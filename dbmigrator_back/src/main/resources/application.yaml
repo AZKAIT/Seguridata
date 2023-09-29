@@ -1,0 +1,8 @@
+server:
+  servlet:
+    context-path: /migrator
+
+spring:
+  mongodb:
+    embedded:
+      version: 4.0.2
