@@ -16,7 +16,6 @@ import java.util.List;
 import java.util.Objects;
 
 import static com.seguridata.tools.dbmigrator.data.constant.ProjectStatus.CREATED;
-import static com.seguridata.tools.dbmigrator.data.constant.ProjectStatus.PAUSED;
 import static com.seguridata.tools.dbmigrator.data.constant.ProjectStatus.RUNNING;
 import static com.seguridata.tools.dbmigrator.data.constant.ProjectStatus.STOPPED;
 
@@ -74,11 +73,12 @@ public class ProjectService {
         }
 
         if (!CREATED.equals(project.getStatus()) && !STOPPED.equals(project.getStatus())) {
-            throw new ObjectLockedException("Project should be in CREATED or STOPPED state to create plans");
+            throw new ObjectLockedException("Project should be in CREATED or STOPPED state to update values");
         }
     }
 
     public boolean updateProjectStatus(ProjectEntity project, ProjectStatus newStatus) {
+        // TODO: change validations
         if (CREATED.equals(newStatus)) {
             throw new InvalidUpdateException("Can't update Project status to CREATED");
         }
@@ -88,10 +88,7 @@ public class ProjectService {
             throw new InvalidUpdateException("Created Project status can only transition to RUNNING");
         }
 
-        if (STOPPED.equals(currentStatus) && PAUSED.equals(newStatus)) {
-            throw new InvalidUpdateException("Can't update Project status to PAUSED from STOPPED");
-        }
-
+        project.setStatus(newStatus);
         return this.projectRepo.updateProjectStatus(project.getId(), newStatus);
     }
 }

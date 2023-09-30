@@ -1,7 +1,9 @@
 package com.seguridata.tools.dbmigrator.business.facade;
 
 import com.seguridata.tools.dbmigrator.business.event.InitiateProjectEvent;
+import com.seguridata.tools.dbmigrator.business.event.StopProjectEvent;
 import com.seguridata.tools.dbmigrator.business.exception.BaseCodeException;
+import com.seguridata.tools.dbmigrator.business.exception.ObjectLockedException;
 import com.seguridata.tools.dbmigrator.business.mapper.ProjectMapper;
 import com.seguridata.tools.dbmigrator.business.service.ConnectionService;
 import com.seguridata.tools.dbmigrator.business.service.ProjectService;
@@ -16,6 +18,7 @@ import org.springframework.stereotype.Component;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
+import java.util.Objects;
 
 import static java.lang.Boolean.TRUE;
 
@@ -106,26 +109,44 @@ public class ProjectFacade {
     public ResponseWrapper<Boolean> initiateProjectExecution(String projectId) {
         ResponseWrapper<Boolean> execResponse = new ResponseWrapper<>();
         execResponse.setData(false);
+        ProjectEntity project = null;
         try {
-            ProjectEntity project = this.projectService.getProject(projectId);
+            project = this.projectService.getProject(projectId);
             this.projectService.validateProjectStatus(project);
 
             this.appEventPublisher.publishEvent(new InitiateProjectEvent(this, project));
             execResponse.setData(true);
-
-            this.projectService.updateProjectStatus(project, ProjectStatus.RUNNING);
-
             execResponse.setCode("00");
         } catch (BaseCodeException e) {
             execResponse.setCode(e.getCode());
             execResponse.setMessages(Arrays.asList(e.getMessages()));
         } catch (Exception e) {
-            if (TRUE.equals(execResponse.getData())) {
-                // TODO: attempt finalizing
-            } else {
-                execResponse.setCode("07");
-                execResponse.setMessages(Collections.singleton(e.getMessage()));
+            execResponse.setCode("07");
+            execResponse.setMessages(Collections.singleton(e.getMessage()));
+        }
+
+        return execResponse;
+    }
+
+    public ResponseWrapper<Boolean> stopProjectExecution(String projectId) {
+        ResponseWrapper<Boolean> execResponse = new ResponseWrapper<>();
+        execResponse.setData(false);
+        ProjectEntity project = null;
+        try {
+            project = this.projectService.getProject(projectId);
+            if (!ProjectStatus.RUNNING.equals(project.getStatus())) {
+                throw new ObjectLockedException("Project should be in RUNNING state to stop execution");
             }
+
+            this.appEventPublisher.publishEvent(new StopProjectEvent(this, project));
+            execResponse.setData(true);
+            execResponse.setCode("00");
+        } catch (BaseCodeException e) {
+            execResponse.setCode(e.getCode());
+            execResponse.setMessages(Arrays.asList(e.getMessages()));
+        } catch (Exception e) {
+            execResponse.setCode("07");
+            execResponse.setMessages(Collections.singleton(e.getMessage()));
         }
 
         return execResponse;

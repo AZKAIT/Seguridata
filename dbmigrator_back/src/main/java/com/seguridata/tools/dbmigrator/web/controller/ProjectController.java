@@ -71,4 +71,24 @@ public class ProjectController {
             return ResponseEntity.status(HttpStatus.CONFLICT).body(projectResponse);
         }
     }
+
+    @PostMapping("{projectId}/start")
+    public ResponseEntity<ResponseWrapper<Boolean>> startProjectExecution(@PathVariable String projectId) {
+        ResponseWrapper<Boolean> response = this.projectFacade.initiateProjectExecution(projectId);
+        if ("00".equals(response.getCode())) {
+            return ResponseEntity.status(HttpStatus.OK).body(response);
+        } else {
+            return ResponseEntity.status(HttpStatus.CONFLICT).body(response);
+        }
+    }
+
+    @PostMapping("{projectId}/stop")
+    public ResponseEntity<ResponseWrapper<Boolean>> stopProjectExecution(@PathVariable String projectId) {
+        ResponseWrapper<Boolean> response = this.projectFacade.stopProjectExecution(projectId);
+        if ("00".equals(response.getCode())) {
+            return ResponseEntity.status(HttpStatus.OK).body(response);
+        } else {
+            return ResponseEntity.status(HttpStatus.CONFLICT).body(response);
+        }
+    }
 }

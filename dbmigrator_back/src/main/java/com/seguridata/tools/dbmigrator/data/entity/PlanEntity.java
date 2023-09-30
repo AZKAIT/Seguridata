@@ -16,7 +16,9 @@ public class PlanEntity {
     @Id
     private String id;
     private Integer orderNum;
+    @DocumentReference
     private TableEntity sourceTable;
+    @DocumentReference
     private TableEntity targetTable;
     private Object startId;
     private Object endId;
