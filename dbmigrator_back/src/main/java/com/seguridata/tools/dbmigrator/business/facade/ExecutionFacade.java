@@ -76,7 +76,7 @@ public class ExecutionFacade {
 
             threadPoolExecutor.stopTasks();
         } catch (Exception e) {
-            LOGGER.error("Exception on Project execution: Project({}) -> {}", project.getId(), e.getMessage());
+            LOGGER.error("Exception on Project STOP execution: Project({}) -> {}", project.getId(), e.getMessage());
         }
     }
 
@@ -113,7 +113,7 @@ public class ExecutionFacade {
 
             return targetQueryManager;
         } catch (Exception e) {
-            LOGGER.error("Error caught on getSourceQueryManager: {}", e.getMessage());
+            LOGGER.error("Error caught on getTargetQueryManager: {}", e.getMessage());
             ErrorTrackingEntity errorTracking = new ErrorTrackingEntity();
             errorTracking.setMessage(e.getMessage());
             errorTracking.setReferenceType(ConnectionEntity.class.getCanonicalName());

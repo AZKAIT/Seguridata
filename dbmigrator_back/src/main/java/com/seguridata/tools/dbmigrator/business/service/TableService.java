@@ -3,7 +3,6 @@ package com.seguridata.tools.dbmigrator.business.service;
 import com.seguridata.tools.dbmigrator.business.exception.DuplicateDataException;
 import com.seguridata.tools.dbmigrator.business.exception.EmptyResultException;
 import com.seguridata.tools.dbmigrator.business.exception.MissingObjectException;
-import com.seguridata.tools.dbmigrator.business.exception.ObjectLockedException;
 import com.seguridata.tools.dbmigrator.data.entity.ConnectionEntity;
 import com.seguridata.tools.dbmigrator.data.entity.TableEntity;
 import com.seguridata.tools.dbmigrator.data.repository.TableRepository;
@@ -13,8 +12,7 @@ import org.springframework.util.CollectionUtils;
 
 import java.util.List;
 import java.util.Objects;
-
-import static java.lang.Boolean.TRUE;
+import java.util.stream.Collectors;
 
 @Service
 public class TableService {
@@ -36,7 +34,7 @@ public class TableService {
         return this.tableRepo.createTable(table);
     }
 
-    public List<TableEntity> getTables(String connectionId) {
+    public List<TableEntity> getTablesForConnection(String connectionId) {
         List<TableEntity> tables = this.tableRepo.getTableListByConnection(connectionId);
         if (CollectionUtils.isEmpty(tables)) {
             throw new EmptyResultException("Empty tables for connection");
@@ -63,8 +61,20 @@ public class TableService {
     }
 
     public void validateTableOwner(String connectionId, String tableId) {
-        if(!this.tableRepo.validateTableConnection(connectionId, tableId)) {
+        if (!this.tableRepo.validateTableConnection(connectionId, tableId)) {
             throw new RuntimeException("Table doesn't belong to Connection");
         }
+    }
+
+    public List<TableEntity> saveBatch(ConnectionEntity connection, List<TableEntity> tables) {
+        return tables.stream().map(table -> {
+                    try {
+                        return this.createNewTable(connection, table);
+                    } catch (Exception e) {
+                        return null;
+                    }
+                })
+                .filter(Objects::nonNull)
+                .collect(Collectors.toList());
     }
 }

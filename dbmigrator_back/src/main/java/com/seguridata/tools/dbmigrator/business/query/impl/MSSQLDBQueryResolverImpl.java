@@ -17,12 +17,26 @@ import java.util.stream.Collectors;
 @DatabaseTypeBean(dbType = DatabaseType.MSSQL)
 public class MSSQLDBQueryResolverImpl implements DBQueryResolver {
     @Override
+    public String getTablesQuery() {
+        return "SELECT TABLE_NAME AS 'name', TABLE_SCHEMA AS 'schema'" +
+                " FROM INFORMATION_SCHEMA.TABLES" +
+                " WHERE TABLE_TYPE = 'BASE TABLE' AND TABLE_CATALOG = :namespace";
+    }
+
+    @Override
+    public String getColumnsQuery() {
+        return "SELECT TABLE_NAME AS 'tableName', COLUMN_NAME AS 'name', DATA_TYPE AS 'dataType', CHARACTER_MAXIMUM_LENGTH AS 'dataLength'" +
+                " FROM INFORMATION_SCHEMA.COLUMNS" +
+                " WHERE TABLE_NAME = :tableName AND TABLE_SCHEMA = :schema AND TABLE_CATALOG = :namespace";
+    }
+
+    @Override
     public String verificationQuery() {
         return "SELECT 1";
     }
 
     @Override
-    public String selectFromSourceTableQuery(TableEntity table, Collection<DefinitionEntity> definitions) {
+    public String selectFromSourceTableQuery(TableEntity table, Collection<DefinitionEntity> definitions, long skip, long limit) {
         String schemaPart = this.getSchemePart(table);
 
         String columns = definitions.stream()
@@ -30,7 +44,10 @@ public class MSSQLDBQueryResolverImpl implements DBQueryResolver {
                 .map(ColumnEntity::getName)
                 .collect(Collectors.joining(","));
 
-        return "SELECT " + columns + " FROM " + schemaPart + table.getName() + ""; // TODO: limit and sort queries depending on business rules defined by SeguriData
+        return "SELECT " + columns + " FROM " + schemaPart + table.getName()
+                + " ORDER BY " + table.getOrderColumnName()
+                + " OFFSET " + skip + " ROWS"
+                + " FETCH NEXT " + limit + " ROWS ONLY";
     }
 
     @Override
@@ -50,6 +67,11 @@ public class MSSQLDBQueryResolverImpl implements DBQueryResolver {
         String paramDef = String.join(",", paramDefList);
 
         return "INSERT INTO " + schemaPart + table.getName() + " (" + colDef + ") values (" + paramDef + ")";
+    }
+
+    @Override
+    public String countQuery() {
+        return "SELECT COUNT(*) AS Total FROM :schema.:tableName";
     }
 
 

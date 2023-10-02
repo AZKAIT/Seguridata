@@ -12,6 +12,7 @@ import org.springframework.util.CollectionUtils;
 
 import java.util.List;
 import java.util.Objects;
+import java.util.stream.Collectors;
 
 @Service
 public class ColumnService {
@@ -82,5 +83,17 @@ public class ColumnService {
         }
 
         return sortingColumns.get(0);
+    }
+
+    public List<ColumnEntity> saveBatch(TableEntity table, List<ColumnEntity> columns) {
+        return columns.stream().map(column -> {
+                    try {
+                        return this.createColumn(table, column);
+                    } catch (Exception e) {
+                        return null;
+                    }
+                })
+                .filter(Objects::nonNull)
+                .collect(Collectors.toList());
     }
 }

@@ -1,5 +1,6 @@
 package com.seguridata.tools.dbmigrator.business.facade;
 
+import com.seguridata.tools.dbmigrator.business.event.ConnectionCreatedEvent;
 import com.seguridata.tools.dbmigrator.business.exception.BaseCodeException;
 import com.seguridata.tools.dbmigrator.business.exception.DBValidationException;
 import com.seguridata.tools.dbmigrator.business.exception.ObjectLockedException;
@@ -11,6 +12,7 @@ import com.seguridata.tools.dbmigrator.data.entity.ConnectionEntity;
 import com.seguridata.tools.dbmigrator.data.model.ConnectionModel;
 import com.seguridata.tools.dbmigrator.data.wrapper.ResponseWrapper;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.stereotype.Component;
 
 import javax.validation.Valid;
@@ -25,14 +27,17 @@ public class ConnectionFacade {
     private final ConnectionMapper connMapper;
     private final DatabaseConnectionFactory dbConnFactory;
     private final ConnectionService connectionService;
+    private final ApplicationEventPublisher appEventPublisher;
 
     @Autowired
     public ConnectionFacade(ConnectionMapper connMapper,
                             DatabaseConnectionFactory dbConnFactory,
-                            ConnectionService connectionService) {
+                            ConnectionService connectionService,
+                            ApplicationEventPublisher appEventPublisher) {
         this.connMapper = connMapper;
         this.dbConnFactory = dbConnFactory;
         this.connectionService = connectionService;
+        this.appEventPublisher = appEventPublisher;
     }
 
     public ResponseWrapper<ConnectionModel> createNewConnection(@Valid ConnectionModel connectionModel) {
@@ -48,8 +53,12 @@ public class ConnectionFacade {
 
             // Saving connection to Database
             connection = this.connectionService.createConnection(connection);
+
+            ConnectionModel resultModel = this.connMapper.mapConnectionModel(connection);
             connectionResponse.setCode("00");
-            connectionResponse.setData(this.connMapper.mapConnectionModel(connection));
+            connectionResponse.setData(resultModel);
+
+            this.appEventPublisher.publishEvent(new ConnectionCreatedEvent(this, resultModel));
         } catch (BaseCodeException e) {
             connectionResponse.setCode(e.getCode());
             connectionResponse.setMessages(Arrays.asList(e.getMessages()));

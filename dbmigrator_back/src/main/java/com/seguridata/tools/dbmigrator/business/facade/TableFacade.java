@@ -1,8 +1,6 @@
 package com.seguridata.tools.dbmigrator.business.facade;
 
 import com.seguridata.tools.dbmigrator.business.exception.BaseCodeException;
-import com.seguridata.tools.dbmigrator.business.exception.MissingObjectException;
-import com.seguridata.tools.dbmigrator.business.exception.ObjectLockedException;
 import com.seguridata.tools.dbmigrator.business.mapper.TableMapper;
 import com.seguridata.tools.dbmigrator.business.service.ConnectionService;
 import com.seguridata.tools.dbmigrator.business.service.TableService;
@@ -15,9 +13,6 @@ import org.springframework.stereotype.Component;
 
 import java.util.Arrays;
 import java.util.List;
-import java.util.Objects;
-
-import static java.lang.Boolean.TRUE;
 
 @Component
 public class TableFacade {
@@ -58,7 +53,7 @@ public class TableFacade {
         ResponseWrapper<List<TableModel>> tableResponse = new ResponseWrapper<>();
 
         try {
-            List<TableEntity> tables = this.tableService.getTables(connectionId);
+            List<TableEntity> tables = this.tableService.getTablesForConnection(connectionId);
             tableResponse.setCode("00");
             tableResponse.setData(this.tableMapper.mapTableModelList(tables));
         } catch (BaseCodeException e) {

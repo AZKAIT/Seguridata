@@ -58,7 +58,8 @@ public class DatabaseConnectionFactory {
         OracleDataSource dataSource = new OracleDataSource();
         dataSource.setUser(connection.getUsername());
         dataSource.setPassword(connection.getPassword());
-        dataSource.setServiceName(connection.getDatabase());
+        dataSource.setServiceName(connection.getObjectService());
+        dataSource.setDatabaseName(connection.getDatabase());
         dataSource.setDriverType("thin");
         dataSource.setServerName(connection.getHost());
         dataSource.setPortNumber(connection.getPort());
@@ -73,6 +74,7 @@ public class DatabaseConnectionFactory {
         ds.setServerName(connection.getHost());
         ds.setPortNumber(connection.getPort());
         ds.setDatabaseName(connection.getDatabase());
+        ds.setInstanceName(connection.getObjectService());
 
         // TODO: validate if it is okay to disable SSL
         ds.setEncrypt(false);

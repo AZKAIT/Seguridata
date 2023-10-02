@@ -24,6 +24,7 @@ public class ConnectionEntity {
     private String password;
     private DatabaseType type;
     private Boolean locked;
+    private String objectService;
 
     @ReadOnlyProperty
     @DocumentReference(lookup="{'connection':?#{#self._id} }")

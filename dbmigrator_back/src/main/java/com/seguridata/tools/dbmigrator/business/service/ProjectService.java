@@ -17,7 +17,9 @@ import java.util.Objects;
 
 import static com.seguridata.tools.dbmigrator.data.constant.ProjectStatus.CREATED;
 import static com.seguridata.tools.dbmigrator.data.constant.ProjectStatus.RUNNING;
+import static com.seguridata.tools.dbmigrator.data.constant.ProjectStatus.STARTING;
 import static com.seguridata.tools.dbmigrator.data.constant.ProjectStatus.STOPPED;
+import static com.seguridata.tools.dbmigrator.data.constant.ProjectStatus.STOPPING;
 
 @Service
 public class ProjectService {
@@ -78,14 +80,21 @@ public class ProjectService {
     }
 
     public boolean updateProjectStatus(ProjectEntity project, ProjectStatus newStatus) {
-        // TODO: change validations
         if (CREATED.equals(newStatus)) {
             throw new InvalidUpdateException("Can't update Project status to CREATED");
         }
 
         ProjectStatus currentStatus = project.getStatus();
-        if (CREATED.equals(currentStatus) && !RUNNING.equals(newStatus)) {
-            throw new InvalidUpdateException("Created Project status can only transition to RUNNING");
+        if (CREATED.equals(currentStatus) && !STARTING.equals(newStatus)) {
+            throw new InvalidUpdateException("CREATED Project status can only transition to STARTING");
+        }
+
+        if (STARTING.equals(currentStatus) && !RUNNING.equals(newStatus)) {
+            throw new InvalidUpdateException("STARTING Project status can only transition to RUNNING");
+        }
+
+        if (STOPPING.equals(currentStatus) && !STOPPED.equals(newStatus)) {
+            throw new InvalidUpdateException("STOPPING Project status can only transition to STOPPED");
         }
 
         project.setStatus(newStatus);

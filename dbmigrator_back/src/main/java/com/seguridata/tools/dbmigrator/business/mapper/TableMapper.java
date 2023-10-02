@@ -1,5 +1,6 @@
 package com.seguridata.tools.dbmigrator.business.mapper;
 
+import com.seguridata.tools.dbmigrator.data.entity.ConnectionEntity;
 import com.seguridata.tools.dbmigrator.data.entity.TableEntity;
 import com.seguridata.tools.dbmigrator.data.model.TableModel;
 import org.springframework.stereotype.Component;
@@ -30,6 +31,7 @@ public class TableMapper {
         table.setName(tableModel.getName());
         table.setSchema(tableModel.getSchema());
         table.setDescription(tableModel.getDescription());
+        table.setOrderColumnName(tableModel.getOrderColumnName());
 
         return table;
     }
@@ -44,6 +46,7 @@ public class TableMapper {
         tableModel.setName(table.getName());
         tableModel.setSchema(table.getSchema());
         tableModel.setDescription(table.getDescription());
+        tableModel.setOrderColumnName(table.getOrderColumnName());
 
         return tableModel;
     }

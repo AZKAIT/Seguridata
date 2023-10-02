@@ -20,9 +20,9 @@ public class PlanEntity {
     private TableEntity sourceTable;
     @DocumentReference
     private TableEntity targetTable;
-    private Object startId;
-    private Object endId;
-    private List<Object> idList;
+    private Long initialSkip;
+    private Long rowLimit;
+    private Long maxRows;
     private Double progressPercent;
     private String status;
     private Date startDate;

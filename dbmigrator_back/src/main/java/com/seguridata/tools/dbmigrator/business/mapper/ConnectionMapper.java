@@ -31,6 +31,7 @@ public class ConnectionMapper {
         entity.setDescription(model.getDescription());
         entity.setHost(model.getHost());
         entity.setPort(model.getPort());
+        entity.setObjectService(model.getObjectService());
         entity.setDatabase(model.getDatabase());
         entity.setUsername(model.getUsername());
         entity.setPassword(model.getPassword());
@@ -51,6 +52,7 @@ public class ConnectionMapper {
         model.setDescription(entity.getDescription());
         model.setHost(entity.getHost());
         model.setPort(entity.getPort());
+        model.setObjectService(entity.getObjectService());
         model.setDatabase(entity.getDatabase());
         model.setUsername(entity.getUsername());
         model.setPassword("*************");

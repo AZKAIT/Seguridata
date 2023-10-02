@@ -1,5 +1,6 @@
 package com.seguridata.tools.dbmigrator.business.mapper;
 
+import com.seguridata.tools.dbmigrator.data.constant.ConversionFunction;
 import com.seguridata.tools.dbmigrator.data.entity.DefinitionEntity;
 import com.seguridata.tools.dbmigrator.data.model.DefinitionModel;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -8,6 +9,7 @@ import org.springframework.stereotype.Component;
 import java.util.Collection;
 import java.util.List;
 import java.util.Objects;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Component
@@ -36,9 +38,9 @@ public class DefinitionMapper {
 
         DefinitionEntity definition = new DefinitionEntity();
         definition.setId(definitionModel.getId());
-        definition.setConversionFunction(definitionModel.getConversionFunction());
         definition.setSourceColumn(this.columnMapper.mapColumnEntity(definitionModel.getSourceColumn()));
         definition.setTargetColumn(this.columnMapper.mapColumnEntity(definitionModel.getTargetColumn()));
+        definition.setConversionFunction(Optional.ofNullable(definitionModel.getConversionFunction()).orElse(ConversionFunction.NONE));
 
         return definition;
     }

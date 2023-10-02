@@ -21,6 +21,8 @@ public class ConnectionModel {
     private String host;
     private Integer port;
     @NotBlank
+    private String objectService;
+    @NotBlank
     private String database;
     @NotBlank
     private String username;

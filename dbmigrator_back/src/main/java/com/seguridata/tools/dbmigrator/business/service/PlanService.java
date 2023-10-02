@@ -44,6 +44,10 @@ public class PlanService {
         plan.setId(null);
         plan.setProject(project);
 
+        if (Objects.isNull(plan.getMaxRows()) || Objects.equals(0L, plan.getMaxRows())) {
+            plan.setMaxRows(-1L);
+        }
+
         return this.planRepo.createPlan(plan);
     }
 
@@ -54,6 +58,10 @@ public class PlanService {
         updatedPlan.setStartDate(existingPlan.getStartDate());
         updatedPlan.setEndDate(existingPlan.getEndDate());
         updatedPlan.setProject(existingPlan.getProject());
+
+        if (Objects.isNull(updatedPlan.getMaxRows()) || Objects.equals(0L, updatedPlan.getMaxRows())) {
+            updatedPlan.setMaxRows(-1L);
+        }
 
         return this.planRepo.updatePlan(updatedPlan);
     }

@@ -5,10 +5,10 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.Getter;
 import lombok.Setter;
 
+import javax.validation.constraints.Max;
 import javax.validation.constraints.Min;
 import javax.validation.constraints.NotBlank;
 import java.util.Date;
-import java.util.List;
 
 @JsonInclude(JsonInclude.Include.NON_NULL)
 @Getter @Setter
@@ -20,9 +20,12 @@ public class PlanModel {
     private TableModel sourceTable;
     @NotBlank
     private TableModel targetTable;
-    private Object startId;
-    private Object endId;
-    private List<Object> idList;
+    @Min(0)
+    private Long initialSkip;
+    @Min(1)
+    @Max(1000)
+    private Long rowLimit;
+    private Long maxRows;
     @JsonProperty(access = JsonProperty.Access.READ_ONLY)
     private Double progressPercent;
     @JsonProperty(access = JsonProperty.Access.READ_ONLY)

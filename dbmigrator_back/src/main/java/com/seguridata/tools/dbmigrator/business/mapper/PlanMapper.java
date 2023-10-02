@@ -33,9 +33,9 @@ public class PlanMapper {
         plan.setOrderNum(planModel.getOrderNum());
         plan.setStartDate(planModel.getStartDate());
         plan.setEndDate(planModel.getEndDate());
-        plan.setStartId(planModel.getStartId());
-        plan.setEndId(planModel.getEndId());
-        plan.setIdList(planModel.getIdList());
+        plan.setInitialSkip(planModel.getInitialSkip());
+        plan.setRowLimit(planModel.getRowLimit());
+        plan.setMaxRows(planModel.getMaxRows());
         plan.setProgressPercent(planModel.getProgressPercent());
         plan.setStatus(planModel.getStatus());
 
@@ -51,9 +51,9 @@ public class PlanMapper {
         planModel.setOrderNum(plan.getOrderNum());
         planModel.setStartDate(plan.getStartDate());
         planModel.setEndDate(plan.getEndDate());
-        planModel.setStartId(plan.getStartId());
-        planModel.setEndId(plan.getEndId());
-        planModel.setIdList(plan.getIdList());
+        planModel.setInitialSkip(plan.getInitialSkip());
+        planModel.setRowLimit(plan.getRowLimit());
+        planModel.setMaxRows(plan.getMaxRows());
         planModel.setProgressPercent(plan.getProgressPercent());
         planModel.setStatus(plan.getStatus());
 
