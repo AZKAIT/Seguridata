@@ -108,6 +108,7 @@ public class SyncUpFacade {
             List<ColumnEntity> createdColumns = tables.stream().map(table ->
                 this.syncUpTableColumns(queryManager, table)).flatMap(List::stream)
                     .collect(Collectors.toList());
+            queryManager.closeConnection();
 
             columnsResponse.setCode("00");
             columnsResponse.setData(this.columnMapper.mapColumnModelList(createdColumns));
@@ -130,6 +131,7 @@ public class SyncUpFacade {
             DatabaseQueryManager queryManager = this.appContext.getBean(DatabaseQueryManager.class, this.appContext);
             queryManager.initializeConnection(entity);
             this.syncUpTableColumns(queryManager, table);
+            queryManager.closeConnection();
         } catch (SQLException e) {
             LOGGER.error("SyncUp failed: {}", e.getMessage());
         }
@@ -140,11 +142,16 @@ public class SyncUpFacade {
         queryManager.initializeConnection(connection);
 
         List<TableEntity> schemaTables = queryManager.findSchemaTables();
-        return this.tableService.saveBatch(connection, schemaTables);
+        schemaTables = this.tableService.saveBatch(connection, schemaTables);
+        queryManager.closeConnection();
+
+        return schemaTables;
     }
 
     private List<ColumnEntity> syncUpTableColumns(DatabaseQueryManager queryManager, TableEntity table) {
         List<ColumnEntity> tableColumns = queryManager.findColumnForTable(table);
-        return this.columnService.saveBatch(table, tableColumns);
+        tableColumns = this.columnService.saveBatch(table, tableColumns);
+
+        return tableColumns;
     }
 }

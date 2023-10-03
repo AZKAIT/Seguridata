@@ -61,6 +61,8 @@ public class ExecutionFacade {
             this.threadPoolExecutorFactory.removeExecutorForProject(project.getId());
 
             this.projectService.updateProjectStatus(project, ProjectStatus.STOPPED);
+            sourceQueryManager.closeConnection();
+            targetQueryManager.closeConnection();
             LOGGER.info("Execution finished");
         } catch (Exception e) {
             LOGGER.error("Exception on Project execution: Project({}) -> {}", project.getId(), e.getMessage());

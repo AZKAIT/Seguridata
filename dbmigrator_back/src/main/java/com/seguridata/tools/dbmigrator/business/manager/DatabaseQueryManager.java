@@ -4,20 +4,19 @@ import com.seguridata.tools.dbmigrator.business.factory.DatabaseConnectionFactor
 import com.seguridata.tools.dbmigrator.business.factory.QueryResolverFactory;
 import com.seguridata.tools.dbmigrator.business.query.DBQueryResolver;
 import com.seguridata.tools.dbmigrator.business.service.ConnectionService;
-import com.seguridata.tools.dbmigrator.business.service.TableService;
 import com.seguridata.tools.dbmigrator.data.entity.ColumnEntity;
 import com.seguridata.tools.dbmigrator.data.entity.ConnectionEntity;
 import com.seguridata.tools.dbmigrator.data.entity.DefinitionEntity;
 import com.seguridata.tools.dbmigrator.data.entity.TableEntity;
 import com.seguridata.tools.dbmigrator.data.mapper.ColumnRowMapper;
 import com.seguridata.tools.dbmigrator.data.mapper.TableRowMapper;
+import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.config.ConfigurableBeanFactory;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.Scope;
 import org.springframework.dao.DataAccessResourceFailureException;
-import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
 import org.springframework.jdbc.core.namedparam.SqlParameterSource;
@@ -30,6 +29,7 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
+import java.util.Optional;
 
 @Component
 @Scope(value = ConfigurableBeanFactory.SCOPE_PROTOTYPE)
@@ -37,10 +37,10 @@ public class DatabaseQueryManager {
     private static final Logger LOGGER = LoggerFactory.getLogger(DatabaseQueryManager.class);
 
     private final ConnectionService connectionService;
-    private JdbcTemplate jdbcTemplate;
     private NamedParameterJdbcTemplate namedParamJdbcTemplate;
     private DBQueryResolver queryResolver;
     private ConnectionEntity connection;
+    private DataSource dataSource;
     private boolean initialized;
 
     private final ApplicationContext appContext;
@@ -48,15 +48,13 @@ public class DatabaseQueryManager {
     public DatabaseQueryManager(ApplicationContext appContext) {
         LOGGER.info("Creating DatabaseQueryManager with: ");
         this.appContext = appContext;
-        this.jdbcTemplate = null;
         this.initialized = false;
 
         this.connectionService = this.appContext.getBean(ConnectionService.class);
     }
 
     public void initializeConnection(String connectionId) throws SQLException {
-        ConnectionEntity connection = this.connectionService.getConnection(connectionId);
-        this.initializeConnection(connection);
+        this.initializeConnection(this.connectionService.getConnection(connectionId));
     }
 
     public void initializeConnection(ConnectionEntity connection) throws SQLException {
@@ -66,13 +64,20 @@ public class DatabaseQueryManager {
         this.connection = connection;
         this.queryResolver = queryResolverFactory.getDBQueryResolver(this.connection.getType());
 
-        DataSource dataSource = connectionFactory.getConnection(this.connection);
-        this.jdbcTemplate = new JdbcTemplate(dataSource);
-        this.jdbcTemplate.execute(this.queryResolver.verificationQuery());
+        this.dataSource = connectionFactory.getConnection(this.connection);
 
-        this.namedParamJdbcTemplate = new NamedParameterJdbcTemplate(dataSource);
+        this.namedParamJdbcTemplate = new NamedParameterJdbcTemplate(this.dataSource);
+        this.namedParamJdbcTemplate.getJdbcTemplate().execute(this.queryResolver.verificationQuery());
 
         this.initialized = true;
+    }
+
+    public void closeConnection() {
+        try {
+            this.dataSource.getConnection().close();
+        } catch (SQLException e) {
+            LOGGER.error("Exception while trying to close DB connection: {}", e.getMessage());
+        }
     }
 
     public List<TableEntity> findSchemaTables() {
@@ -94,12 +99,9 @@ public class DatabaseQueryManager {
     }
 
     public long getTotalRows(TableEntity table) {
-        String query = this.queryResolver.countQuery();
-        MapSqlParameterSource namedParameters = new MapSqlParameterSource();
-        namedParameters.addValue("schema", table.getSchema());
-        namedParameters.addValue("tableName", table.getName());
+        String query = this.queryResolver.countQuery(Optional.ofNullable(table.getSchema()).filter(StringUtils::isNotBlank).map(schema -> String.format("%s.%s", schema, table.getName())).orElse(table.getName()));
 
-        BigDecimal result = this.namedParamJdbcTemplate.queryForObject(query, namedParameters, BigDecimal.class);
+        BigDecimal result = this.namedParamJdbcTemplate.queryForObject(query, Collections.emptyMap(), BigDecimal.class);
         if (Objects.isNull(result)) {
             throw new DataAccessResourceFailureException("Total Rows is null");
         }
@@ -108,7 +110,7 @@ public class DatabaseQueryManager {
 
     public List<Map<String, Object>> retrieveDataBlockFrom(TableEntity sourceTable, List<DefinitionEntity> sourceDefinitions, long skip, long limit) {
         String query = this.queryResolver.selectFromSourceTableQuery(sourceTable, sourceDefinitions, skip, limit);
-        return this.jdbcTemplate.queryForList(query);
+        return this.namedParamJdbcTemplate.queryForList(query, Collections.emptyMap());
     }
 
     public int insertDataBlockTo(TableEntity targetTable, List<DefinitionEntity> targetDefinitions, Map<String, Object> data) {

@@ -11,5 +11,5 @@ public interface DBQueryResolver {
     String verificationQuery();
     String selectFromSourceTableQuery(TableEntity table, Collection<DefinitionEntity> definitions, long skip, long limit);
     String insertToTargetTableQuery(TableEntity table, Collection<DefinitionEntity> definitions);
-    String countQuery();
+    String countQuery(String schemaTableName);
 }

@@ -70,8 +70,8 @@ public class MSSQLDBQueryResolverImpl implements DBQueryResolver {
     }
 
     @Override
-    public String countQuery() {
-        return "SELECT COUNT(*) AS Total FROM :schema.:tableName";
+    public String countQuery(String schemaTableName) {
+        return "SELECT COUNT(*) AS Total FROM " + schemaTableName;
     }
 
 

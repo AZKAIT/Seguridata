@@ -60,8 +60,8 @@ public class OracleDBQueryResolverImpl implements DBQueryResolver {
     }
 
     @Override
-    public String countQuery() {
-        return "SELECT COUNT(*) \"Total\" FROM :schema.:tableName";
+    public String countQuery(String schemaTableName) {
+        return "SELECT COUNT(*) \"Total\" FROM " + schemaTableName;
     }
 
     private String paginationSource(String tableName, String orderColumn, long skip, long limit) {
