@@ -1,0 +1,42 @@
+<ng-container *ngIf="planList">
+  <p-card [header]="'Planes de ' + (project? project.name: 'N/A')">
+    <p-table [value]="planList" selectionMode="single" dataKey="id" [selection]="selectedPlan" (selectionChange)="onSelectedPlanFromList($event)"
+      [paginator]="true" [rows]="10" [tableStyle]="{ 'min-width': '50rem' }">
+      <ng-template pTemplate="caption">
+        <div class="flex align-items-center justify-content-between">
+          Planes
+          <div >
+            <p-button icon="pi pi-refresh" styleClass="p-button-text" (onClick)="refreshList();"></p-button>
+            <p-button icon="pi pi-pencil" styleClass="p-button-text" (onClick)="editPlan()" [disabled]="!selectedPlan"></p-button>
+            <p-button icon="pi pi-trash" styleClass="p-button-text" (onClick)="deletePlan()" [disabled]="!selectedPlan"></p-button>
+            <p-button icon="pi pi-plus" styleClass="p-button-text" (onClick)="createPlan()"></p-button>
+          </div>
+        </div>
+      </ng-template>
+      <ng-template pTemplate="header">
+        <tr>
+          <th style="width: 4rem"></th>
+          <th>Orden</th>
+          <th>Tabla Origen</th>
+          <th>Tabla Destino</th>
+          <th>Omisión Inicial</th>
+          <th>Tamaño Bloque</th>
+          <th>Registros Máximos</th>
+        </tr>
+      </ng-template>
+      <ng-template pTemplate="body" let-plan>
+        <tr [pSelectableRow]="plan">
+          <td>
+            <p-tableRadioButton [value]="plan"></p-tableRadioButton>
+          </td>
+          <td>{{ plan.orderNum }}</td>
+          <td>{{ plan.sourceTable?.name }}</td>
+          <td>{{ plan.targetTable?.name }}</td>
+          <td>{{ plan.initialSkip }}</td>
+          <td>{{ plan.rowLimit }}</td>
+          <td>{{ plan.maxRows }}</td>
+        </tr>
+      </ng-template>
+    </p-table>
+  </p-card>
+</ng-container>

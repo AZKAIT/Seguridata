@@ -1,0 +1,67 @@
+<p-card header="Información del Plan">
+  <form [formGroup]="planFormGroup">
+    <div class="field">
+      <span class="p-float-label">
+        <input pInputText id="order-num" formControlName="orderNum" />
+        <label htmlFor="order-num">Orden</label>
+      </span>
+    </div>
+    <div class="field">
+      <span class="p-float-label">
+        <p-dropdown inputId="select-conn-drop" [options]="sourceTableList" formControlName="sourceTable"
+        dataKey="id" [filter]="true" filterBy="name" [showClear]="true" placeholder="Tabla Origen" (onChange)="changeSourceTable($event)">
+          <ng-template pTemplate="selectedItem">
+            <div class="flex align-items-center gap-2" *ngIf="selSourceTable">
+              <div>{{ selSourceTable.name }}</div>
+            </div>
+          </ng-template>
+          <ng-template let-table pTemplate="item">
+            <div class="flex align-items-center gap-2">
+              <div>{{ (table.schema ?  table.schema + '.' : '') + table.name }}</div>
+            </div>
+          </ng-template>
+        </p-dropdown>
+        <label for="select-conn-drop">Tabla Origen</label>
+      </span>
+    </div>
+    <div class="field">
+      <span class="p-float-label">
+        <p-dropdown inputId="select-conn-drop" [options]="targetTableList" formControlName="targetTable"
+        dataKey="id" [filter]="true" filterBy="name" [showClear]="true" placeholder="Tabla Destino" (onChange)="changeTargetTable($event)">
+          <ng-template pTemplate="selectedItem">
+            <div class="flex align-items-center gap-2" *ngIf="selTargetTable">
+              <div>{{ selTargetTable.name }}</div>
+            </div>
+          </ng-template>
+          <ng-template let-table pTemplate="item">
+            <div class="flex align-items-center gap-2">
+              <div>{{ (table.schema ?  table.schema + '.' : '') + table.name }}</div>
+            </div>
+          </ng-template>
+        </p-dropdown>
+        <label for="select-conn-drop">Tabla Destino</label>
+      </span>
+    </div>
+    <div class="field">
+      <span class="p-float-label">
+        <p-inputNumber inputId="initial-skip" formControlName="initialSkip"> </p-inputNumber>
+        <label htmlFor="initial-skip">Omisión Inicial</label>
+    </span>
+    </div>
+    <div class="field">
+      <span class="p-float-label">
+        <p-inputNumber inputId="row-limit" formControlName="rowLimit"> </p-inputNumber>
+        <label htmlFor="row-limit">Límite de bloque</label>
+    </span>
+    </div>
+    <div class="field">
+      <span class="p-float-label">
+        <p-inputNumber inputId="max-rows" formControlName="maxRows"> </p-inputNumber>
+        <label htmlFor="max-rows">Registros Máximos</label>
+    </span>
+    </div>
+
+
+    <p-button type="submit" label="Guardar" (onClick)="submit()" [disabled]="!planFormGroup.valid"></p-button>
+  </form>
+</p-card>

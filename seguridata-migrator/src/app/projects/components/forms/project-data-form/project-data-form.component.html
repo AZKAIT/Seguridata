@@ -1,0 +1,56 @@
+<p-card header="Información del Proyecto">
+  <form [formGroup]="projectFormGroup">
+    <div class="field">
+      <span class="p-float-label">
+        <input pInputText id="name" formControlName="name" />
+        <label htmlFor="name">Nombre</label>
+      </span>
+    </div>
+    <div class="field">
+      <span class="p-float-label">
+        <textarea id="description" formControlName="description" rows="5" cols="30" pInputTextarea></textarea>
+        <label for="description">Descripción</label>
+      </span>
+    </div>
+    <div class="field">
+      <span class="p-float-label">
+        <p-dropdown inputId="select-conn-drop" [options]="connectionList" formControlName="sourceConnection"
+        dataKey="id" [filter]="true" filterBy="name" [showClear]="true" placeholder="Conexión Origen" (onChange)="changeSourceConn($event)">
+          <ng-template pTemplate="selectedItem">
+            <div class="flex align-items-center gap-2" *ngIf="selSourceConn">
+              <div>{{ selSourceConn.name }}</div>
+            </div>
+          </ng-template>
+          <ng-template let-connection pTemplate="item">
+            <div class="flex align-items-center gap-2">
+              <div>{{ connection.name }}</div>
+              <span>{{ connection.host + ':' + connection.port}}</span>
+            </div>
+          </ng-template>
+        </p-dropdown>
+        <label for="select-conn-drop">Conexión Origen</label>
+      </span>
+    </div>
+    <div class="field">
+      <span class="p-float-label">
+        <p-dropdown inputId="select-conn-drop" [options]="connectionList" formControlName="targetConnection"
+        dataKey="id" [filter]="true" filterBy="name" [showClear]="true" placeholder="Conexión Destino" (onChange)="changeTargetConn($event)">
+          <ng-template pTemplate="selectedItem">
+            <div class="flex align-items-center gap-2" *ngIf="selTargetConn">
+              <div>{{ selTargetConn.name }}</div>
+            </div>
+          </ng-template>
+          <ng-template let-connection pTemplate="item">
+            <div class="flex align-items-center gap-2">
+              <div>{{ connection.name }}</div>
+              <span>{{ connection.host + ':' + connection.port}}</span>
+            </div>
+          </ng-template>
+        </p-dropdown>
+        <label for="select-conn-drop">Conexión Destino</label>
+      </span>
+    </div>
+
+    <p-button type="submit" label="Guardar" (onClick)="submit()" [disabled]="!projectFormGroup.valid"></p-button>
+  </form>
+</p-card>

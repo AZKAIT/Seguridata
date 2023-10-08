@@ -1,0 +1,38 @@
+<ng-container *ngIf="tableList">
+  <p-card [header]="'Tablas de ' + (connection? connection.name: 'N/A')">
+    <p-table [value]="tableList" selectionMode="single" dataKey="id" [selection]="selectedTable" (selectionChange)="onSelectedTableFromList($event)"
+      [paginator]="true" [rows]="10" [tableStyle]="{ 'min-width': '50rem' }">
+      <ng-template pTemplate="caption">
+        <div class="flex align-items-center justify-content-between">
+          Tablas
+          <div >
+            <p-button icon="pi pi-refresh" styleClass="p-button-text" (onClick)="refreshList();"></p-button>
+            <p-button icon="pi pi-pencil" styleClass="p-button-text" (onClick)="editTable()" [disabled]="!selectedTable"></p-button>
+            <p-button icon="pi pi-trash" styleClass="p-button-text" (onClick)="deleteTable()" [disabled]="!selectedTable"></p-button>
+            <p-button icon="pi pi-plus" styleClass="p-button-text" (onClick)="createTable()"></p-button>
+          </div>
+        </div>
+      </ng-template>
+      <ng-template pTemplate="header">
+        <tr>
+          <th style="width: 4rem"></th>
+          <th>Schema</th>
+          <th>Tabla</th>
+          <th>Descripción</th>
+          <th>Col. Ordenamiento</th>
+        </tr>
+      </ng-template>
+      <ng-template pTemplate="body" let-table>
+        <tr [pSelectableRow]="table">
+          <td>
+            <p-tableRadioButton [value]="table"></p-tableRadioButton>
+          </td>
+          <td>{{ table.schema }}</td>
+          <td>{{ table.name }}</td>
+          <td>{{ table.description }}</td>
+          <td>{{ table.orderColumnName }}</td>
+        </tr>
+      </ng-template>
+    </p-table>
+  </p-card>
+</ng-container>

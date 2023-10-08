@@ -1,0 +1,7 @@
+<app-connection-list [connectionList]="connectionList" [(selectedConn)]="selectedConn" (listRefreshEvent)="onExecuteRefresh();"
+  (editConnEvent)="onEditConnection()" (deleteConnEvent)="onDeleteConnection()" (createConnEvent)="onCreateConnection()"></app-connection-list>
+
+<app-tables-container [connection]="selectedConn"></app-tables-container>
+
+<app-connection-data-form [connection]="selectedConn"
+  (saveConnection)="saveConnectionData($event)"></app-connection-data-form>

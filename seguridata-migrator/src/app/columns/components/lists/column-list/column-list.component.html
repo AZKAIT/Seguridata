@@ -1,0 +1,38 @@
+<ng-container *ngIf="columnList">
+  <p-card [header]="'Columnas de ' + (table? table.name: 'N/A')">
+    <p-table [value]="columnList" selectionMode="single" dataKey="id" [selection]="selectedColumn" (selectionChange)="onSelectedColumnFromList($event)"
+      [paginator]="true" [rows]="10" [tableStyle]="{ 'min-width': '50rem' }">
+      <ng-template pTemplate="caption">
+        <div class="flex align-items-center justify-content-between">
+          Columnas
+          <div >
+            <p-button icon="pi pi-refresh" styleClass="p-button-text" (onClick)="refreshList();"></p-button>
+            <p-button icon="pi pi-pencil" styleClass="p-button-text" (onClick)="editColumn()" [disabled]="!selectedColumn"></p-button>
+            <p-button icon="pi pi-trash" styleClass="p-button-text" (onClick)="deleteColumn()" [disabled]="!selectedColumn"></p-button>
+            <p-button icon="pi pi-plus" styleClass="p-button-text" (onClick)="createColumn()"></p-button>
+          </div>
+        </div>
+      </ng-template>
+      <ng-template pTemplate="header">
+        <tr>
+          <th style="width: 4rem"></th>
+          <th>Columna</th>
+          <th>Descripción</th>
+          <th>Tipo Dato</th>
+          <th>Tamaño Dato</th>
+        </tr>
+      </ng-template>
+      <ng-template pTemplate="body" let-column>
+        <tr [pSelectableRow]="column">
+          <td>
+            <p-tableRadioButton [value]="column"></p-tableRadioButton>
+          </td>
+          <td>{{ column.name }}</td>
+          <td>{{ column.description }}</td>
+          <td>{{ column.dataType }}</td>
+          <td>{{ column.orderCodataLengthlumnName }}</td>
+        </tr>
+      </ng-template>
+    </p-table>
+  </p-card>
+</ng-container>

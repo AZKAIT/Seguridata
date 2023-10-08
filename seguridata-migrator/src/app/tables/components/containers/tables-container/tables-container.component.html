@@ -1,0 +1,6 @@
+<app-table-list [connection]="connection" [tableList]="tableList" [(selectedTable)]="selectedTable" (listRefreshEvent)="onExecuteRefresh();"
+(editTableEvent)="onEditTable()" (deleteTableEvent)="onDeleteTable()" (createTableEvent)="onCreateTable()"></app-table-list>
+
+<app-columns-container [table]="selectedTable"></app-columns-container>
+
+<app-table-data-form [table]="selectedTable" (saveTable)="saveTableData($event)"></app-table-data-form>

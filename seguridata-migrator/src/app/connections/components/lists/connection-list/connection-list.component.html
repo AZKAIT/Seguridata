@@ -1,0 +1,43 @@
+<ng-container *ngIf="connectionList">
+  <p-card header="Conexiones">
+    <p-table [value]="connectionList" selectionMode="single" dataKey="id" [selection]="selectedConn"
+      (selectionChange)="onSelectedConnectionFromList($event)" [paginator]="true" [rows]="10"
+      [tableStyle]="{ 'min-width': '50rem' }">
+      <ng-template pTemplate="caption">
+        <div class="flex align-items-center justify-content-between">
+          Conexiones
+          <div>
+            <p-button icon="pi pi-refresh" styleClass="p-button-text" (onClick)="refreshList();"></p-button>
+            <p-button icon="pi pi-pencil" styleClass="p-button-text" (onClick)="editConnection()"
+              [disabled]="!selectedConn"></p-button>
+            <p-button icon="pi pi-trash" styleClass="p-button-text" (onClick)="deleteConnection()"
+              [disabled]="!selectedConn"></p-button>
+            <p-button icon="pi pi-plus" styleClass="p-button-text" (onClick)="createConnection()"></p-button>
+          </div>
+        </div>
+      </ng-template>
+      <ng-template pTemplate="header">
+        <tr>
+          <th style="width: 4rem"></th>
+          <th>Nombre</th>
+          <th>Descripción</th>
+          <th>Host</th>
+          <th>Tipo</th>
+          <th>&nbsp;</th>
+        </tr>
+      </ng-template>
+      <ng-template pTemplate="body" let-connection>
+        <tr [pSelectableRow]="connection">
+          <td>
+            <p-tableRadioButton [value]="connection"></p-tableRadioButton>
+          </td>
+          <td>{{ connection.name }}</td>
+          <td>{{ connection.description }}</td>
+          <td>{{ connection.host + ':' + connection.port }}</td>
+          <td>{{ connection.type }}</td>
+          <td><i [class]="'pi' + ' ' + (connection.locked ? 'pi-lock' : 'pi-lock-open')"></i></td>
+        </tr>
+      </ng-template>
+    </p-table>
+  </p-card>
+</ng-container>

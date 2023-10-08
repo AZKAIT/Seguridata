@@ -1,0 +1,6 @@
+<app-plan-list [project]="project" [planList]="planList" [(selectedPlan)]="selectedPlan" (listRefreshEvent)="onExecuteRefresh();"
+(editPlanEvent)="onEditPlan()" (deletePlanEvent)="onDeletePlan()" (createPlanEvent)="onCreatePlan()"></app-plan-list>
+
+<app-definitions-container [plan]="selectedPlan"></app-definitions-container>
+
+<app-plan-data-form [plan]="selectedPlan" [sourceTableList]="sourceTableList" [targetTableList]="targetTableList" (savePlan)="savePlanData($event)"></app-plan-data-form>

@@ -1,0 +1,29 @@
+<p-card header="Información de la tabla">
+  <form [formGroup]="tableFormGroup">
+    <div class="field">
+      <span class="p-float-label">
+        <input pInputText id="schema" formControlName="schema" />
+        <label htmlFor="schema">Schema</label>
+      </span>
+    </div>
+    <div class="field">
+      <span class="p-float-label">
+        <input pInputText id="name" formControlName="name" />
+        <label htmlFor="name">Nombre</label>
+      </span>
+    </div>
+    <div class="field">
+      <span class="p-float-label">
+        <textarea id="description" formControlName="description" rows="5" cols="30" pInputTextarea></textarea>
+        <label for="description">Descripción</label>
+      </span>
+    </div>
+    <div class="field">
+      <span class="p-float-label">
+        <input pInputText id="order-col" formControlName="orderColumnName" />
+        <label htmlFor="order-col">Col. Ordenamiento</label>
+      </span>
+    </div>
+    <p-button type="submit" label="Guardar" (onClick)="submit()" [disabled]="!tableFormGroup.valid"></p-button>
+  </form>
+</p-card>

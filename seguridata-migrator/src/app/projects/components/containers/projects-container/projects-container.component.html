@@ -1,0 +1,7 @@
+<app-project-list [projectList]="projectList" [(selectedProject)]="selectedProject" (listRefreshEvent)="onExecuteRefresh();"
+(editProjectEvent)="onEditProject()" (deleteProjectEvent)="onDeleteProject()" (createProjectEvent)="onCreateProject()"
+(executeProjectEvent)="onExecuteProjectEvent($event)" (stopProjectEvent)="onStopProjectEvent($event)"></app-project-list>
+
+<app-plans-container [project]="selectedProject"></app-plans-container>
+
+<app-project-data-form [project]="selectedProject" [connectionList]="connList" (saveProject)="saveProjectData($event)"></app-project-data-form>
