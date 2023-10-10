@@ -141,6 +141,23 @@ public class DefinitionFacade {
         return response;
     }
 
+    public ResponseWrapper<DefinitionModel> deleteDefinition(String definitionId) {
+        ResponseWrapper<DefinitionModel> response = new ResponseWrapper<>();
+        try {
+            DefinitionEntity existingDef = this.definitionService.getDefinition(definitionId);
+            PlanEntity plan = existingDef.getPlan();
+            this.projectService.validateProjectStatus(plan.getProject());
+
+            DefinitionEntity deleteDef = this.definitionService.deleteDefinition(existingDef);
+            response.setCode("00");
+            response.setData(this.definitionMapper.mapDefinitionModel(deleteDef));
+        } catch (BaseCodeException e) {
+            response.setCode(e.getCode());
+            response.setMessages(Arrays.asList(e.getMessages()));
+        }
+        return response;
+    }
+
     private void validateColumns(DefinitionEntity definition) {
         this.columnService.getColumn(definition.getSourceColumn().getId());
         this.columnService.getColumn(definition.getTargetColumn().getId());

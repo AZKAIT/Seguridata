@@ -103,6 +103,21 @@ public class ProjectFacade {
         return projectResponse;
     }
 
+    public ResponseWrapper<ProjectModel> deleteProject(String projectId, ProjectModel projectModel) {
+        ResponseWrapper<ProjectModel> projectResponse = new ResponseWrapper<>();
+        try {
+            ProjectEntity existingProject = this.projectService.getProject(projectId);
+            this.projectService.validateProjectStatus(existingProject);
+
+            //ProjectEntity deletedProject = this.projectService.
+        } catch (BaseCodeException e) {
+            projectResponse.setCode(e.getCode());
+            projectResponse.setMessages(Arrays.asList(e.getMessages()));
+        }
+
+        return projectResponse;
+    }
+
     public ResponseWrapper<Boolean> initiateProjectExecution(String projectId) {
         ResponseWrapper<Boolean> execResponse = new ResponseWrapper<>();
         execResponse.setData(false);

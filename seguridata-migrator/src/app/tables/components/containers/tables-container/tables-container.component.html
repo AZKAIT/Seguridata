@@ -3,4 +3,4 @@
 
 <app-columns-container [table]="selectedTable"></app-columns-container>
 
-<app-table-data-form [table]="selectedTable" (saveTable)="saveTableData($event)"></app-table-data-form>
+<app-table-data-form *ngIf="connection" [table]="selectedTable" (saveTable)="saveTableData($event)"></app-table-data-form>

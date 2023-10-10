@@ -10,6 +10,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.util.CollectionUtils;
 
+import java.util.Collections;
 import java.util.List;
 import java.util.Objects;
 
@@ -62,5 +63,13 @@ public class DefinitionService {
         });
 
         return this.definitionRepo.createDefinitionList(definitions);
+    }
+
+    public DefinitionEntity deleteDefinition(DefinitionEntity definition) {
+        return this.definitionRepo.deleteDefinition(definition.getId());
+    }
+
+    public List<DefinitionEntity> deleteDefinitionsByPlan(PlanEntity plan) {
+        return this.definitionRepo.deleteDefinitionsByPlanIds(Collections.singleton(plan.getId()));
     }
 }

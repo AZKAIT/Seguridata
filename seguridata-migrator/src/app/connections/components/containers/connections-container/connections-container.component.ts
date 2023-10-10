@@ -15,6 +15,8 @@ export class ConnectionsContainerComponent implements OnInit, OnDestroy {
   connectionList: ConnectionModel[] = [];
   selectedConn: ConnectionModel | undefined;
 
+  showForm: boolean = false;
+
 
   constructor(private _connectionService: ConnectionService) {
   }
@@ -39,6 +41,7 @@ export class ConnectionsContainerComponent implements OnInit, OnDestroy {
 
   onEditConnection() {
     console.log(`Execute onEditConnection: ${JSON.stringify(this.selectedConn)}`);
+    this.showForm = true;
   }
 
   onDeleteConnection() {
@@ -55,6 +58,7 @@ export class ConnectionsContainerComponent implements OnInit, OnDestroy {
 
   onCreateConnection() {
     this.selectedConn = undefined;
+    this.showForm = true;
   }
 
   saveConnectionData(connection: ConnectionModel) {

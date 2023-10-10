@@ -1,4 +1,4 @@
 <app-column-list [table]="table" [columnList]="columnList" [(selectedColumn)]="selectedColumn" (listRefreshEvent)="onExecuteRefresh();"
 (editColumnEvent)="onEditColumn()" (deleteColumnEvent)="onDeleteColumn()" (createColumnEvent)="onCreateColumn()"></app-column-list>
 
-<app-column-data-form [column]="selectedColumn" (saveColumn)="saveColumnData($event)"></app-column-data-form>
+<app-column-data-form *ngIf="table" [column]="selectedColumn" (saveColumn)="saveColumnData($event)"></app-column-data-form>

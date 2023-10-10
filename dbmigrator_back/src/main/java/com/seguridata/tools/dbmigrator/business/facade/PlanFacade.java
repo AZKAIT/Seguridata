@@ -2,6 +2,7 @@ package com.seguridata.tools.dbmigrator.business.facade;
 
 import com.seguridata.tools.dbmigrator.business.exception.BaseCodeException;
 import com.seguridata.tools.dbmigrator.business.mapper.PlanMapper;
+import com.seguridata.tools.dbmigrator.business.service.DefinitionService;
 import com.seguridata.tools.dbmigrator.business.service.PlanService;
 import com.seguridata.tools.dbmigrator.business.service.ProjectService;
 import com.seguridata.tools.dbmigrator.business.service.TableService;
@@ -21,16 +22,19 @@ public class PlanFacade {
     private final ProjectService projectService;
     private final PlanService planService;
     private final TableService tableService;
+    private final DefinitionService definitionService;
     private final PlanMapper planMapper;
 
     @Autowired
     public PlanFacade(ProjectService projectService,
                       PlanService planService,
                       TableService tableService,
+                      DefinitionService definitionService,
                       PlanMapper planMapper) {
         this.projectService = projectService;
         this.planService = planService;
         this.tableService = tableService;
+        this.definitionService = definitionService;
         this.planMapper = planMapper;
     }
 
@@ -93,6 +97,24 @@ public class PlanFacade {
 
             planResponse.setCode("00");
             planResponse.setData(this.planMapper.mapPlanModel(updatedPlan));
+        } catch (BaseCodeException e) {
+            planResponse.setCode(e.getCode());
+            planResponse.setMessages(Arrays.asList(e.getMessages()));
+        }
+        return planResponse;
+    }
+
+    public ResponseWrapper<PlanModel> deletePlan(String planId) {
+        ResponseWrapper<PlanModel> planResponse = new ResponseWrapper<>();
+        try {
+            PlanEntity existingPlan = this.planService.getPlan(planId);
+            this.projectService.validateProjectStatus(existingPlan.getProject());
+
+            PlanEntity deletedPlan = this.planService.deletePlan(existingPlan);
+            this.definitionService.deleteDefinitionsByPlan(deletedPlan);
+
+            planResponse.setCode("00");
+            planResponse.setData(this.planMapper.mapPlanModel(deletedPlan));
         } catch (BaseCodeException e) {
             planResponse.setCode(e.getCode());
             planResponse.setMessages(Arrays.asList(e.getMessages()));

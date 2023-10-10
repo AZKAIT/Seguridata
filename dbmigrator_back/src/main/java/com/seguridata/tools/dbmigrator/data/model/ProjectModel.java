@@ -6,7 +6,7 @@ import com.seguridata.tools.dbmigrator.data.constant.ProjectStatus;
 import lombok.Getter;
 import lombok.Setter;
 
-import javax.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotBlank;
 import java.util.Date;
 
 @JsonInclude(JsonInclude.Include.NON_NULL)

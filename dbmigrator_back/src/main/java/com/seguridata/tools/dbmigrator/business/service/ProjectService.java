@@ -69,6 +69,10 @@ public class ProjectService {
         return this.projectRepo.updateProject(updatedProject);
     }
 
+    public ProjectEntity deleteProject(ProjectEntity project) {
+        return this.projectRepo.deleteProject(project.getId());
+    }
+
     public void validateProjectStatus(ProjectEntity project) {
         if (Objects.isNull(project)) {
             throw new MissingObjectException("Couldn't find Project");
@@ -89,8 +93,8 @@ public class ProjectService {
             throw new InvalidUpdateException("CREATED Project status can only transition to STARTING");
         }
 
-        if (STARTING.equals(currentStatus) && !RUNNING.equals(newStatus)) {
-            throw new InvalidUpdateException("STARTING Project status can only transition to RUNNING");
+        if (STARTING.equals(currentStatus) && (!RUNNING.equals(newStatus) && !STOPPED.equals(newStatus))) {
+            throw new InvalidUpdateException("STARTING Project status can only transition to RUNNING or STOPPED");
         }
 
         if (STOPPING.equals(currentStatus) && !STOPPED.equals(newStatus)) {

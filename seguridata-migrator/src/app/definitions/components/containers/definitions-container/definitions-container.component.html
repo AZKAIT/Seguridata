@@ -1,4 +1,4 @@
 <app-definition-list [plan]="plan" [defList]="defList" [(selectedDef)]="selectedDef" (listRefreshEvent)="onExecuteRefresh();"
 (editDefEvent)="onEditDefinition()" (deleteDefEvent)="onDeleteDef()" (createDefEvent)="onCreateDef()"></app-definition-list>
 
-<app-definition-data-form [definition]="selectedDef" [sourceColumnList]="sourceColumnList" [targetColumnList]="targetColumnList" (saveDef)="saveDefData($event)"></app-definition-data-form>
+<app-definition-data-form *ngIf="plan" [definition]="selectedDef" [sourceColumnList]="sourceColumnList" [targetColumnList]="targetColumnList" (saveDef)="saveDefData($event)"></app-definition-data-form>

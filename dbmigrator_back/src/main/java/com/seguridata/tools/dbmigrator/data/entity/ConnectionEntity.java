@@ -1,5 +1,6 @@
 package com.seguridata.tools.dbmigrator.data.entity;
 
+import com.seguridata.segurilib.cipher.Cipher;
 import com.seguridata.tools.dbmigrator.data.constant.DatabaseType;
 import lombok.Getter;
 import lombok.Setter;
@@ -29,4 +30,20 @@ public class ConnectionEntity {
     @ReadOnlyProperty
     @DocumentReference(lookup="{'connection':?#{#self._id} }")
     private List<TableEntity> tables;
+
+    public String getPassword() {
+        try {
+            return Cipher.decipher(this.password);
+        } catch (Exception e) {
+            return null;
+        }
+    }
+
+    public void setPassword(String password) {
+        try {
+            this.password = Cipher.cipher(password);
+        } catch (Exception e) {
+            this.password = null;
+        }
+    }
 }

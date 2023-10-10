@@ -9,7 +9,9 @@ import org.springframework.data.mongodb.core.query.Query;
 import org.springframework.stereotype.Repository;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Repository
 public class DefinitionRepository {
@@ -38,14 +40,18 @@ public class DefinitionRepository {
         return this.mongoTemplate.save(definition);
     }
 
-    public boolean deleteDefinition(String id) {
-        return this.mongoTemplate.remove(DefinitionEntity.class)
-                .matching(Criteria.where("_id").is(new ObjectId(id)))
-                .one()
-                .getDeletedCount() > 0;
+    public DefinitionEntity deleteDefinition(String id) {
+        return this.mongoTemplate.findAndRemove(new Query(Criteria.where("_id").is(new ObjectId(id))), DefinitionEntity.class);
     }
 
     public List<DefinitionEntity> createDefinitionList(List<DefinitionEntity> definitionList) {
         return new ArrayList<>(this.mongoTemplate.insert(definitionList, DefinitionEntity.class));
     }
+
+    public List<DefinitionEntity> deleteDefinitionsByPlanIds(Collection<String> planIds) {
+        Criteria planCriteria = Criteria.where("plan")
+                .in(planIds.stream().map(ObjectId::new).collect(Collectors.toList()));
+        return this.mongoTemplate.findAllAndRemove(new Query(planCriteria), DefinitionEntity.class);
+    }
+
 }

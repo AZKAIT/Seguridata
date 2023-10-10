@@ -65,4 +65,8 @@ public class PlanService {
 
         return this.planRepo.updatePlan(updatedPlan);
     }
+
+    public PlanEntity deletePlan(PlanEntity plan) {
+        return this.planRepo.deletePlan(plan.getId());
+    }
 }

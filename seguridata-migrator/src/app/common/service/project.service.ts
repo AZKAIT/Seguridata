@@ -53,4 +53,16 @@ export class ProjectService {
     return this.backend.servicePost<PlanModel>(`/projects/${projectId}/plans`, plan, undefined, params)
     .pipe(map(response => response.body?.data));
   }
+
+  startProject(projectId: string): Observable<boolean | undefined> {
+    const params = new HttpParams();
+    return this.backend.servicePost<boolean>(`/projects/${projectId}/start`, undefined, undefined, params)
+    .pipe(map(response => response.body?.data));
+  }
+
+  stopProject(projectId: string): Observable<boolean | undefined> {
+    const params = new HttpParams();
+    return this.backend.servicePost<boolean>(`/projects/${projectId}/stop`, undefined, undefined, params)
+    .pipe(map(response => response.body?.data));
+  }
 }

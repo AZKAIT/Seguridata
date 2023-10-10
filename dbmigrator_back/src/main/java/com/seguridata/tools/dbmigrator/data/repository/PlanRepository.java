@@ -8,7 +8,9 @@ import org.springframework.data.mongodb.core.query.Criteria;
 import org.springframework.data.mongodb.core.query.Query;
 import org.springframework.stereotype.Repository;
 
+import java.util.Collection;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Repository
 public class PlanRepository {
@@ -37,10 +39,12 @@ public class PlanRepository {
         return this.mongoTemplate.find(new Query(projectCriteria), PlanEntity.class);
     }
 
-    public boolean deleteConnection(String id) {
-        return this.mongoTemplate.remove(PlanEntity.class)
-                .matching(Criteria.where("_id").is(new ObjectId(id)))
-                .one()
-                .getDeletedCount() > 0;
+    public PlanEntity deletePlan(String id) {
+        return this.mongoTemplate.findAndRemove(new Query(Criteria.where("_id").is(new ObjectId(id))), PlanEntity.class);
+    }
+
+    public List<PlanEntity> deletePlansByProjectIds(Collection<String> projectIds) {
+        Criteria projectCriteria = Criteria.where("project").in(projectIds.stream().map(ObjectId::new).collect(Collectors.toList()));
+        return this.mongoTemplate.findAllAndRemove(new Query(projectCriteria), PlanEntity.class);
     }
 }

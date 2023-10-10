@@ -11,11 +11,11 @@ import com.seguridata.tools.dbmigrator.data.dto.ConnectionTestResult;
 import com.seguridata.tools.dbmigrator.data.entity.ConnectionEntity;
 import com.seguridata.tools.dbmigrator.data.model.ConnectionModel;
 import com.seguridata.tools.dbmigrator.data.wrapper.ResponseWrapper;
+import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.stereotype.Component;
 
-import javax.validation.Valid;
 import java.util.Arrays;
 import java.util.List;
 

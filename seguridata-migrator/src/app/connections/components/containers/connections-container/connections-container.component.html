@@ -3,5 +3,5 @@
 
 <app-tables-container [connection]="selectedConn"></app-tables-container>
 
-<app-connection-data-form [connection]="selectedConn"
+<app-connection-data-form *ngIf="showForm" [connection]="selectedConn"
   (saveConnection)="saveConnectionData($event)"></app-connection-data-form>

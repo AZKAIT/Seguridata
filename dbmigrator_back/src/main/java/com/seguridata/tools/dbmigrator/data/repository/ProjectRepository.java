@@ -8,6 +8,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.mongodb.core.MongoTemplate;
 import org.springframework.data.mongodb.core.query.Criteria;
 import org.springframework.data.mongodb.core.query.CriteriaDefinition;
+import org.springframework.data.mongodb.core.query.Query;
 import org.springframework.data.mongodb.core.query.Update;
 import org.springframework.data.mongodb.core.query.UpdateDefinition;
 import org.springframework.stereotype.Repository;
@@ -41,11 +42,8 @@ public class ProjectRepository {
         return this.mongoTemplate.findAll(ProjectEntity.class);
     }
 
-    public boolean deleteProject(String id) {
-        return this.mongoTemplate.remove(ProjectEntity.class)
-                .matching(Criteria.where("_id").is(new ObjectId(id)))
-                .one()
-                .getDeletedCount() > 0;
+    public ProjectEntity deleteProject(String id) {
+        return this.mongoTemplate.findAndRemove(new Query(Criteria.where("_id").is(new ObjectId(id))), ProjectEntity.class);
     }
 
     public boolean updateProjectStatus(String projectId, ProjectStatus status) {

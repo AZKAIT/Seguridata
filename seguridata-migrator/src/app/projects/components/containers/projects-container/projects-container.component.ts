@@ -1,5 +1,6 @@
 import { Component, OnDestroy, OnInit } from '@angular/core';
 import { Subscription } from 'rxjs';
+import { ProjectStatus } from 'src/app/common/enums/project-status';
 import { ConnectionModel } from 'src/app/common/models/connection-model';
 import { ProjectModel } from 'src/app/common/models/project-model';
 import { ConnectionService } from 'src/app/common/service/connection.service';
@@ -87,11 +88,23 @@ export class ProjectsContainerComponent implements OnInit, OnDestroy {
   }
 
   onExecuteProjectEvent(projectId: string) {
-    console.log(`Execute project with ID: ${projectId}`);
+    this.subsList.push(
+      this._projectService.startProject(projectId).subscribe(response => {
+        if (response) {
+          this.changeStatusForLocalProject(projectId, ProjectStatus.STARTING); // TODO: Might ignore and manage with WebSocket-based impl
+        }
+      })
+    );
   }
 
   onStopProjectEvent(projectId: string) {
-    console.log(`Stop project with ID: ${projectId}`);
+    this.subsList.push(
+      this._projectService.stopProject(projectId).subscribe(response => {
+        if (response) {
+          this.changeStatusForLocalProject(projectId, ProjectStatus.STOPPING); // TODO: Might ignore and manage with WebSocket-based impl
+        }
+      })
+    );
   }
 
 
@@ -100,5 +113,12 @@ export class ProjectsContainerComponent implements OnInit, OnDestroy {
       .subscribe(projList => {
         this.projectList = projList ?? [];
       }));
+  }
+
+  private changeStatusForLocalProject(projectId: string, status: ProjectStatus) {
+    const foundProject = this.projectList.find(project => project.id === projectId);
+    if (foundProject) {
+      foundProject.status = status;
+    }
   }
 }
