@@ -10,6 +10,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.util.CollectionUtils;
 
+import java.util.Collection;
+import java.util.Collections;
 import java.util.List;
 import java.util.Objects;
 import java.util.stream.Collectors;
@@ -95,5 +97,20 @@ public class ColumnService {
                 })
                 .filter(Objects::nonNull)
                 .collect(Collectors.toList());
+    }
+
+    public ColumnEntity deleteColumn(ColumnEntity column) {
+        return this.columnRepo.deleteColumn(column.getId());
+    }
+
+    public List<ColumnEntity> deleteColsByTable(TableEntity table) {
+        return this.columnRepo.deleteColumnsByTableIds(Collections.singleton(table.getId()));
+    }
+
+    public List<ColumnEntity> deleteColsByTableList(Collection<TableEntity> tables) {
+        List<String> tableIds = tables.stream()
+                .map(TableEntity::getId)
+                .collect(Collectors.toList());
+        return this.columnRepo.deleteColumnsByTableIds(tableIds);
     }
 }

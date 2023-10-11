@@ -5,13 +5,14 @@ import org.bson.types.ObjectId;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.mongodb.core.MongoTemplate;
 import org.springframework.data.mongodb.core.query.Criteria;
-import org.springframework.data.mongodb.core.query.Query;
 import org.springframework.stereotype.Repository;
 
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 import java.util.stream.Collectors;
+
+import static org.springframework.data.mongodb.core.query.Query.query;
 
 @Repository
 public class DefinitionRepository {
@@ -33,7 +34,7 @@ public class DefinitionRepository {
 
     public List<DefinitionEntity> findDefinitionListByPlan(String planId) {
         Criteria planCriteria = Criteria.where("plan").is(new ObjectId(planId));
-        return this.mongoTemplate.find(new Query(planCriteria), DefinitionEntity.class);
+        return this.mongoTemplate.find(query(planCriteria), DefinitionEntity.class);
     }
 
     public DefinitionEntity updateDefinition(DefinitionEntity definition) {
@@ -41,7 +42,7 @@ public class DefinitionRepository {
     }
 
     public DefinitionEntity deleteDefinition(String id) {
-        return this.mongoTemplate.findAndRemove(new Query(Criteria.where("_id").is(new ObjectId(id))), DefinitionEntity.class);
+        return this.mongoTemplate.findAndRemove(query(Criteria.where("_id").is(new ObjectId(id))), DefinitionEntity.class);
     }
 
     public List<DefinitionEntity> createDefinitionList(List<DefinitionEntity> definitionList) {
@@ -51,7 +52,12 @@ public class DefinitionRepository {
     public List<DefinitionEntity> deleteDefinitionsByPlanIds(Collection<String> planIds) {
         Criteria planCriteria = Criteria.where("plan")
                 .in(planIds.stream().map(ObjectId::new).collect(Collectors.toList()));
-        return this.mongoTemplate.findAllAndRemove(new Query(planCriteria), DefinitionEntity.class);
+        return this.mongoTemplate.findAllAndRemove(query(planCriteria), DefinitionEntity.class);
     }
 
+    public boolean defContainsColumn(String columnId) {
+        Criteria containsColumn = Criteria.where("").orOperator(Criteria.where("sourceColumn").is(new ObjectId(columnId)),
+                Criteria.where("targetColumn").is(new ObjectId(columnId)));
+        return this.mongoTemplate.exists(query(containsColumn), DefinitionEntity.class);
+    }
 }

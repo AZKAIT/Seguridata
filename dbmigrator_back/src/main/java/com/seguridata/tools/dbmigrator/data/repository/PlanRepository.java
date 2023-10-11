@@ -12,6 +12,8 @@ import java.util.Collection;
 import java.util.List;
 import java.util.stream.Collectors;
 
+import static org.springframework.data.mongodb.core.query.Query.query;
+
 @Repository
 public class PlanRepository {
 
@@ -36,15 +38,21 @@ public class PlanRepository {
 
     public List<PlanEntity> getPlansForProject(String projectId) {
         Criteria projectCriteria = Criteria.where("project").is(new ObjectId(projectId));
-        return this.mongoTemplate.find(new Query(projectCriteria), PlanEntity.class);
+        return this.mongoTemplate.find(query(projectCriteria), PlanEntity.class);
     }
 
     public PlanEntity deletePlan(String id) {
-        return this.mongoTemplate.findAndRemove(new Query(Criteria.where("_id").is(new ObjectId(id))), PlanEntity.class);
+        return this.mongoTemplate.findAndRemove(query(Criteria.where("_id").is(new ObjectId(id))), PlanEntity.class);
     }
 
     public List<PlanEntity> deletePlansByProjectIds(Collection<String> projectIds) {
         Criteria projectCriteria = Criteria.where("project").in(projectIds.stream().map(ObjectId::new).collect(Collectors.toList()));
-        return this.mongoTemplate.findAllAndRemove(new Query(projectCriteria), PlanEntity.class);
+        return this.mongoTemplate.findAllAndRemove(query(projectCriteria), PlanEntity.class);
+    }
+
+    public boolean planContainsTable(String tableId) {
+        Criteria containsTable = Criteria.where("").orOperator(Criteria.where("sourceTable").is(new ObjectId(tableId)),
+                Criteria.where("targetTable").is(new ObjectId(tableId)));
+        return this.mongoTemplate.exists(query(containsTable), PlanEntity.class);
     }
 }

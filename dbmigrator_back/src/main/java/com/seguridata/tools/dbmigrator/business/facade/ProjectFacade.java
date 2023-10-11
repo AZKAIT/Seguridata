@@ -6,8 +6,11 @@ import com.seguridata.tools.dbmigrator.business.exception.BaseCodeException;
 import com.seguridata.tools.dbmigrator.business.exception.ObjectLockedException;
 import com.seguridata.tools.dbmigrator.business.mapper.ProjectMapper;
 import com.seguridata.tools.dbmigrator.business.service.ConnectionService;
+import com.seguridata.tools.dbmigrator.business.service.DefinitionService;
+import com.seguridata.tools.dbmigrator.business.service.PlanService;
 import com.seguridata.tools.dbmigrator.business.service.ProjectService;
 import com.seguridata.tools.dbmigrator.data.constant.ProjectStatus;
+import com.seguridata.tools.dbmigrator.data.entity.PlanEntity;
 import com.seguridata.tools.dbmigrator.data.entity.ProjectEntity;
 import com.seguridata.tools.dbmigrator.data.model.ProjectModel;
 import com.seguridata.tools.dbmigrator.data.wrapper.ResponseWrapper;
@@ -18,6 +21,7 @@ import org.springframework.stereotype.Component;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
+import java.util.Objects;
 
 
 @Component
@@ -25,16 +29,22 @@ public class ProjectFacade {
 
     private final ConnectionService connectionService;
     private final ProjectService projectService;
+    private final PlanService planService;
+    private final DefinitionService definitionService;
     private final ProjectMapper projectMapper;
     private final ApplicationEventPublisher appEventPublisher;
 
     @Autowired
     public ProjectFacade(ConnectionService connectionService,
                          ProjectService projectService,
+                         PlanService planService,
+                         DefinitionService definitionService,
                          ProjectMapper projectMapper,
                          ApplicationEventPublisher appEventPublisher) {
         this.connectionService = connectionService;
         this.projectService = projectService;
+        this.planService = planService;
+        this.definitionService = definitionService;
         this.projectMapper = projectMapper;
         this.appEventPublisher = appEventPublisher;
     }
@@ -92,6 +102,12 @@ public class ProjectFacade {
 
             ProjectEntity updatedProject = this.projectMapper.mapProjectEntity(projectModel);
             this.validateConnections(updatedProject);
+
+            if (!Objects.equals(existingProject.getSourceConnection().getId(), updatedProject.getSourceConnection().getId())
+                    || !Objects.equals(existingProject.getTargetConnection().getId(), updatedProject.getTargetConnection().getId())) {
+                this.planService.deletePlansForProject(existingProject);
+            }
+
             updatedProject = this.projectService.updateProject(existingProject, updatedProject);
 
             projectResponse.setCode("00");
@@ -103,13 +119,19 @@ public class ProjectFacade {
         return projectResponse;
     }
 
-    public ResponseWrapper<ProjectModel> deleteProject(String projectId, ProjectModel projectModel) {
+    public ResponseWrapper<ProjectModel> deleteProject(String projectId) {
         ResponseWrapper<ProjectModel> projectResponse = new ResponseWrapper<>();
         try {
             ProjectEntity existingProject = this.projectService.getProject(projectId);
             this.projectService.validateProjectStatus(existingProject);
 
-            //ProjectEntity deletedProject = this.projectService.
+            ProjectEntity deletedProject = this.projectService.deleteProject(existingProject);
+            List<PlanEntity> deletedPlans = this.planService.deletePlansForProject(deletedProject);
+
+            this.definitionService.deleteDefinitionsByPlanList(deletedPlans);
+
+            projectResponse.setCode("00");
+            projectResponse.setData(this.projectMapper.mapProjectModel(deletedProject));
         } catch (BaseCodeException e) {
             projectResponse.setCode(e.getCode());
             projectResponse.setMessages(Arrays.asList(e.getMessages()));

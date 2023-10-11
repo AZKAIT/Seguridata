@@ -5,6 +5,7 @@ import com.seguridata.tools.dbmigrator.business.exception.InvalidUpdateException
 import com.seguridata.tools.dbmigrator.business.exception.MissingObjectException;
 import com.seguridata.tools.dbmigrator.business.exception.ObjectLockedException;
 import com.seguridata.tools.dbmigrator.data.constant.ProjectStatus;
+import com.seguridata.tools.dbmigrator.data.entity.ConnectionEntity;
 import com.seguridata.tools.dbmigrator.data.entity.ProjectEntity;
 import com.seguridata.tools.dbmigrator.data.repository.ProjectRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -103,5 +104,11 @@ public class ProjectService {
 
         project.setStatus(newStatus);
         return this.projectRepo.updateProjectStatus(project.getId(), newStatus);
+    }
+
+    public void projectContainsConn(ConnectionEntity connection) {
+        if (this.projectRepo.projectContainsConn(connection.getId())) {
+            throw new ObjectLockedException("Connection is present in Project, can't delete");
+        }
     }
 }

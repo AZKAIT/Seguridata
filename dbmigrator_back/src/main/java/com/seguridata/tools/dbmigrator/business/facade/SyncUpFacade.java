@@ -23,11 +23,9 @@ import org.springframework.context.ApplicationContext;
 import org.springframework.stereotype.Component;
 
 import java.sql.SQLException;
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
-import java.util.Objects;
 import java.util.stream.Collectors;
 
 @Component
@@ -66,17 +64,10 @@ public class SyncUpFacade {
         ResponseWrapper<List<TableModel>> tablesResponse = new ResponseWrapper<>();
         try {
             ConnectionEntity entity = this.connectionService.getConnection(connectionId);
-            List<TableEntity> createdTables = this.syncUpConnectionTables(entity);
-
-            List<TableModel> createdTableModels = this.tableMapper.mapTableModelList(createdTables);
+            List<TableModel> createdTableModels = this.syncUpConnectionTables(entity);
 
             tablesResponse.setCode("00");
             tablesResponse.setData(createdTableModels);
-
-            ConnectionModel connectionModel = this.connectionMapper.mapConnectionModel(entity);
-            createdTableModels.forEach(tableModel ->
-                    this.appContext.publishEvent(new TableCreatedEvent(this, connectionModel, tableModel))
-            );
         } catch (BaseCodeException e) {
             tablesResponse.setCode(e.getCode());
             tablesResponse.setMessages(Arrays.asList(e.getMessages()));
@@ -105,9 +96,8 @@ public class SyncUpFacade {
 
             DatabaseQueryManager queryManager = this.appContext.getBean(DatabaseQueryManager.class, this.appContext);
             queryManager.initializeConnection(entity);
-            List<ColumnEntity> createdColumns = tables.stream().map(table ->
-                this.syncUpTableColumns(queryManager, table)).flatMap(List::stream)
-                    .collect(Collectors.toList());
+
+            List<ColumnEntity> createdColumns = this.syncUpTableColumns(queryManager, tables);
             queryManager.closeConnection();
 
             columnsResponse.setCode("00");
@@ -123,10 +113,10 @@ public class SyncUpFacade {
         return columnsResponse;
     }
 
-    public void syncUpSingleTableColumn(ConnectionModel connectionModel, TableModel tableModel) {
+    public void syncUpSingleTableColumn(ConnectionModel connectionModel, List<TableModel> tableModels) {
         try {
             ConnectionEntity entity = this.connectionMapper.mapConnectionEntity(connectionModel);
-            TableEntity table = this.tableMapper.mapTableEntity(tableModel);
+            List<TableEntity> table = this.tableMapper.mapTableEntityList(tableModels);
 
             DatabaseQueryManager queryManager = this.appContext.getBean(DatabaseQueryManager.class, this.appContext);
             queryManager.initializeConnection(entity);
@@ -137,7 +127,7 @@ public class SyncUpFacade {
         }
     }
 
-    private List<TableEntity> syncUpConnectionTables(ConnectionEntity connection) throws SQLException {
+    private List<TableModel> syncUpConnectionTables(ConnectionEntity connection) throws SQLException {
         DatabaseQueryManager queryManager = this.appContext.getBean(DatabaseQueryManager.class, this.appContext);
         queryManager.initializeConnection(connection);
 
@@ -145,13 +135,18 @@ public class SyncUpFacade {
         schemaTables = this.tableService.saveBatch(connection, schemaTables);
         queryManager.closeConnection();
 
-        return schemaTables;
+        ConnectionModel connectionModel = this.connectionMapper.mapConnectionModel(connection);
+        List<TableModel> tableModels = this.tableMapper.mapTableModelList(schemaTables);
+        connectionModel.setPassword(connection.getPassword());
+        this.appContext.publishEvent(new TableCreatedEvent(this, connectionModel, tableModels));
+
+        return tableModels;
     }
 
-    private List<ColumnEntity> syncUpTableColumns(DatabaseQueryManager queryManager, TableEntity table) {
-        List<ColumnEntity> tableColumns = queryManager.findColumnForTable(table);
-        tableColumns = this.columnService.saveBatch(table, tableColumns);
-
-        return tableColumns;
+    private List<ColumnEntity> syncUpTableColumns(DatabaseQueryManager queryManager, List<TableEntity> tables) {
+        return tables.stream().flatMap(table -> {
+            List<ColumnEntity> tableColumns = queryManager.findColumnForTable(table);
+            return this.columnService.saveBatch(table, tableColumns).stream();
+        }).collect(Collectors.toList());
     }
 }

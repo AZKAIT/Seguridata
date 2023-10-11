@@ -10,6 +10,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.util.CollectionUtils;
 
+import java.util.Collections;
 import java.util.List;
 import java.util.Objects;
 import java.util.stream.Collectors;
@@ -76,5 +77,13 @@ public class TableService {
                 })
                 .filter(Objects::nonNull)
                 .collect(Collectors.toList());
+    }
+
+    public TableEntity deleteTable(TableEntity table) {
+        return this.tableRepo.deleteTable(table.getId());
+    }
+
+    public List<TableEntity> deleteTablesForConn(ConnectionEntity connection) {
+        return this.tableRepo.deleteTablesByConnection(Collections.singleton(connection.getId()));
     }
 }

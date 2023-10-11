@@ -6,6 +6,7 @@ import com.seguridata.tools.dbmigrator.data.wrapper.ResponseWrapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PutMapping;
@@ -39,6 +40,16 @@ public class DefinitionController {
     public ResponseEntity<ResponseWrapper<DefinitionModel>> updateDefinition(@PathVariable String definitionId,
                                                                              @Valid @RequestBody DefinitionModel definitionModel) {
         ResponseWrapper<DefinitionModel> definitionResponse = this.definitionFacade.updateDefinition(definitionId, definitionModel);
+        if ("00".equals(definitionResponse.getCode())) {
+            return ResponseEntity.status(HttpStatus.ACCEPTED).body(definitionResponse);
+        } else {
+            return ResponseEntity.status(HttpStatus.CONFLICT).body(definitionResponse);
+        }
+    }
+
+    @DeleteMapping
+    public ResponseEntity<ResponseWrapper<DefinitionModel>> deleteDefinition(@PathVariable String definitionId) {
+        ResponseWrapper<DefinitionModel> definitionResponse = this.definitionFacade.deleteDefinition(definitionId);
         if ("00".equals(definitionResponse.getCode())) {
             return ResponseEntity.status(HttpStatus.ACCEPTED).body(definitionResponse);
         } else {

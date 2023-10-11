@@ -6,9 +6,13 @@ import com.seguridata.tools.dbmigrator.business.exception.DBValidationException;
 import com.seguridata.tools.dbmigrator.business.exception.ObjectLockedException;
 import com.seguridata.tools.dbmigrator.business.factory.DatabaseConnectionFactory;
 import com.seguridata.tools.dbmigrator.business.mapper.ConnectionMapper;
+import com.seguridata.tools.dbmigrator.business.service.ColumnService;
 import com.seguridata.tools.dbmigrator.business.service.ConnectionService;
+import com.seguridata.tools.dbmigrator.business.service.ProjectService;
+import com.seguridata.tools.dbmigrator.business.service.TableService;
 import com.seguridata.tools.dbmigrator.data.dto.ConnectionTestResult;
 import com.seguridata.tools.dbmigrator.data.entity.ConnectionEntity;
+import com.seguridata.tools.dbmigrator.data.entity.TableEntity;
 import com.seguridata.tools.dbmigrator.data.model.ConnectionModel;
 import com.seguridata.tools.dbmigrator.data.wrapper.ResponseWrapper;
 import jakarta.validation.Valid;
@@ -27,17 +31,26 @@ public class ConnectionFacade {
     private final ConnectionMapper connMapper;
     private final DatabaseConnectionFactory dbConnFactory;
     private final ConnectionService connectionService;
+    private final TableService tableService;
+    private final ColumnService columnService;
+    private final ProjectService projectService;
     private final ApplicationEventPublisher appEventPublisher;
 
     @Autowired
     public ConnectionFacade(ConnectionMapper connMapper,
                             DatabaseConnectionFactory dbConnFactory,
                             ConnectionService connectionService,
+                            TableService tableService,
+                            ColumnService columnService,
+                            ProjectService projectService,
                             ApplicationEventPublisher appEventPublisher) {
         this.connMapper = connMapper;
         this.dbConnFactory = dbConnFactory;
         this.connectionService = connectionService;
         this.appEventPublisher = appEventPublisher;
+        this.tableService = tableService;
+        this.columnService = columnService;
+        this.projectService = projectService;
     }
 
     public ResponseWrapper<ConnectionModel> createNewConnection(@Valid ConnectionModel connectionModel) {
@@ -56,8 +69,9 @@ public class ConnectionFacade {
 
             ConnectionModel resultModel = this.connMapper.mapConnectionModel(connection);
             connectionResponse.setCode("00");
-            connectionResponse.setData(resultModel);
+            connectionResponse.setData(resultModel.toBuilder().build());
 
+            resultModel.setPassword(connection.getPassword());
             this.appEventPublisher.publishEvent(new ConnectionCreatedEvent(this, resultModel));
         } catch (BaseCodeException e) {
             connectionResponse.setCode(e.getCode());
@@ -106,6 +120,29 @@ public class ConnectionFacade {
             }
 
             currentConnection = this.connectionService.updateConnection(currentConnection, this.connMapper.mapConnectionEntity(connectionModel));
+            connectionResponse.setCode("00");
+            connectionResponse.setData(this.connMapper.mapConnectionModel(currentConnection));
+        } catch (BaseCodeException e) {
+            connectionResponse.setCode(e.getCode());
+            connectionResponse.setMessages(Arrays.asList(e.getMessages()));
+        }
+
+        return connectionResponse;
+    }
+
+    public ResponseWrapper<ConnectionModel> deleteConnection(String connectionId) {
+        ResponseWrapper<ConnectionModel> connectionResponse = new ResponseWrapper<>();
+        try {
+            ConnectionEntity currentConnection = this.connectionService.getConnection(connectionId);
+            if (TRUE.equals(currentConnection.getLocked())) {
+                throw new ObjectLockedException("Connection is locked, cannot update");
+            }
+            this.projectService.projectContainsConn(currentConnection);
+
+            currentConnection = this.connectionService.deleteConnection(currentConnection);
+            List<TableEntity> deletedTables = this.tableService.deleteTablesForConn(currentConnection);
+            this.columnService.deleteColsByTableList(deletedTables);
+
             connectionResponse.setCode("00");
             connectionResponse.setData(this.connMapper.mapConnectionModel(currentConnection));
         } catch (BaseCodeException e) {

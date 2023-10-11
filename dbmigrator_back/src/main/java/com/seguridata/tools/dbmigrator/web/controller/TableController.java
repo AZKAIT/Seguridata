@@ -6,6 +6,7 @@ import com.seguridata.tools.dbmigrator.data.wrapper.ResponseWrapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PutMapping;
@@ -41,6 +42,17 @@ public class TableController {
     public ResponseEntity<ResponseWrapper<TableModel>> updateTable(@PathVariable String tableId,
                                                                    @RequestBody @Valid TableModel tableModel) {
         ResponseWrapper<TableModel> tableResponse = this.tableFacade.updateTable(tableId, tableModel);
+
+        if ("00".equals(tableResponse.getCode())) {
+            return ResponseEntity.ok(tableResponse);
+        } else {
+            return ResponseEntity.status(HttpStatus.CONFLICT).body(tableResponse);
+        }
+    }
+
+    @DeleteMapping
+    public ResponseEntity<ResponseWrapper<TableModel>> deleteTable(@PathVariable String tableId) {
+        ResponseWrapper<TableModel> tableResponse = this.tableFacade.deleteTable(tableId);
 
         if ("00".equals(tableResponse.getCode())) {
             return ResponseEntity.ok(tableResponse);

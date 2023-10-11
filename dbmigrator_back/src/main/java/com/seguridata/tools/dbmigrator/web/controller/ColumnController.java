@@ -6,6 +6,7 @@ import com.seguridata.tools.dbmigrator.data.wrapper.ResponseWrapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PutMapping;
@@ -40,6 +41,16 @@ public class ColumnController {
     public ResponseEntity<ResponseWrapper<ColumnModel>> updateColumn(@PathVariable String columnId,
                                                                      @Valid @RequestBody ColumnModel columnModel) {
         ResponseWrapper<ColumnModel> columnResponse = this.columnFacade.updateColumn(columnId, columnModel);
+        if ("00".equals(columnResponse.getCode())) {
+            return ResponseEntity.ok(columnResponse);
+        } else {
+            return ResponseEntity.status(HttpStatus.CONFLICT).body(columnResponse);
+        }
+    }
+
+    @DeleteMapping
+    public ResponseEntity<ResponseWrapper<ColumnModel>> deleteColumn(@PathVariable String columnId) {
+        ResponseWrapper<ColumnModel> columnResponse = this.columnFacade.deleteColumn(columnId);
         if ("00".equals(columnResponse.getCode())) {
             return ResponseEntity.ok(columnResponse);
         } else {

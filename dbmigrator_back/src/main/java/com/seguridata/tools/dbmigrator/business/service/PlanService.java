@@ -2,13 +2,16 @@ package com.seguridata.tools.dbmigrator.business.service;
 
 import com.seguridata.tools.dbmigrator.business.exception.EmptyResultException;
 import com.seguridata.tools.dbmigrator.business.exception.MissingObjectException;
+import com.seguridata.tools.dbmigrator.business.exception.ObjectLockedException;
 import com.seguridata.tools.dbmigrator.data.entity.PlanEntity;
 import com.seguridata.tools.dbmigrator.data.entity.ProjectEntity;
+import com.seguridata.tools.dbmigrator.data.entity.TableEntity;
 import com.seguridata.tools.dbmigrator.data.repository.PlanRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.util.CollectionUtils;
 
+import java.util.Collections;
 import java.util.List;
 import java.util.Objects;
 
@@ -68,5 +71,15 @@ public class PlanService {
 
     public PlanEntity deletePlan(PlanEntity plan) {
         return this.planRepo.deletePlan(plan.getId());
+    }
+
+    public List<PlanEntity> deletePlansForProject(ProjectEntity project) {
+        return this.planRepo.deletePlansByProjectIds(Collections.singleton(project.getId()));
+    }
+
+    public void planContainsTable(TableEntity table) {
+        if (this.planRepo.planContainsTable(table.getId())) {
+            throw new ObjectLockedException("Table is present in Plan, can't delete");
+        }
     }
 }

@@ -16,6 +16,8 @@ import org.springframework.stereotype.Repository;
 import java.util.Date;
 import java.util.List;
 
+import static org.springframework.data.mongodb.core.query.Query.query;
+
 @Repository
 public class ProjectRepository {
 
@@ -52,5 +54,11 @@ public class ProjectRepository {
                 .apply(new Update().set("status", status).set("lastStatusDate", new Date())).all();
 
         return updateResult.getMatchedCount() == 1 && updateResult.getModifiedCount() == 1;
+    }
+
+    public boolean projectContainsConn(String tableId) {
+        Criteria containsConnection = Criteria.where("").orOperator(Criteria.where("sourceConnection").is(new ObjectId(tableId)),
+                Criteria.where("targetConnection").is(new ObjectId(tableId)));
+        return this.mongoTemplate.exists(query(containsConnection), ProjectEntity.class);
     }
 }

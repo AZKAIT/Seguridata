@@ -4,8 +4,10 @@ import com.seguridata.tools.dbmigrator.data.constant.ConversionFunction;
 import lombok.Getter;
 import lombok.Setter;
 import org.springframework.data.annotation.Id;
+import org.springframework.data.mongodb.core.mapping.Document;
 import org.springframework.data.mongodb.core.mapping.DocumentReference;
 
+@Document(collection = "definitions")
 @Getter @Setter
 public class DefinitionEntity {
     @Id

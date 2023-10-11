@@ -6,6 +6,7 @@ import com.seguridata.tools.dbmigrator.data.wrapper.ResponseWrapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PutMapping;
@@ -47,4 +48,13 @@ public class PlanController {
         }
     }
 
+    @DeleteMapping
+    public ResponseEntity<ResponseWrapper<PlanModel>> deletePlan(@PathVariable String planId) {
+        ResponseWrapper<PlanModel> planResponse = this.planFacade.deletePlan(planId);
+        if ("00".equals(planResponse.getCode())) {
+            return ResponseEntity.ok(planResponse);
+        } else {
+            return ResponseEntity.status(HttpStatus.CONFLICT).body(planResponse);
+        }
+    }
 }

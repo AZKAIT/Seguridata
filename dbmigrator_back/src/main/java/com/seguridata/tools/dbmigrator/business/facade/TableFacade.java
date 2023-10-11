@@ -2,7 +2,9 @@ package com.seguridata.tools.dbmigrator.business.facade;
 
 import com.seguridata.tools.dbmigrator.business.exception.BaseCodeException;
 import com.seguridata.tools.dbmigrator.business.mapper.TableMapper;
+import com.seguridata.tools.dbmigrator.business.service.ColumnService;
 import com.seguridata.tools.dbmigrator.business.service.ConnectionService;
+import com.seguridata.tools.dbmigrator.business.service.PlanService;
 import com.seguridata.tools.dbmigrator.business.service.TableService;
 import com.seguridata.tools.dbmigrator.data.entity.ConnectionEntity;
 import com.seguridata.tools.dbmigrator.data.entity.TableEntity;
@@ -20,14 +22,20 @@ public class TableFacade {
     private final ConnectionService connectionService;
     private final TableMapper tableMapper;
     private final TableService tableService;
+    private final ColumnService columnService;
+    private final PlanService planService;
 
     @Autowired
     public TableFacade(ConnectionService connectionService,
                        TableMapper tableMapper,
-                       TableService tableService) {
+                       TableService tableService,
+                       ColumnService columnService,
+                       PlanService planService) {
         this.connectionService = connectionService;
         this.tableMapper = tableMapper;
         this.tableService = tableService;
+        this.columnService = columnService;
+        this.planService = planService;
     }
 
     public ResponseWrapper<TableModel> createTable(String connectionId, TableModel tableModel) {
@@ -90,6 +98,26 @@ public class TableFacade {
 
             tableResponse.setCode("00");
             tableResponse.setData(this.tableMapper.mapTableModel(updatedTable));
+        } catch (BaseCodeException e) {
+            tableResponse.setCode(e.getCode());
+            tableResponse.setMessages(Arrays.asList(e.getMessages()));
+        }
+
+        return tableResponse;
+    }
+
+    public ResponseWrapper<TableModel> deleteTable(String tableId) {
+        ResponseWrapper<TableModel> tableResponse = new ResponseWrapper<>();
+        try {
+            TableEntity existingTable = this.tableService.getTable(tableId);
+            this.connectionService.validateConnectionStatus(existingTable.getConnection());
+            this.planService.planContainsTable(existingTable);
+
+            existingTable = this.tableService.deleteTable(existingTable);
+            this.columnService.deleteColsByTable(existingTable);
+
+            tableResponse.setCode("00");
+            tableResponse.setData(this.tableMapper.mapTableModel(existingTable));
         } catch (BaseCodeException e) {
             tableResponse.setCode(e.getCode());
             tableResponse.setMessages(Arrays.asList(e.getMessages()));

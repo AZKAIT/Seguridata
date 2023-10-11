@@ -9,7 +9,11 @@ import org.springframework.data.mongodb.core.query.Query;
 import org.springframework.stereotype.Repository;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
+import java.util.stream.Collectors;
+
+import static org.springframework.data.mongodb.core.query.Query.query;
 
 @Repository
 public class ColumnRepository {
@@ -31,18 +35,21 @@ public class ColumnRepository {
 
     public List<ColumnEntity> findColumnListByTable(String tableId) {
         Criteria tableCriteria = Criteria.where("table").is(new ObjectId(tableId));
-        return this.mongoTemplate.find(new Query(tableCriteria), ColumnEntity.class);
+        return this.mongoTemplate.find(query(tableCriteria), ColumnEntity.class);
     }
 
     public ColumnEntity updateColumn(ColumnEntity column) {
         return this.mongoTemplate.save(column);
     }
 
-    public boolean deleteColumn(String id) {
-        return this.mongoTemplate.remove(ColumnEntity.class)
-                .matching(Criteria.where("_id").is(new ObjectId(id)))
-                .one()
-                .getDeletedCount() > 0;
+    public ColumnEntity deleteColumn(String id) {
+        return this.mongoTemplate.findAndRemove(query(Criteria.where("_id").is(new ObjectId(id))), ColumnEntity.class);
+    }
+
+    public List<ColumnEntity> deleteColumnsByTableIds(Collection<String> tableIds) {
+        Criteria tableCriteria = Criteria.where("table")
+                .in(tableIds.stream().map(ObjectId::new).collect(Collectors.toList()));
+        return this.mongoTemplate.findAllAndRemove(query(tableCriteria), ColumnEntity.class);
     }
 
 
@@ -57,7 +64,7 @@ public class ColumnRepository {
         Criteria existCriteria = Criteria.where("table").is(new ObjectId(tableId))
                 .and("_id").is(new ObjectId(columnId));
 
-        return this.mongoTemplate.exists(new Query(existCriteria), ColumnEntity.class);
+        return this.mongoTemplate.exists(query(existCriteria), ColumnEntity.class);
     }
 
     public List<ColumnEntity> createColumnList(List<ColumnEntity> columnList) {
@@ -67,6 +74,6 @@ public class ColumnRepository {
     public List<ColumnEntity> findSortingColumnForTable(String tableId) {
         Criteria sortColCriteria = Criteria.where("table").is(new ObjectId(tableId))
                 .and("sorting").is(true);
-        return this.mongoTemplate.find(new Query(sortColCriteria), ColumnEntity.class);
+        return this.mongoTemplate.find(query(sortColCriteria), ColumnEntity.class);
     }
 }

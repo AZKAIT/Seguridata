@@ -15,6 +15,7 @@ import org.springframework.stereotype.Component;
 
 import java.util.Arrays;
 import java.util.List;
+import java.util.Objects;
 
 @Component
 public class PlanFacade {
@@ -93,6 +94,12 @@ public class PlanFacade {
 
             PlanEntity updatedPlan = this.planMapper.mapPlanEntity(planModel);
             this.validateTables(updatedPlan);
+
+            if (!Objects.equals(existingPlan.getSourceTable().getId(), updatedPlan.getSourceTable().getId())
+                    || !Objects.equals(existingPlan.getTargetTable().getId(), updatedPlan.getTargetTable().getId())) {
+                this.definitionService.deleteDefinitionsByPlan(existingPlan);
+            }
+
             updatedPlan = this.planService.updatePlan(existingPlan, updatedPlan);
 
             planResponse.setCode("00");

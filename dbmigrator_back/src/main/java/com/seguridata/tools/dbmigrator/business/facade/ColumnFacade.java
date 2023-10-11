@@ -3,18 +3,16 @@ package com.seguridata.tools.dbmigrator.business.facade;
 import com.seguridata.tools.dbmigrator.business.exception.BaseCodeException;
 import com.seguridata.tools.dbmigrator.business.exception.EmptyResultException;
 import com.seguridata.tools.dbmigrator.business.exception.MissingObjectException;
-import com.seguridata.tools.dbmigrator.business.exception.ObjectLockedException;
 import com.seguridata.tools.dbmigrator.business.mapper.ColumnMapper;
 import com.seguridata.tools.dbmigrator.business.service.ColumnService;
 import com.seguridata.tools.dbmigrator.business.service.ConnectionService;
+import com.seguridata.tools.dbmigrator.business.service.DefinitionService;
 import com.seguridata.tools.dbmigrator.business.service.TableService;
 import com.seguridata.tools.dbmigrator.data.entity.ColumnEntity;
-import com.seguridata.tools.dbmigrator.data.entity.ConnectionEntity;
 import com.seguridata.tools.dbmigrator.data.entity.TableEntity;
 import com.seguridata.tools.dbmigrator.data.model.ColumnModel;
 import com.seguridata.tools.dbmigrator.data.wrapper.ResponseWrapper;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.dao.DataAccessResourceFailureException;
 import org.springframework.stereotype.Component;
 import org.springframework.util.CollectionUtils;
 
@@ -22,7 +20,6 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Objects;
 
-import static java.lang.Boolean.TRUE;
 
 @Component
 public class ColumnFacade {
@@ -30,16 +27,19 @@ public class ColumnFacade {
     private final ConnectionService connectionService;
     private final TableService tableService;
     private final ColumnService columnService;
+    private final DefinitionService definitionService;
     private final ColumnMapper columnMapper;
 
     @Autowired
     public ColumnFacade(ConnectionService connectionService,
                         TableService tableService,
                         ColumnService columnService,
+                        DefinitionService definitionService,
                         ColumnMapper columnMapper) {
         this.connectionService = connectionService;
         this.tableService = tableService;
         this.columnService = columnService;
+        this.definitionService = definitionService;
         this.columnMapper = columnMapper;
     }
 
@@ -133,6 +133,30 @@ public class ColumnFacade {
             response.setCode(e.getCode());
             response.setMessages(Arrays.asList(e.getMessages()));
         }
+        return response;
+    }
+
+    public ResponseWrapper<ColumnModel> deleteColumn(String columnId) {
+        ResponseWrapper<ColumnModel> response = new ResponseWrapper<>();
+        try {
+            ColumnEntity existingColumn = this.columnService.getColumn(columnId);
+            TableEntity table = existingColumn.getTable();
+            if (Objects.isNull(table)) {
+                throw new MissingObjectException("Table not found on column");
+            }
+
+            this.connectionService.validateConnectionStatus(table.getConnection());
+            this.definitionService.defContainsColumn(existingColumn);
+
+            existingColumn = this.columnService.deleteColumn(existingColumn);
+
+            response.setCode("00");
+            response.setData(this.columnMapper.mapColumnModel(existingColumn));
+        } catch (BaseCodeException e) {
+            response.setCode(e.getCode());
+            response.setMessages(Arrays.asList(e.getMessages()));
+        }
+
         return response;
     }
 }

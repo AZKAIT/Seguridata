@@ -8,6 +8,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -75,6 +76,18 @@ public class ConnectionController {
 
         if ("00".equals(connectionResponse.getCode())) {
             return ResponseEntity.status(HttpStatus.ACCEPTED).body(connectionResponse);
+        } else {
+            return ResponseEntity.status(HttpStatus.CONFLICT).body(connectionResponse);
+        }
+    }
+
+    @DeleteMapping("{connectionId}")
+    public ResponseEntity<ResponseWrapper<ConnectionModel>> deleteConnection(@PathVariable String connectionId) {
+        LOGGER.debug("Retrieving connection by ID: {}", connectionId);
+        ResponseWrapper<ConnectionModel> connectionResponse = this.connectionFacade.deleteConnection(connectionId);
+
+        if ("00".equals(connectionResponse.getCode())) {
+            return ResponseEntity.ok(connectionResponse);
         } else {
             return ResponseEntity.status(HttpStatus.CONFLICT).body(connectionResponse);
         }

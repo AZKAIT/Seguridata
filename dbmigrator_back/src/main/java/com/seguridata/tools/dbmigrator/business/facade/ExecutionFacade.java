@@ -3,6 +3,7 @@ package com.seguridata.tools.dbmigrator.business.facade;
 import com.seguridata.tools.dbmigrator.business.exception.EmptyResultException;
 import com.seguridata.tools.dbmigrator.business.factory.ThreadPoolExecutorFactory;
 import com.seguridata.tools.dbmigrator.business.manager.DatabaseQueryManager;
+import com.seguridata.tools.dbmigrator.business.service.ConnectionService;
 import com.seguridata.tools.dbmigrator.business.service.ProjectService;
 import com.seguridata.tools.dbmigrator.business.service.ErrorTrackingService;
 import com.seguridata.tools.dbmigrator.business.task.PlanExecutionCallable;
@@ -30,26 +31,37 @@ public class ExecutionFacade {
 
     private final ApplicationContext appContext;
     private final ProjectService projectService;
+    private final ConnectionService connectionService;
     private final ErrorTrackingService errorTrackingService;
     private final ThreadPoolExecutorFactory threadPoolExecutorFactory;
 
     @Autowired
     public ExecutionFacade(ApplicationContext appContext,
                            ProjectService projectService,
+                           ConnectionService connectionService,
                            ErrorTrackingService errorTrackingService,
                            ThreadPoolExecutorFactory threadPoolExecutorFactory) {
         this.appContext = appContext;
         this.projectService = projectService;
+        this.connectionService = connectionService;
         this.errorTrackingService = errorTrackingService;
         this.threadPoolExecutorFactory = threadPoolExecutorFactory;
     }
 
     public void startExecution(ProjectEntity project) {
         LOGGER.info("Starting execution of Project: {}", project.getId());
+        ConnectionEntity srcConn = null;
+        ConnectionEntity tgtConn = null;
         try {
             this.projectService.updateProjectStatus(project, ProjectStatus.STARTING);
-            DatabaseQueryManager sourceQueryManager = this.getSourceQueryManager(project);
-            DatabaseQueryManager targetQueryManager = this.getTargetQueryManager(project);
+            srcConn = project.getSourceConnection();
+            tgtConn = project.getTargetConnection();
+            this.connectionService.lockConnections(srcConn, tgtConn);
+
+            LOGGER.debug("Initializing Source Query Manager");
+            DatabaseQueryManager sourceQueryManager = this.getQueryManager(project, srcConn);
+            LOGGER.debug("Initializing Target Query Manager");
+            DatabaseQueryManager targetQueryManager = this.getQueryManager(project, tgtConn);
 
             List<PlanExecutionCallable> executionCallables = this.getTasksForProject(project, sourceQueryManager, targetQueryManager);
             CountDownLatch latch = this.executeTasks(project, executionCallables);
@@ -57,15 +69,17 @@ public class ExecutionFacade {
 
             LOGGER.info("Awaiting execution...");
             latch.await();
-            LOGGER.info("Finished waiting, removing Executor");
-            this.threadPoolExecutorFactory.removeExecutorForProject(project.getId());
+            LOGGER.info("Finished waiting");
 
-            this.projectService.updateProjectStatus(project, ProjectStatus.STOPPED);
+
             sourceQueryManager.closeConnection();
             targetQueryManager.closeConnection();
             LOGGER.info("Execution finished");
         } catch (Exception e) {
             LOGGER.error("Exception on Project execution: Project({}) -> {}", project.getId(), e.getMessage());
+        } finally {
+            this.threadPoolExecutorFactory.removeExecutorForProject(project.getId());
+            this.connectionService.unlockConnections(srcConn, tgtConn);
             this.projectService.updateProjectStatus(project, ProjectStatus.STOPPED);
         }
     }
@@ -82,44 +96,20 @@ public class ExecutionFacade {
         }
     }
 
-    private DatabaseQueryManager getSourceQueryManager(ProjectEntity project) {
-        LOGGER.debug("Inside getSourceQueryManager");
-        ConnectionEntity sourceConnection = project.getSourceConnection();
-        try {
-            DatabaseQueryManager sourceQueryManager = this.appContext.getBean(DatabaseQueryManager.class, this.appContext);
-            LOGGER.debug("Initializing Connection");
-            sourceQueryManager.initializeConnection(sourceConnection.getId());
-            LOGGER.info("Connection Initialized successfully: {} - ({})", sourceConnection.getName(), sourceConnection.getId());
-
-            return sourceQueryManager;
-        } catch (Exception e) {
-            LOGGER.error("Error caught on getSourceQueryManager: {}", e.getMessage());
-            ErrorTrackingEntity errorTracking = new ErrorTrackingEntity();
-            errorTracking.setMessage(e.getMessage());
-            errorTracking.setReferenceType(ConnectionEntity.class.getCanonicalName());
-            errorTracking.setReferenceId(sourceConnection.getId());
-            this.errorTrackingService.createErrorTrackingForProject(project, errorTracking);
-
-            throw new RuntimeException("Initialization of Source Query Manager failed");
-        }
-    }
-
-    private DatabaseQueryManager getTargetQueryManager(ProjectEntity project) {
-        LOGGER.debug("Inside getTargetQueryManager");
-        ConnectionEntity targetConnection = project.getTargetConnection();
+    private DatabaseQueryManager getQueryManager(ProjectEntity project, ConnectionEntity connection) {
         try {
             DatabaseQueryManager targetQueryManager = this.appContext.getBean(DatabaseQueryManager.class, this.appContext);
             LOGGER.debug("Initializing Connection");
-            targetQueryManager.initializeConnection(targetConnection.getId());
-            LOGGER.info("Connection Initialized successfully: {} - ({})", targetConnection.getName(), targetConnection.getId());
+            targetQueryManager.initializeConnection(connection.getId());
+            LOGGER.info("Connection Initialized successfully: {} - ({})", connection.getName(), connection.getId());
 
             return targetQueryManager;
         } catch (Exception e) {
-            LOGGER.error("Error caught on getTargetQueryManager: {}", e.getMessage());
+            LOGGER.error("Error caught on getQueryManager: {}", e.getMessage());
             ErrorTrackingEntity errorTracking = new ErrorTrackingEntity();
             errorTracking.setMessage(e.getMessage());
             errorTracking.setReferenceType(ConnectionEntity.class.getCanonicalName());
-            errorTracking.setReferenceId(targetConnection.getId());
+            errorTracking.setReferenceId(connection.getId());
             this.errorTrackingService.createErrorTrackingForProject(project, errorTracking);
 
             throw new RuntimeException("Initialization of Target Query Manager failed");

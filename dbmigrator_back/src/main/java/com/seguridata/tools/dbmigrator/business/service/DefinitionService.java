@@ -3,6 +3,8 @@ package com.seguridata.tools.dbmigrator.business.service;
 import com.seguridata.tools.dbmigrator.business.exception.DuplicateDataException;
 import com.seguridata.tools.dbmigrator.business.exception.EmptyResultException;
 import com.seguridata.tools.dbmigrator.business.exception.MissingObjectException;
+import com.seguridata.tools.dbmigrator.business.exception.ObjectLockedException;
+import com.seguridata.tools.dbmigrator.data.entity.ColumnEntity;
 import com.seguridata.tools.dbmigrator.data.entity.DefinitionEntity;
 import com.seguridata.tools.dbmigrator.data.entity.PlanEntity;
 import com.seguridata.tools.dbmigrator.data.repository.DefinitionRepository;
@@ -13,6 +15,7 @@ import org.springframework.util.CollectionUtils;
 import java.util.Collections;
 import java.util.List;
 import java.util.Objects;
+import java.util.stream.Collectors;
 
 @Service
 public class DefinitionService {
@@ -71,5 +74,18 @@ public class DefinitionService {
 
     public List<DefinitionEntity> deleteDefinitionsByPlan(PlanEntity plan) {
         return this.definitionRepo.deleteDefinitionsByPlanIds(Collections.singleton(plan.getId()));
+    }
+
+    public List<DefinitionEntity> deleteDefinitionsByPlanList(List<PlanEntity> plans) {
+        List<String> planIds = plans.stream()
+                .map(PlanEntity::getId)
+                .collect(Collectors.toList());
+        return this.definitionRepo.deleteDefinitionsByPlanIds(planIds);
+    }
+
+    public void defContainsColumn(ColumnEntity column) {
+        if (this.definitionRepo.defContainsColumn(column.getId())) {
+            throw new ObjectLockedException("Column is present in Definition, can't delete");
+        }
     }
 }

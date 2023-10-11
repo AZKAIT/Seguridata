@@ -5,10 +5,13 @@ import org.bson.types.ObjectId;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.mongodb.core.MongoTemplate;
 import org.springframework.data.mongodb.core.query.Criteria;
-import org.springframework.data.mongodb.core.query.Query;
 import org.springframework.stereotype.Repository;
 
+import java.util.Collection;
 import java.util.List;
+import java.util.stream.Collectors;
+
+import static org.springframework.data.mongodb.core.query.Query.query;
 
 @Repository
 public class TableRepository {
@@ -30,18 +33,15 @@ public class TableRepository {
 
     public List<TableEntity> getTableListByConnection(String connectionId) {
         Criteria connectionCriteria = Criteria.where("connection").is(new ObjectId(connectionId));
-        return this.mongoTemplate.find(new Query(connectionCriteria), TableEntity.class);
+        return this.mongoTemplate.find(query(connectionCriteria), TableEntity.class);
     }
 
     public TableEntity updateTable(TableEntity table) {
         return this.mongoTemplate.save(table);
     }
 
-    public boolean deleteTable(String id) {
-        return this.mongoTemplate.remove(TableEntity.class)
-                .matching(Criteria.where("_id").is(new ObjectId(id)))
-                .one()
-                .getDeletedCount() > 0;
+    public TableEntity deleteTable(String id) {
+        return this.mongoTemplate.findAndRemove(query(Criteria.where("_id").is(new ObjectId(id))), TableEntity.class);
     }
 
     public boolean validateTableData(String connectionId, TableEntity table) {
@@ -49,13 +49,19 @@ public class TableRepository {
                 .and("schema").is(table.getSchema())
                 .and("name").is(table.getName());
 
-        return this.mongoTemplate.exists(new Query(existCriteria), TableEntity.class);
+        return this.mongoTemplate.exists(query(existCriteria), TableEntity.class);
+    }
+
+    public List<TableEntity> deleteTablesByConnection(Collection<String> connectionIds) {
+        Criteria connectionCriteria = Criteria.where("connection")
+                .in(connectionIds.stream().map(ObjectId::new).collect(Collectors.toList()));
+        return this.mongoTemplate.findAllAndRemove(query(connectionCriteria), TableEntity.class);
     }
 
     public boolean validateTableConnection(String connectionId, String tableId) {
         Criteria existCriteria = Criteria.where("connection").is(new ObjectId(connectionId))
                 .and("_id").is(new ObjectId(tableId));
 
-        return this.mongoTemplate.exists(new Query(existCriteria), TableEntity.class);
+        return this.mongoTemplate.exists(query(existCriteria), TableEntity.class);
     }
 }

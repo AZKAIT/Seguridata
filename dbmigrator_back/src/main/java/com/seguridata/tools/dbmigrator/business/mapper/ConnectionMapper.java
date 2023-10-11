@@ -46,19 +46,17 @@ public class ConnectionMapper {
             return null;
         }
 
-        ConnectionModel model = new ConnectionModel();
-        model.setId(entity.getId());
-        model.setName(entity.getName());
-        model.setDescription(entity.getDescription());
-        model.setHost(entity.getHost());
-        model.setPort(entity.getPort());
-        model.setObjectService(entity.getObjectService());
-        model.setDatabase(entity.getDatabase());
-        model.setUsername(entity.getUsername());
-        model.setPassword("*************");
-        model.setType(entity.getType());
-        model.setLocked(entity.getLocked());
-
-        return model;
+        return ConnectionModel.builder()
+                .id(entity.getId())
+                .name(entity.getName())
+                .description(entity.getDescription())
+                .host(entity.getHost())
+                .port(entity.getPort())
+                .objectService(entity.getObjectService())
+                .database(entity.getDatabase())
+                .username(entity.getUsername())
+                .password("*************").type(entity.getType())
+                .locked(entity.getLocked())
+                .build();
     }
 }

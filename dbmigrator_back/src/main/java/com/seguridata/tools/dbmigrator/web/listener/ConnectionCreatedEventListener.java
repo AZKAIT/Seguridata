@@ -30,7 +30,7 @@ public class ConnectionCreatedEventListener {
 
     @Async
     @EventListener
-    public void onTableCreated(TableCreatedEvent tableCreatedEvent) {
+    public void onTablesCreated(TableCreatedEvent tableCreatedEvent) {
         LOGGER.info("Handle onTableCreated");
         this.syncUpFacade.syncUpSingleTableColumn(tableCreatedEvent.getConnection(), tableCreatedEvent.getTable());
     }

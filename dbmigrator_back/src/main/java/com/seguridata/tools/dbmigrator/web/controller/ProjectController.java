@@ -6,6 +6,7 @@ import com.seguridata.tools.dbmigrator.data.wrapper.ResponseWrapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -67,6 +68,16 @@ public class ProjectController {
         ResponseWrapper<ProjectModel> projectResponse = this.projectFacade.updateProject(projectId, projectModel);
         if ("00".equals(projectResponse.getCode())) {
             return ResponseEntity.status(HttpStatus.ACCEPTED).body(projectResponse);
+        } else {
+            return ResponseEntity.status(HttpStatus.CONFLICT).body(projectResponse);
+        }
+    }
+
+    @DeleteMapping("{projectId}")
+    public ResponseEntity<ResponseWrapper<ProjectModel>> deleteProject(@PathVariable String projectId) {
+        ResponseWrapper<ProjectModel> projectResponse = this.projectFacade.deleteProject(projectId);
+        if ("00".equals(projectResponse.getCode())) {
+            return ResponseEntity.status(HttpStatus.OK).body(projectResponse);
         } else {
             return ResponseEntity.status(HttpStatus.CONFLICT).body(projectResponse);
         }

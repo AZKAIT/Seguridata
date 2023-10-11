@@ -11,8 +11,11 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.util.CollectionUtils;
 
+import java.util.Arrays;
 import java.util.List;
 import java.util.Objects;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 import static java.lang.Boolean.TRUE;
 
@@ -75,5 +78,22 @@ public class ConnectionService {
         if (TRUE.equals(connection.getLocked())) {
             throw new ObjectLockedException("Connection is locked, cannot update columns");
         }
+    }
+
+    public ConnectionEntity deleteConnection(ConnectionEntity connection) {
+        return this.connectionRepo.deleteConnection(connection.getId());
+    }
+
+    public boolean lockConnections(ConnectionEntity... connections) {
+        return this.changeConnectionLock(connections, true);
+    }
+
+    public boolean unlockConnections(ConnectionEntity... connections) {
+        return this.changeConnectionLock(connections, false);
+    }
+
+    private boolean changeConnectionLock(ConnectionEntity[] connections, boolean locked) {
+        List<String> connIds = Arrays.stream(connections).map(ConnectionEntity::getId).collect(Collectors.toList());
+        return this.connectionRepo.updateConnectionLock(connIds, locked);
     }
 }
