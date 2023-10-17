@@ -1,7 +1,7 @@
 import { NgModule } from '@angular/core';
 import { BrowserModule } from '@angular/platform-browser';
 import { APP_BASE_HREF, PlatformLocation } from '@angular/common';
-import { HttpClientModule } from '@angular/common/http';
+import { HTTP_INTERCEPTORS, HttpClientModule } from '@angular/common/http';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 
 import { AppComponent } from './app.component';
@@ -10,12 +10,23 @@ import { ProjectsModule } from './projects/projects.module';
 import { ColumnsModule } from './columns/columns.module';
 import { PlansModule } from './plans/plans.module';
 import { DefinitionsModule } from './definitions/definitions.module';
+import { GlobalHttpInterceptorService } from './common/interceptor/global-http-interceptor.service';
+
+import { MessageService } from 'primeng/api';
+import { ToastModule } from 'primeng/toast';
+import { ButtonModule } from 'primeng/button';
+import { TabViewModule } from 'primeng/tabview';
+import { WizardsModule } from './wizards/wizards.module';
+import { AppRoutingModule } from './app-routing.module';
+import { DashboardComponent } from './dashboard/dashboard.component';
 
 @NgModule({
   declarations: [
-    AppComponent
+    AppComponent,
+    DashboardComponent
   ],
   imports: [
+    AppRoutingModule,
     BrowserModule,
     BrowserAnimationsModule,
     HttpClientModule,
@@ -24,13 +35,26 @@ import { DefinitionsModule } from './definitions/definitions.module';
     ColumnsModule,
     ProjectsModule,
     PlansModule,
-    DefinitionsModule
+    DefinitionsModule,
+    WizardsModule,
+
+    ToastModule,
+    ButtonModule,
+    TabViewModule
   ],
-  providers: [{
-    provide: APP_BASE_HREF,
-    useFactory: (s: PlatformLocation) => s.getBaseHrefFromDOM(),
-      deps: [PlatformLocation]
-  }],
+  providers: [
+    {
+      provide: APP_BASE_HREF,
+      useFactory: (s: PlatformLocation) => s.getBaseHrefFromDOM(),
+        deps: [PlatformLocation]
+    },
+    {
+      provide: HTTP_INTERCEPTORS,
+      useClass: GlobalHttpInterceptorService,
+      multi: true
+    },
+    MessageService
+  ],
   bootstrap: [AppComponent]
 })
 export class AppModule { }

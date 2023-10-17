@@ -4,11 +4,8 @@ import { DropdownChangeEvent } from 'primeng/dropdown';
 import { ConversionFunction } from 'src/app/common/enums/conversion-function';
 import { ColumnModel } from 'src/app/common/models/column-model';
 import { DefinitionModel } from 'src/app/common/models/definition-model';
+import { SelectionTypes } from 'src/app/common/types/selection-types';
 
-type SelectionTypes = {
-  name: string;
-  code: string;
-};
 
 @Component({
   selector: 'app-definition-data-form',
@@ -21,6 +18,9 @@ export class DefinitionDataFormComponent {
   @Input() targetColumnList: ColumnModel[] = [];
 
   @Output() saveDef = new EventEmitter<DefinitionModel>();
+
+  @Input() formLoading?: boolean;
+  @Input() showForm?: boolean;
 
   selSourceColumn?: ColumnModel;
   selTargetColumn?: ColumnModel;

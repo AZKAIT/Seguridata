@@ -34,7 +34,7 @@ public class TableColumnController {
         if ("00".equals(columnList.getCode())) {
             return ResponseEntity.ok(columnList);
         } else {
-            return ResponseEntity.status(HttpStatus.CONFLICT).body(columnList);
+            return ResponseEntity.status(HttpStatus.NO_CONTENT).body(columnList);
         }
     }
 

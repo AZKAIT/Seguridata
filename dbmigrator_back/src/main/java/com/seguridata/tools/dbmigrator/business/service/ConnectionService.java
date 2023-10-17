@@ -76,7 +76,7 @@ public class ConnectionService {
         }
 
         if (TRUE.equals(connection.getLocked())) {
-            throw new ObjectLockedException("Connection is locked, cannot update columns");
+            throw new ObjectLockedException("Connection is locked, cannot proceed");
         }
     }
 

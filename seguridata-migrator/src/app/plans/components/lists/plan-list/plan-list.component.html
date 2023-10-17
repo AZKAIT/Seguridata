@@ -1,15 +1,15 @@
 <ng-container *ngIf="planList">
   <p-card [header]="'Planes de ' + (project? project.name: 'N/A')">
-    <p-table [value]="planList" selectionMode="single" dataKey="id" [selection]="selectedPlan" (selectionChange)="onSelectedPlanFromList($event)"
+    <p-table [value]="planList" selectionMode="single" dataKey="id" [selection]="selectedPlan" (selectionChange)="onSelectedPlanFromList($event)" [loading]="tableLoading"
       [paginator]="true" [rows]="10" [tableStyle]="{ 'min-width': '50rem' }">
       <ng-template pTemplate="caption">
         <div class="flex align-items-center justify-content-between">
           Planes
           <div >
-            <p-button icon="pi pi-refresh" styleClass="p-button-text" (onClick)="refreshList();"></p-button>
-            <p-button icon="pi pi-pencil" styleClass="p-button-text" (onClick)="editPlan()" [disabled]="!selectedPlan"></p-button>
-            <p-button icon="pi pi-trash" styleClass="p-button-text" (onClick)="deletePlan()" [disabled]="!selectedPlan"></p-button>
-            <p-button icon="pi pi-plus" styleClass="p-button-text" (onClick)="createPlan()"></p-button>
+            <p-button icon="pi pi-refresh" [text]="true" (onClick)="refreshList();"></p-button>
+            <p-button icon="pi pi-pencil" [text]="true" (onClick)="editPlan()" [disabled]="!selectedPlan"></p-button>
+            <p-button icon="pi pi-trash" [text]="true" (onClick)="deletePlan()" [disabled]="!selectedPlan" [loading]="deleteLoading || false"></p-button>
+            <p-button icon="pi pi-plus" [text]="true" (onClick)="createPlan()"></p-button>
           </div>
         </div>
       </ng-template>

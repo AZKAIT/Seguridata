@@ -14,13 +14,16 @@ import { StepsModule } from 'primeng/steps';
 import { DropdownModule } from 'primeng/dropdown';
 import { InputTextModule } from 'primeng/inputtext';
 import { InputTextareaModule } from 'primeng/inputtextarea';
+import { DialogModule } from 'primeng/dialog';
+import { ProjectQuickAccessListComponent } from './components/lists/project-quick-access-list/project-quick-access-list.component';
 
 
 @NgModule({
   declarations: [
     ProjectsContainerComponent,
     ProjectDataFormComponent,
-    ProjectListComponent
+    ProjectListComponent,
+    ProjectQuickAccessListComponent
   ],
   imports: [
     FormsModule,
@@ -32,6 +35,7 @@ import { InputTextareaModule } from 'primeng/inputtextarea';
     TableModule,
     ButtonModule,
     CardModule,
+    DialogModule,
 
     DropdownModule,
     InputTextModule,
@@ -40,7 +44,9 @@ import { InputTextareaModule } from 'primeng/inputtextarea';
     StepsModule
   ],
   exports: [
-    ProjectsContainerComponent
+    ProjectsContainerComponent,
+    ProjectDataFormComponent,
+    ProjectQuickAccessListComponent
   ]
 })
 export class ProjectsModule { }

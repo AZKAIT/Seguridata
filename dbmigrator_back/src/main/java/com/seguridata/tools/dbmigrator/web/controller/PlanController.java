@@ -33,7 +33,7 @@ public class PlanController {
         if ("00".equals(planResponse.getCode())) {
             return ResponseEntity.ok(planResponse);
         } else {
-            return ResponseEntity.status(HttpStatus.CONFLICT).body(planResponse);
+            return ResponseEntity.status(HttpStatus.NO_CONTENT).body(planResponse);
         }
     }
 

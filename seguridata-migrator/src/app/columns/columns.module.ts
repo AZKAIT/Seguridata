@@ -10,7 +10,8 @@ import { ColumnListComponent } from './components/lists/column-list/column-list.
 import { TableModule } from 'primeng/table';
 import { ButtonModule } from 'primeng/button';
 import { CardModule } from 'primeng/card';
-
+import { DialogModule } from 'primeng/dialog';
+import { DropdownModule } from 'primeng/dropdown';
 import { InputTextModule } from 'primeng/inputtext';
 import { InputTextareaModule } from 'primeng/inputtextarea';
 
@@ -30,7 +31,8 @@ import { InputTextareaModule } from 'primeng/inputtextarea';
     TableModule,
     ButtonModule,
     CardModule,
-
+    DialogModule,
+    DropdownModule,
     InputTextModule,
     InputTextareaModule
   ],

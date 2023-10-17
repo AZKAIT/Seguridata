@@ -37,7 +37,7 @@ public class ProjectController {
         if ("00".equals(projectsResponse.getCode())) {
             return ResponseEntity.ok(projectsResponse);
         } else {
-            return ResponseEntity.status(HttpStatus.CONFLICT).body(projectsResponse);
+            return ResponseEntity.status(HttpStatus.NO_CONTENT).body(projectsResponse);
         }
     }
 
@@ -58,7 +58,7 @@ public class ProjectController {
         if ("00".equals(projectResponse.getCode())) {
             return ResponseEntity.status(HttpStatus.OK).body(projectResponse);
         } else {
-            return ResponseEntity.status(HttpStatus.CONFLICT).body(projectResponse);
+            return ResponseEntity.status(HttpStatus.NO_CONTENT).body(projectResponse);
         }
     }
 

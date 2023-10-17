@@ -1,51 +1,50 @@
-<p-card header="Información de la Definición">
-  <form [formGroup]="defFormGroup">
-    <div class="field">
-      <span class="p-float-label">
-        <p-dropdown inputId="select-conn-drop" [options]="sourceColumnList" formControlName="sourceColumn" dataKey="id"
-          [filter]="true" filterBy="name" [showClear]="true" placeholder="Columna Origen"
-          (onChange)="changeSourceColumn($event)">
-          <ng-template pTemplate="selectedItem">
-            <div class="flex align-items-center gap-2" *ngIf="selSourceColumn">
-              <div>{{ selSourceColumn.name }}</div>
-            </div>
-          </ng-template>
-          <ng-template let-column pTemplate="item">
-            <div class="flex align-items-center gap-2">
-              <div>{{ column.name }} ({{ column.dataType }})</div>
-            </div>
-          </ng-template>
-        </p-dropdown>
-        <label for="select-conn-drop">Columna Origen</label>
-      </span>
-    </div>
-    <div class="field">
-      <span class="p-float-label">
-        <p-dropdown inputId="select-conn-drop" [options]="targetColumnList" formControlName="targetColumn" dataKey="id"
-          [filter]="true" filterBy="name" [showClear]="true" placeholder="Columna Destino"
-          (onChange)="changeTargetColumn($event)">
-          <ng-template pTemplate="selectedItem">
-            <div class="flex align-items-center gap-2" *ngIf="selTargetColumn">
-              <div>{{ selTargetColumn.name }}</div>
-            </div>
-          </ng-template>
-          <ng-template let-column pTemplate="item">
-            <div class="flex align-items-center gap-2">
-              <div>{{ column.name }} ({{ column.dataType }})</div>
-            </div>
-          </ng-template>
-        </p-dropdown>
-        <label for="select-conn-drop">Columna Destino</label>
-      </span>
-    </div>
-    <div class="field">
-      <span class="p-float-label">
-        <p-dropdown formControlName="conversionFunction" placeholder="Función de Conversión" [options]="convFunctions" optionLabel="name"
-          optionValue="code" inputId="conv-func"></p-dropdown>
-        <label for="conv-func">Función de Conversión</label>
-      </span>
-    </div>
+<form [formGroup]="defFormGroup">
+  <div class="field">
+    <span class="p-float-label">
+      <p-dropdown inputId="select-conn-drop" [options]="sourceColumnList" formControlName="sourceColumn" dataKey="id"
+        [filter]="true" filterBy="name" [showClear]="true" placeholder="Columna Origen" appendTo="body"
+        (onChange)="changeSourceColumn($event)">
+        <ng-template pTemplate="selectedItem">
+          <div class="flex align-items-center gap-2" *ngIf="selSourceColumn">
+            <div>{{ selSourceColumn.name }}</div>
+          </div>
+        </ng-template>
+        <ng-template let-column pTemplate="item">
+          <div class="flex align-items-center gap-2">
+            <div>{{ column.name }} ({{ column.dataType }})</div>
+          </div>
+        </ng-template>
+      </p-dropdown>
+      <label for="select-conn-drop">Columna Origen</label>
+    </span>
+  </div>
+  <div class="field">
+    <span class="p-float-label">
+      <p-dropdown inputId="select-conn-drop" [options]="targetColumnList" formControlName="targetColumn" dataKey="id"
+        [filter]="true" filterBy="name" [showClear]="true" placeholder="Columna Destino" appendTo="body"
+        (onChange)="changeTargetColumn($event)">
+        <ng-template pTemplate="selectedItem">
+          <div class="flex align-items-center gap-2" *ngIf="selTargetColumn">
+            <div>{{ selTargetColumn.name }}</div>
+          </div>
+        </ng-template>
+        <ng-template let-column pTemplate="item">
+          <div class="flex align-items-center gap-2">
+            <div>{{ column.name }} ({{ column.dataType }})</div>
+          </div>
+        </ng-template>
+      </p-dropdown>
+      <label for="select-conn-drop">Columna Destino</label>
+    </span>
+  </div>
+  <div class="field">
+    <span class="p-float-label">
+      <p-dropdown formControlName="conversionFunction" placeholder="Función de Conversión" [options]="convFunctions"
+        optionLabel="name" optionValue="code" inputId="conv-func" appendTo="body"></p-dropdown>
+      <label for="conv-func">Función de Conversión</label>
+    </span>
+  </div>
 
-    <p-button type="submit" label="Guardar" (onClick)="submit()" [disabled]="!defFormGroup.valid"></p-button>
-  </form>
-</p-card>
+  <p-button type="submit" label="Guardar" (onClick)="submit()" [disabled]="!defFormGroup.valid"
+    [loading]="formLoading || false"></p-button>
+</form>

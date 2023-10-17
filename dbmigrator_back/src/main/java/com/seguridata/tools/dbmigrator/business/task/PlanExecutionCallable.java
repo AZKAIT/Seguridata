@@ -1,5 +1,6 @@
 package com.seguridata.tools.dbmigrator.business.task;
 
+import com.seguridata.tools.dbmigrator.business.exception.DBValidationException;
 import com.seguridata.tools.dbmigrator.business.exception.EmptyResultException;
 import com.seguridata.tools.dbmigrator.business.manager.DatabaseQueryManager;
 import com.seguridata.tools.dbmigrator.business.service.ErrorTrackingService;
@@ -14,6 +15,8 @@ import org.slf4j.LoggerFactory;
 import org.springframework.dao.DuplicateKeyException;
 import org.springframework.util.CollectionUtils;
 
+import java.io.PrintWriter;
+import java.io.StringWriter;
 import java.util.AbstractMap;
 import java.util.List;
 import java.util.Map;
@@ -53,6 +56,10 @@ public class PlanExecutionCallable implements Callable<String> {
 
     @Override
     public String call() {
+        TableEntity sourceTable = this.plan.getSourceTable();
+        TableEntity targetTable = this.plan.getTargetTable();
+        Thread.currentThread().setName(String.format("%s=>%s", sourceTable.getName(), targetTable.getName()));
+
         LOGGER.info("Executing Task: {}", Thread.currentThread().getName());
         if (Objects.isNull(this.latch)) {
             LOGGER.error("Latch is null");
@@ -60,8 +67,6 @@ public class PlanExecutionCallable implements Callable<String> {
         }
 
         try {
-            TableEntity sourceTable = this.plan.getSourceTable();
-            TableEntity targetTable = this.plan.getTargetTable();
             List<DefinitionEntity> dataProcessDefinitions = this.plan.getDefinitions();
             if (CollectionUtils.isEmpty(dataProcessDefinitions)) {
                 throw new EmptyResultException("Definitions list is empty");
@@ -69,6 +74,10 @@ public class PlanExecutionCallable implements Callable<String> {
 
 
             long totalRowsSource = this.sourceQueryManager.getTotalRows(sourceTable);
+            if (totalRowsSource == 0) {
+                throw new EmptyResultException("No Data for table " + sourceTable.getName());
+            }
+
             final long rowLimit = this.plan.getRowLimit();
             final long maxRows = this.plan.getMaxRows();
             final long initialSkip = this.plan.getInitialSkip();
@@ -79,7 +88,7 @@ public class PlanExecutionCallable implements Callable<String> {
 
             long currentRows = 0;
             long skip = initialSkip;
-
+            LOGGER.info("Initiating process for {} rows in batches of {} starting from row {}, on a total of {} rows", maxRows, rowLimit, initialSkip, totalRowsSource);
             while (this.validateRowNum(currentRows, maxRows) && ((initialSkip + currentRows) < totalRowsSource) && !Thread.interrupted()) {
                 // Retrieve Data from SourceTable
                 List<Map<String, Object>> sourceData = this.getSourceData(sourceTable, skip, rowLimit);
@@ -101,9 +110,12 @@ public class PlanExecutionCallable implements Callable<String> {
 
                 currentRows += insertedRows;
                 skip += insertedRows;
+
+                LOGGER.info("Processed {} rows of ({} / {}) next skip is {} for {} => {}",
+                        currentRows, totalRowsSource, maxRows, skip, sourceTable.getName(), targetTable.getName());
             }
         } catch (Exception e) {
-            LOGGER.error("Exception occurred on Task: {}", e.getMessage());
+            LOGGER.error("Exception occurred on Task: {}", getStackTrace(e));
             ErrorTrackingEntity errorTracking = new ErrorTrackingEntity();
             errorTracking.setMessage(e.getMessage());
             errorTracking.setReferenceType(PlanEntity.class.getCanonicalName());
@@ -111,12 +123,20 @@ public class PlanExecutionCallable implements Callable<String> {
             this.errorTrackingService.createErrorTrackingForProject(this.project, errorTracking);
         } finally {
             this.latch.countDown();
+            LOGGER.info("Terminating Task: {}", Thread.currentThread().getName());
         }
         return "YES";
     }
 
+    private String getStackTrace(Throwable t) {
+        StringWriter sw = new StringWriter();
+        PrintWriter pw = new PrintWriter(sw);
+        t.printStackTrace(pw);
+
+        return sw.toString();
+    }
+
     private List<Map<String, Object>> getSourceData(TableEntity table, long skip, long limit) {
-        LOGGER.info("Retrieving data from Source Table");
         List<Map<String, Object>> resultList = this.sourceQueryManager
                 .retrieveDataBlockFrom(table, this.plan.getDefinitions(), skip, limit);
 
@@ -136,6 +156,7 @@ public class PlanExecutionCallable implements Callable<String> {
         long insertedRows = 0;
         for (Map<String, Object> resultSet : sourceData) {
             boolean failed = false;
+            boolean stopExecution = false;
             String failMessage = "";
             try {
                 insertedRows += this.targetQueryManager.insertDataBlockTo(table, dataProcessDefinitions, resultSet);
@@ -152,6 +173,8 @@ public class PlanExecutionCallable implements Callable<String> {
             } catch (Exception e) {
                 failed = true;
                 failMessage = e.getMessage();
+                stopExecution = true;
+                LOGGER.error("Unexpected error: {}", e.getMessage());
             } finally {
                 if (failed) {
                     ErrorTrackingEntity errorTracking = new ErrorTrackingEntity();
@@ -161,9 +184,14 @@ public class PlanExecutionCallable implements Callable<String> {
                     this.errorTrackingService.createErrorTrackingForProject(this.project, errorTracking);
                 }
             }
+
+            if (stopExecution) {
+                throw new DBValidationException(failMessage);
+            }
         }
         // TODO: Define what to do if data couldn't be inserted
 
+        LOGGER.info("Inserted rows after execution: {}", insertedRows);
         return insertedRows;
     }
 

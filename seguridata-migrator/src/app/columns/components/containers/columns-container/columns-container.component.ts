@@ -1,4 +1,5 @@
 import { Component, OnDestroy, Input } from '@angular/core';
+import { MessageService } from 'primeng/api';
 import { Subscription } from 'rxjs';
 import { ColumnModel } from 'src/app/common/models/column-model';
 import { TableModel } from 'src/app/common/models/table-model';
@@ -12,20 +13,26 @@ import { TableService } from 'src/app/common/service/table.service';
 })
 export class ColumnsContainerComponent implements OnDestroy {
 
-  subsList: Subscription[] = [];
+  private _subsList: Subscription[] = [];
 
   _table: TableModel | undefined;
 
   columnList: ColumnModel[] = [];
   selectedColumn: ColumnModel | undefined;
 
-  constructor(private _tableService: TableService, private _columnService: ColumnService) {
+  showForm: boolean = false;
+
+  tableLoading: boolean = false;
+  formLoading: boolean = false;
+  deleteLoading: boolean = false;
+
+  constructor(private _tableService: TableService, private _columnService: ColumnService, private _messageService: MessageService) {
   }
 
   ngOnDestroy(): void {
     let subs: Subscription | undefined;
-    while (this.subsList.length) {
-      subs = this.subsList.pop();
+    while (this._subsList.length) {
+      subs = this._subsList.pop();
       if (subs) {
         subs.unsubscribe();
       }
@@ -44,16 +51,25 @@ export class ColumnsContainerComponent implements OnDestroy {
   }
 
   onEditColumn() {
-    console.log(`Execute onColumnDataEvent: ${JSON.stringify(this.selectedColumn)}`);
+    this.showForm = true;
   }
 
   onDeleteColumn() {
+    this.deleteLoading = true;
     if (this.selectedColumn?.id) {
-      this.subsList.push(this._columnService.deleteColumn(this.selectedColumn.id)
-        .subscribe(delColumn => {
-          if (this.selectedColumn) {
-            this.columnList.splice(this.columnList.indexOf(this.selectedColumn, 1))
-            this.selectedColumn = undefined;
+      this._subsList.push(this._columnService.deleteColumn(this.selectedColumn.id)
+        .subscribe({
+          next: delColumn => {
+            if (this.selectedColumn) {
+              this.columnList.splice(this.columnList.indexOf(this.selectedColumn, 1))
+              this.selectedColumn = undefined;
+              this.postSuccess('Eliminar Columna', `Columna ${delColumn?.name} eliminada`);
+            }
+            this.deleteLoading = false;
+          },
+          error: err => {
+            this.deleteLoading = false;
+            this.postError('Error eliminando Columna', err?.messages?.join(','));
           }
         }));
     }
@@ -61,43 +77,82 @@ export class ColumnsContainerComponent implements OnDestroy {
 
   onCreateColumn() {
     this.selectedColumn = undefined;
+    this.showForm = true;
   }
 
   saveColumnData(column: ColumnModel) {
+    this.formLoading = true;
     if (column?.id) {
-      this.subsList.push(this._columnService.updateColumn(column.id, column)
-        .subscribe(updatedCol => {
-          if (this.selectedColumn && updatedCol) {
-            const prevDataIndex = this.columnList.indexOf(this.selectedColumn);
-            this.columnList[prevDataIndex] = updatedCol;
-            this.selectedColumn = undefined;
+      this._subsList.push(this._columnService.updateColumn(column.id, column)
+        .subscribe({
+          next: updatedCol => {
+            if (this.selectedColumn && updatedCol) {
+              const prevDataIndex = this.columnList.indexOf(this.selectedColumn);
+              this.columnList[prevDataIndex] = updatedCol;
+              this.selectedColumn = undefined;
+              this.showForm = false;
+              this.postSuccess('Actualizar Columna', `Columna ${updatedCol?.name} actualizada`);
+            }
+            this.formLoading = false;
+          },
+          error: err => {
+            this.formLoading = false;
+            this.postError('Error actualizando Columna', err?.messages?.join(','));
           }
         }));
     } else if (this._table?.id) {
-      this.subsList.push(this._tableService.createColumnForTable(this._table.id, column)
-        .subscribe(newColumn => {
-          if (newColumn) {
-            this.columnList.push(newColumn);
-            this.selectedColumn = undefined;
+      this._subsList.push(this._tableService.createColumnForTable(this._table.id, column)
+        .subscribe({
+          next: newColumn => {
+            if (newColumn) {
+              this.columnList.push(newColumn);
+              this.selectedColumn = undefined;
+              this.showForm = false;
+              this.postSuccess('Crear Columna', `Columna ${newColumn?.name} creada`);
+            }
+            this.formLoading = false;
+          },
+          error: err => {
+            this.formLoading = false;
+            this.postError('Error creando Columna', err?.messages?.join(','));
           }
         }));
     } else {
-      console.error('No Table or Table ID');
+      this.postError('Error en la Tabla', 'No hay una Tabla definida');
+      this.formLoading = false;
     }
   }
 
 
   private fetchColumns(table: TableModel | undefined) {
+    this.selectedColumn = undefined;
+    this.tableLoading = true;
     if (table?.id) {
-      this.subsList.push(
+      this._subsList.push(
         this._tableService.getColumnsForTable(table.id)
-          .subscribe(columnList => {
-            this.columnList = columnList ?? [];
+          .subscribe({
+            next: columnList => {
+              this.columnList = columnList ?? [];
+              this.tableLoading = false;
+            },
+            error: err => {
+              this.tableLoading = false;
+              this.postError('Error cargando Columnas', err?.messages?.join(','));
+            }
           })
       );
     } else {
       this.columnList = [];
       this.selectedColumn = undefined;
+      this.tableLoading = false;
     }
+  }
+
+  private postError(title: string, message: string) {
+    this._messageService.add({ severity: 'error', summary: title, detail: message });
+  }
+
+  private postSuccess(title: string, message: string) {
+    this._messageService.add({ severity: 'success', summary: title, detail: message });
   }
 }

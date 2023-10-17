@@ -52,7 +52,7 @@ public class ConnectionController {
         if ("00".equals(connectionResponse.getCode())) {
             return ResponseEntity.ok(connectionResponse);
         } else {
-            return ResponseEntity.status(HttpStatus.CONFLICT).body(connectionResponse);
+            return ResponseEntity.status(HttpStatus.NO_CONTENT).body(connectionResponse);
         }
     }
 

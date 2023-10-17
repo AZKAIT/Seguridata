@@ -16,6 +16,9 @@ export class ProjectDataFormComponent {
 
   @Output() saveProject = new EventEmitter<ProjectModel>();
 
+  @Input() formLoading?: boolean;
+  @Input() showForm?: boolean;
+
   selSourceConn?: ConnectionModel;
   selTargetConn?: ConnectionModel;
 
@@ -38,15 +41,19 @@ export class ProjectDataFormComponent {
   set project(project: ProjectModel | undefined) {
     this._project = project;
     if (project) {
+      let projStatus = project.status;
+      if (typeof projStatus === 'string') {
+        projStatus = ProjectStatus[projStatus as keyof typeof ProjectStatus];
+      }
       this.projectFormGroup.patchValue(project);
-      if (!project.status && ProjectStatus.CREATED != project.status && ProjectStatus.STOPPED != project.status) {
+      if (!projStatus && ProjectStatus.CREATED != projStatus && ProjectStatus.STOPPED != projStatus) {
         this.projectFormGroup.disable();
       }
       this.selSourceConn = project.sourceConnection;
       this.selTargetConn = project.targetConnection;
     } else {
       this.projectFormGroup.reset();
-      this.projectFormGroup.patchValue({sourceConnection: undefined, targetConnection: undefined});
+      this.projectFormGroup.patchValue({ sourceConnection: undefined, targetConnection: undefined });
     }
   }
 

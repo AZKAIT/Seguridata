@@ -1,53 +1,50 @@
 <ng-container *ngIf="projectList">
   <p-card header="Proyectos">
-  <p-table
-  [value]="projectList" selectionMode="single" dataKey="id" [selection]="selectedProject"
-  (selectionChange)="onSelectedProjectFromList($event)"
-  [paginator]="true"
-  [rows]="10"
-  [tableStyle]="{ 'min-width': '50rem' }">
-    <ng-template pTemplate="caption">
-      <div class="flex align-items-center justify-content-between">
-        Proyectos
-        <div >
-          <p-button icon="pi pi-refresh" styleClass="p-button-text" (onClick)="refreshList();"></p-button>
-          <p-button icon="pi pi-pencil" styleClass="p-button-text" (onClick)="editProject()" [disabled]="!selectedProject"></p-button>
-          <p-button icon="pi pi-trash" styleClass="p-button-text" (onClick)="deleteProject()" [disabled]="!selectedProject"></p-button>
-          <p-button icon="pi pi-plus" styleClass="p-button-text" (onClick)="createProject()"></p-button>
+    <p-table [value]="projectList" selectionMode="single" dataKey="id" [selection]="selectedProject"
+      [loading]="tableLoading" (selectionChange)="onSelectedProjectFromList($event)" [paginator]="true" [rows]="10"
+      [tableStyle]="{ 'min-width': '50rem' }">
+      <ng-template pTemplate="caption">
+        <div class="flex align-items-center justify-content-between">
+          Proyectos
+          <div>
+            <p-button icon="pi pi-refresh" [text]="true" (onClick)="refreshList();"></p-button>
+            <p-button icon="pi pi-pencil" [text]="true" (onClick)="editProject()"
+              [disabled]="!selectedProject"></p-button>
+            <p-button icon="pi pi-trash" [text]="true" (onClick)="deleteProject()" [disabled]="!selectedProject"
+              [loading]="deleteLoading || false"></p-button>
+            <p-button icon="pi pi-plus" [text]="true" (onClick)="createProject()"></p-button>
+            <p-button [icon]="'pi ' + (!selectedProject || isExecutable(selectedProject) ? 'pi-play' : 'pi-stop')"
+              [text]="true" [disabled]="!selectedProject" (onClick)="onScheduleProject()"
+              [loading]="schedulingLoading || false"></p-button>
+          </div>
         </div>
-      </div>
-    </ng-template>
-    <ng-template pTemplate="header">
-      <tr>
-        <th>&nbsp;</th>
-        <th>Nombre</th>
-        <th>Descripción</th>
-        <th>Conex. Origen</th>
-        <th>Conex. Destino</th>
-        <th>Creado</th>
-        <th>Estatus</th>
-        <th>Ult. estatus</th>
-        <th>&nbsp;</th>
-      </tr>
-    </ng-template>
-    <ng-template pTemplate="body" let-project>
-      <tr [pSelectableRow]="project">
-        <td>
-          <p-tableRadioButton [value]="project"></p-tableRadioButton>
-        </td>
-        <td>{{ project.name }}</td>
-        <td>{{ project.description }}</td>
-        <td>{{ project.sourceConnection?.name }}</td>
-        <td>{{ project.targetConnection?.name }}</td>
-        <td>{{ project.createdAt | date }}</td>
-        <td>{{ project.status }}</td>
-        <td>{{ project.lastStatusDate | date }}</td>
-        <td>
-          <p-button *ngIf="isExecutable(project)" icon="pi pi-play" styleClass="p-button-text p-button-rounded p-button-secondary" (onClick)="onExecuteProject(project.id)"></p-button>
-          <p-button *ngIf="!isExecutable(project)" icon="pi pi-stop" styleClass="p-button-text p-button-rounded p-button-secondary" (onClick)="onStopProject(project.id)"></p-button>
-        </td>
-      </tr>
-    </ng-template>
-  </p-table>
-</p-card>
+      </ng-template>
+      <ng-template pTemplate="header">
+        <tr>
+          <th>&nbsp;</th>
+          <th>Nombre</th>
+          <th>Descripción</th>
+          <th>Conex. Origen</th>
+          <th>Conex. Destino</th>
+          <th>Creado</th>
+          <th>Estatus</th>
+          <th>Ult. estatus</th>
+        </tr>
+      </ng-template>
+      <ng-template pTemplate="body" let-project>
+        <tr [pSelectableRow]="project">
+          <td>
+            <p-tableRadioButton [value]="project"></p-tableRadioButton>
+          </td>
+          <td>{{ project.name }}</td>
+          <td>{{ project.description }}</td>
+          <td>{{ project.sourceConnection?.name }}</td>
+          <td>{{ project.targetConnection?.name }}</td>
+          <td>{{ project.createdAt | date }}</td>
+          <td>{{ parseStatus(project.status) }}</td>
+          <td>{{ project.lastStatusDate | date }}</td>
+        </tr>
+      </ng-template>
+    </p-table>
+  </p-card>
 </ng-container>

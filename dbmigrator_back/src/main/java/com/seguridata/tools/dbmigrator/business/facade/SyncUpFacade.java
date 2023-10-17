@@ -64,6 +64,7 @@ public class SyncUpFacade {
         ResponseWrapper<List<TableModel>> tablesResponse = new ResponseWrapper<>();
         try {
             ConnectionEntity entity = this.connectionService.getConnection(connectionId);
+            this.connectionService.validateConnectionStatus(entity);
             List<TableModel> createdTableModels = this.syncUpConnectionTables(entity);
 
             tablesResponse.setCode("00");
@@ -92,6 +93,7 @@ public class SyncUpFacade {
         ResponseWrapper<List<ColumnModel>> columnsResponse = new ResponseWrapper<>();
         try {
             ConnectionEntity entity = this.connectionService.getConnection(connectionId);
+            this.connectionService.validateConnectionStatus(entity);
             List<TableEntity> tables = this.tableService.getTablesForConnection(connectionId);
 
             DatabaseQueryManager queryManager = this.appContext.getBean(DatabaseQueryManager.class, this.appContext);

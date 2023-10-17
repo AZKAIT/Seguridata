@@ -15,11 +15,15 @@ export class ProjectListComponent {
   @Output() deleteProjectEvent = new EventEmitter<void>();
   @Output() createProjectEvent = new EventEmitter<void>();
 
-  @Output() executeProjectEvent = new EventEmitter<string>();
-  @Output() stopProjectEvent = new EventEmitter<string>();
+  @Output() executeProjectEvent = new EventEmitter<void>();
+  @Output() stopProjectEvent = new EventEmitter<void>();
 
   @Input() selectedProject?: ProjectModel;
   @Output() selectedProjectChange = new EventEmitter<ProjectModel | undefined>();
+
+  @Input() tableLoading?: boolean;
+  @Input() deleteLoading?: boolean;
+  @Input() schedulingLoading?: boolean;
 
   refreshList() {
     this.listRefreshEvent.emit();
@@ -43,20 +47,34 @@ export class ProjectListComponent {
     this.selectedProjectChange.emit(this.selectedProject);
   }
 
-  onExecuteProject(projectId: string) {
-    this.executeProjectEvent.emit(projectId);
+  onScheduleProject() {
+    if (this.isExecutable(this.selectedProject)) {
+      this.executeProjectEvent.emit();
+    } else {
+      this.stopProjectEvent.emit();
+    }
   }
 
-  onStopProject(projectId: string) {
-    this.stopProjectEvent.emit(projectId);
-  }
+  isExecutable(project: ProjectModel | undefined): boolean {
+    if (!project) {
+      return false;
+    }
 
-  isExecutable(project: ProjectModel): boolean {
     let projStatus = project.status;
     if (typeof projStatus === 'string') {
       projStatus = ProjectStatus[projStatus as keyof typeof ProjectStatus];
     }
 
     return (ProjectStatus.CREATED === projStatus || ProjectStatus.STOPPED == projStatus);
+  }
+
+  parseStatus(status: any): ProjectStatus | string {
+    let projStatus = status;
+    if (typeof projStatus === 'string') {
+      projStatus = ProjectStatus[ProjectStatus[projStatus as keyof typeof ProjectStatus]];
+    } else if (typeof projStatus === 'number') {
+      projStatus = ProjectStatus[status]
+    }
+    return projStatus;
   }
 }

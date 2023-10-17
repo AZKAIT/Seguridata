@@ -17,6 +17,9 @@ export class PlanDataFormComponent {
 
   @Output() savePlan = new EventEmitter<PlanModel>();
 
+  @Input() formLoading?: boolean;
+  @Input() showForm?: boolean;
+
   selSourceTable?: TableModel;
   selTargetTable?: TableModel;
 

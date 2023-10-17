@@ -41,9 +41,7 @@ public class ThreadPoolExecutorFactory {
     }
 
     public void removeExecutorForProject(String projectId) {
-        if (!this.executorServices.containsKey(projectId)) {
-            throw new EmptyResultException("No Executor Service for given Project");
-        } else {
+        if (this.executorServices.containsKey(projectId)) {
             MigrationThreadPoolExecutor threadPoolExecutor = this.executorServices.remove(projectId);
             threadPoolExecutor.shutdown();
         }
@@ -51,7 +49,7 @@ public class ThreadPoolExecutorFactory {
 
 
     private MigrationThreadPoolExecutor createThreadPoolTaskExecutor() {
-        return new MigrationThreadPoolExecutor(1, 1, 0L, TimeUnit.MILLISECONDS,
+        return new MigrationThreadPoolExecutor(5, 50, 0L, TimeUnit.MILLISECONDS,
                 new LinkedBlockingQueue<>());
     }
 }

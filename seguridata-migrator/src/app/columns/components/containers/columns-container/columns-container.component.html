@@ -1,4 +1,6 @@
-<app-column-list [table]="table" [columnList]="columnList" [(selectedColumn)]="selectedColumn" (listRefreshEvent)="onExecuteRefresh();"
+<app-column-list [table]="table" [columnList]="columnList" [(selectedColumn)]="selectedColumn" (listRefreshEvent)="onExecuteRefresh();" [tableLoading]="tableLoading" [deleteLoading]="deleteLoading"
 (editColumnEvent)="onEditColumn()" (deleteColumnEvent)="onDeleteColumn()" (createColumnEvent)="onCreateColumn()"></app-column-list>
 
-<app-column-data-form *ngIf="table" [column]="selectedColumn" (saveColumn)="saveColumnData($event)"></app-column-data-form>
+<p-dialog header="Información de la Columna" [(visible)]="showForm" [modal]="true" [style]="{width: '50vw'}" >
+<app-column-data-form *ngIf="table && showForm" [column]="selectedColumn" (saveColumn)="saveColumnData($event)" [formLoading]="formLoading"></app-column-data-form>
+</p-dialog>

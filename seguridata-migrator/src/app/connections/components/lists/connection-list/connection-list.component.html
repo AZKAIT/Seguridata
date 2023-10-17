@@ -1,18 +1,18 @@
 <ng-container *ngIf="connectionList">
   <p-card header="Conexiones">
     <p-table [value]="connectionList" selectionMode="single" dataKey="id" [selection]="selectedConn"
-      (selectionChange)="onSelectedConnectionFromList($event)" [paginator]="true" [rows]="10"
+      (selectionChange)="onSelectedConnectionFromList($event)" [paginator]="true" [rows]="10" [loading]="tableLoading"
       [tableStyle]="{ 'min-width': '50rem' }">
       <ng-template pTemplate="caption">
         <div class="flex align-items-center justify-content-between">
           Conexiones
           <div>
-            <p-button icon="pi pi-refresh" styleClass="p-button-text" (onClick)="refreshList();"></p-button>
-            <p-button icon="pi pi-pencil" styleClass="p-button-text" (onClick)="editConnection()"
+            <p-button icon="pi pi-refresh" [text]="true" (onClick)="refreshList();"></p-button>
+            <p-button icon="pi pi-pencil" [text]="true" (onClick)="editConnection()"
               [disabled]="!selectedConn"></p-button>
-            <p-button icon="pi pi-trash" styleClass="p-button-text" (onClick)="deleteConnection()"
-              [disabled]="!selectedConn"></p-button>
-            <p-button icon="pi pi-plus" styleClass="p-button-text" (onClick)="createConnection()"></p-button>
+            <p-button icon="pi pi-trash" [text]="true" (onClick)="deleteConnection()"
+              [disabled]="!selectedConn" [loading]="deleteLoading || false"></p-button>
+            <p-button icon="pi pi-plus" [text]="true" (onClick)="createConnection()"></p-button>
           </div>
         </div>
       </ng-template>

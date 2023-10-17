@@ -11,6 +11,9 @@ export class TableDataFormComponent {
 
   @Output() saveTable = new EventEmitter<TableModel>();
 
+  @Input() formLoading?: boolean;
+  @Input() showForm?: boolean;
+
   _table: TableModel | undefined;
 
   tableFormGroup: FormGroup;

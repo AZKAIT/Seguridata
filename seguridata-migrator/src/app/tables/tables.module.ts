@@ -7,6 +7,7 @@ import { TableListComponent } from './components/lists/table-list/table-list.com
 import { TableModule } from 'primeng/table';
 import { ButtonModule } from 'primeng/button';
 import { CardModule } from 'primeng/card';
+import { DialogModule } from 'primeng/dialog';
 
 import { InputTextModule } from 'primeng/inputtext';
 import { InputTextareaModule } from 'primeng/inputtextarea';
@@ -30,6 +31,7 @@ import { ColumnsModule } from '../columns/columns.module';
     TableModule,
     ButtonModule,
     CardModule,
+    DialogModule,
 
     InputTextModule,
     InputTextareaModule

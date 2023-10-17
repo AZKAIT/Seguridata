@@ -11,7 +11,7 @@ export class BackendFacadeService {
 
   private url: string;
 
-  constructor(private http: HttpClient, @Inject(APP_BASE_HREF) private baseHref: string, @Inject(DOCUMENT) private document: any) {
+  constructor(private http: HttpClient, @Inject(DOCUMENT) private document: any) {
     const loc: string = this.document.location.toString();
     const uiIndex = loc.indexOf( "/ui" );
 

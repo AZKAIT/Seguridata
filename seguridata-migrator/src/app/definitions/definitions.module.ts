@@ -9,9 +9,13 @@ import { DefinitionListComponent } from './components/lists/definition-list/defi
 import { TableModule } from 'primeng/table';
 import { ButtonModule } from 'primeng/button';
 import { CardModule } from 'primeng/card';
-
+import { DialogModule } from 'primeng/dialog';
+import { DragDropModule } from 'primeng/dragdrop';
 import { InputTextModule } from 'primeng/inputtext';
 import { DropdownModule } from 'primeng/dropdown';
+import { ScrollerModule } from 'primeng/scroller';
+import { DefinitionBatchFormComponent } from './components/forms/definition-batch-form/definition-batch-form.component';
+import { DefinitionDataRowComponent } from './directives/definition-data-row/definition-data-row.component';
 
 
 
@@ -19,7 +23,9 @@ import { DropdownModule } from 'primeng/dropdown';
   declarations: [
     DefinitionsContainerComponent,
     DefinitionDataFormComponent,
-    DefinitionListComponent
+    DefinitionListComponent,
+    DefinitionBatchFormComponent,
+    DefinitionDataRowComponent
   ],
   imports: [
     CommonModule,
@@ -29,12 +35,16 @@ import { DropdownModule } from 'primeng/dropdown';
     TableModule,
     ButtonModule,
     CardModule,
+    DialogModule,
+    ScrollerModule,
 
     InputTextModule,
-    DropdownModule
+    DropdownModule,
+    DragDropModule
   ],
   exports: [
-    DefinitionsContainerComponent
+    DefinitionsContainerComponent,
+    DefinitionBatchFormComponent
   ]
 })
 export class DefinitionsModule { }

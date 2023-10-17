@@ -1,15 +1,15 @@
 <ng-container *ngIf="columnList">
   <p-card [header]="'Columnas de ' + (table? table.name: 'N/A')">
-    <p-table [value]="columnList" selectionMode="single" dataKey="id" [selection]="selectedColumn" (selectionChange)="onSelectedColumnFromList($event)"
+    <p-table [value]="columnList" selectionMode="single" dataKey="id" [selection]="selectedColumn" (selectionChange)="onSelectedColumnFromList($event)" [loading]="tableLoading"
       [paginator]="true" [rows]="10" [tableStyle]="{ 'min-width': '50rem' }">
       <ng-template pTemplate="caption">
         <div class="flex align-items-center justify-content-between">
           Columnas
           <div >
-            <p-button icon="pi pi-refresh" styleClass="p-button-text" (onClick)="refreshList();"></p-button>
-            <p-button icon="pi pi-pencil" styleClass="p-button-text" (onClick)="editColumn()" [disabled]="!selectedColumn"></p-button>
-            <p-button icon="pi pi-trash" styleClass="p-button-text" (onClick)="deleteColumn()" [disabled]="!selectedColumn"></p-button>
-            <p-button icon="pi pi-plus" styleClass="p-button-text" (onClick)="createColumn()"></p-button>
+            <p-button icon="pi pi-refresh" [text]="true" (onClick)="refreshList();"></p-button>
+            <p-button icon="pi pi-pencil" [text]="true" (onClick)="editColumn()" [disabled]="!selectedColumn"></p-button>
+            <p-button icon="pi pi-trash" [text]="true" (onClick)="deleteColumn()" [disabled]="!selectedColumn" [loading]="deleteLoading || false"></p-button>
+            <p-button icon="pi pi-plus" [text]="true" (onClick)="createColumn()"></p-button>
           </div>
         </div>
       </ng-template>

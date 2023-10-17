@@ -1,6 +1,8 @@
-<app-table-list [connection]="connection" [tableList]="tableList" [(selectedTable)]="selectedTable" (listRefreshEvent)="onExecuteRefresh();"
+<app-table-list [connection]="connection" [tableList]="tableList" [(selectedTable)]="selectedTable" (listRefreshEvent)="onExecuteRefresh();" [tableLoading]="tableLoading" [deleteLoading]="deleteLoading"
 (editTableEvent)="onEditTable()" (deleteTableEvent)="onDeleteTable()" (createTableEvent)="onCreateTable()"></app-table-list>
 
 <app-columns-container [table]="selectedTable"></app-columns-container>
 
-<app-table-data-form *ngIf="connection" [table]="selectedTable" (saveTable)="saveTableData($event)"></app-table-data-form>
+<p-dialog header="Información de la tabla" [(visible)]="showForm" [modal]="true" [style]="{width: '50vw'}">
+<app-table-data-form *ngIf="connection && showForm" [table]="selectedTable" (saveTable)="saveTableData($event)" [formLoading]="formLoading"></app-table-data-form>
+</p-dialog>

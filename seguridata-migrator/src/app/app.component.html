@@ -1,3 +1,31 @@
-<app-connections-container></app-connections-container>
+<p-toast [life]="7500"></p-toast>
 
-<app-projects-container></app-projects-container>
+
+<div class="grid">
+  <div class="col-2 md:col-1 sticky top-0 flex justify-content-center bg-primary">
+    <div class="fixed top-0 mt-5 xl:mt-4">
+      <div class="justify-content-center xl:justify-content-start">
+        <p-button pRipple [routerLink]="['/']" label="Inicio" icon="pi pi-home" styleClass="hidden xl:inline-flex xl:text-sm bg-primary" [text]="true"></p-button>
+        <p-button pRipple [routerLink]="['/']" styleClass="inline-flex xl:hidden bg-primary" [text]="true">
+          <i class="pi pi-home text-2xl md:text-lg"></i>
+        </p-button>
+      </div>
+      <div class="justify-content-center xl:justify-content-start mt-8">
+        <p-button pRipple [routerLink]="['/connections']" label="Conexiones" icon="pi pi-database" styleClass="hidden xl:inline-flex xl:text-sm bg-primary" [text]="true"></p-button>
+        <p-button pRipple [routerLink]="['/connections']" styleClass="inline-flex xl:hidden bg-primary" [text]="true">
+          <i class="pi pi-database text-2xl md:text-lg"></i>
+        </p-button>
+      </div>
+      <div class="justify-content-center xl:justify-content-start mt-4 lg:mt-3">
+        <p-button pRipple [routerLink]="['/projects']" label="Proyectos" icon="pi pi-briefcase" styleClass="hidden xl:inline-flex xl:text-sm bg-primary" [text]="true"></p-button>
+        <p-button pRipple [routerLink]="['/projects']" styleClass="inline-flex xl:hidden bg-primary" [text]="true">
+          <i class="pi pi-briefcase text-2xl md:text-lg"></i>
+        </p-button>
+      </div>
+    </div>
+  </div>
+
+  <div class="col-10 md:col-11">
+    <router-outlet></router-outlet>
+  </div>
+</div>

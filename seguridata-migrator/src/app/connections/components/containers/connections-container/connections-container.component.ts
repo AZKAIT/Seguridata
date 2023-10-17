@@ -1,4 +1,5 @@
 import { Component, OnDestroy, OnInit } from '@angular/core';
+import { MessageService } from 'primeng/api';
 import { Subscription } from 'rxjs';
 import { ConnectionModel } from 'src/app/common/models/connection-model';
 import { ConnectionService } from 'src/app/common/service/connection.service';
@@ -10,15 +11,19 @@ import { ConnectionService } from 'src/app/common/service/connection.service';
 })
 export class ConnectionsContainerComponent implements OnInit, OnDestroy {
 
-  subsList: Subscription[] = [];
+  private _subsList: Subscription[] = [];
 
   connectionList: ConnectionModel[] = [];
   selectedConn: ConnectionModel | undefined;
 
   showForm: boolean = false;
 
+  tableLoading: boolean = false;
+  formLoading: boolean = false;
+  deleteLoading: boolean = false;
 
-  constructor(private _connectionService: ConnectionService) {
+
+  constructor(private _connectionService: ConnectionService, private _messageService: MessageService) {
   }
 
   ngOnInit(): void {
@@ -27,8 +32,8 @@ export class ConnectionsContainerComponent implements OnInit, OnDestroy {
 
   ngOnDestroy(): void {
     let subs: Subscription | undefined;
-    while (this.subsList.length) {
-      subs = this.subsList.pop();
+    while (this._subsList.length) {
+      subs = this._subsList.pop();
       if (subs) {
         subs.unsubscribe();
       }
@@ -40,17 +45,25 @@ export class ConnectionsContainerComponent implements OnInit, OnDestroy {
   }
 
   onEditConnection() {
-    console.log(`Execute onEditConnection: ${JSON.stringify(this.selectedConn)}`);
     this.showForm = true;
   }
 
   onDeleteConnection() {
+    this.deleteLoading = true;
     if (this.selectedConn?.id) {
-      this.subsList.push(this._connectionService.deleteConnection(this.selectedConn.id)
-        .subscribe(delConn => {
-          if (this.selectedConn) {
-            this.connectionList.splice(this.connectionList.indexOf(this.selectedConn, 1))
-            this.selectedConn = undefined;
+      this._subsList.push(this._connectionService.deleteConnection(this.selectedConn.id)
+        .subscribe({
+          next: delConn => {
+            if (this.selectedConn) {
+              this.connectionList.splice(this.connectionList.indexOf(this.selectedConn, 1))
+              this.selectedConn = undefined;
+              this.postSuccess('Eliminar Conexión', `Conexión ${delConn?.name} eliminada`);
+            }
+            this.deleteLoading = false;
+          },
+          error: err => {
+            this.postError('Error al eliminar Conexión', err?.messages?.join(','));
+            this.deleteLoading = false;
           }
         }));
     }
@@ -62,21 +75,40 @@ export class ConnectionsContainerComponent implements OnInit, OnDestroy {
   }
 
   saveConnectionData(connection: ConnectionModel) {
+    this.formLoading = true;
     if (connection?.id) {
-      this.subsList.push(this._connectionService.updateConnection(connection.id, connection)
-        .subscribe(updatedConn => {
-          if (this.selectedConn && updatedConn) {
-            const prevDataIndex = this.connectionList.indexOf(this.selectedConn);
-            this.connectionList[prevDataIndex] = updatedConn;
-            this.selectedConn = undefined;
+      this._subsList.push(this._connectionService.updateConnection(connection.id, connection)
+        .subscribe({
+          next: updatedConn => {
+            if (this.selectedConn && updatedConn) {
+              const prevDataIndex = this.connectionList.indexOf(this.selectedConn);
+              this.connectionList[prevDataIndex] = updatedConn;
+              this.selectedConn = undefined;
+              this.showForm = false;
+              this.postSuccess('Actualizar Conexión', `Conexión ${updatedConn?.name} actualizada`);
+            }
+            this.formLoading = false;
+          },
+          error: err => {
+            this.postError('Error al actualizar Conexión', err?.messages?.join(','));
+            this.formLoading = false;
           }
         }));
     } else {
-      this.subsList.push(this._connectionService.createConnection(connection)
-        .subscribe(newConn => {
-          if (newConn) {
-            this.connectionList.push(newConn);
-            this.selectedConn = undefined;
+      this._subsList.push(this._connectionService.createConnection(connection)
+        .subscribe({
+          next: newConn => {
+            if (newConn) {
+              this.connectionList.push(newConn);
+              this.selectedConn = undefined;
+              this.showForm = false;
+              this.postSuccess('Crear Conexión', `Conexión ${newConn?.name} creada`);
+            }
+            this.formLoading = false;
+          },
+          error: err => {
+            this.postError('Error al crear Conexión', err?.messages?.join(','));
+            this.formLoading = false;
           }
         }));
     }
@@ -84,9 +116,26 @@ export class ConnectionsContainerComponent implements OnInit, OnDestroy {
 
 
   private fetchConnections() {
-    this.subsList.push(this._connectionService.getAllConnections()
-      .subscribe(connList => {
-        this.connectionList = connList ?? [];
+    this.selectedConn = undefined;
+    this.tableLoading = true;
+    this._subsList.push(this._connectionService.getAllConnections()
+      .subscribe({
+        next: connList => {
+          this.connectionList = connList ?? [];
+          this.tableLoading = false;
+        },
+        error: err => {
+          this.postError('Error al cargar Conexiones', err?.messages?.join(','));
+          this.tableLoading = false;
+        }
       }));
+  }
+
+  private postError(title: string, message: string) {
+    this._messageService.add({ severity: 'error', summary: title, detail: message });
+  }
+
+  private postSuccess(title: string, message: string) {
+    this._messageService.add({ severity: 'success', summary: title, detail: message });
   }
 }

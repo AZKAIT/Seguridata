@@ -1,0 +1,46 @@
+<td>
+  <p-dropdown inputId="select-conn-drop" [options]="sourceColumnList" [(ngModel)]="selSourceColumn" dataKey="id"
+    [filter]="true" filterBy="name" [showClear]="true" placeholder="Columna Origen" appendTo="body"
+    (onChange)="changeSourceColumn()">
+    <ng-template pTemplate="selectedItem">
+      <div class="flex align-items-center gap-2" *ngIf="selSourceColumn">
+        <div>{{ selSourceColumn.name }}</div>
+      </div>
+    </ng-template>
+    <ng-template let-column pTemplate="item">
+      <div class="flex align-items-center gap-2">
+        <div>{{ column.name }} ({{ column.dataType }})</div>
+      </div>
+    </ng-template>
+  </p-dropdown>
+</td>
+<td>
+  <i class="pi pi-arrow-right" style="font-size: 1.5rem"></i>
+</td>
+<td>
+  <p-dropdown placeholder="Seleccionar" [options]="convFunctions" [(ngModel)]="selFunction"
+    (onChange)="changeConversionFunc()" styleClass="p-2 border-1 surface-border border-round" optionLabel="name"
+    optionValue="code" appendTo="body" inputId="conv-func" appendTo="body"></p-dropdown>
+</td>
+<td>
+  <i class="pi pi-arrow-right" style="font-size: 1.5rem"></i>
+</td>
+<td>
+  <p-dropdown inputId="select-conn-drop" [options]="targetColumnList" [(ngModel)]="selTargetColumn" dataKey="id"
+    [filter]="true" filterBy="name" [showClear]="true" placeholder="Columna Destino" appendTo="body"
+    (onChange)="changeTargetColumn()">
+    <ng-template pTemplate="selectedItem">
+      <div class="flex align-items-center gap-2" *ngIf="selTargetColumn">
+        <div>{{ selTargetColumn.name }}</div>
+      </div>
+    </ng-template>
+    <ng-template let-column pTemplate="item">
+      <div class="flex align-items-center gap-2">
+        <div>{{ column.name }} ({{ column.dataType }})</div>
+      </div>
+    </ng-template>
+  </p-dropdown>
+</td>
+<td>
+  <p-button icon="pi pi-times" [rounded]="true" [text]="true" [raised]="true" severity="danger" (onClick)="onRemoveDefinitionRow()"></p-button>
+</td>

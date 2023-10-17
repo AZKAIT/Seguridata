@@ -19,6 +19,9 @@ export class ColumnListComponent {
   @Input() selectedColumn?: ColumnModel;
   @Output() selectedColumnChange = new EventEmitter<ColumnModel | undefined>();
 
+  @Input() tableLoading?: boolean;
+  @Input() deleteLoading?: boolean;
+
 
   refreshList(): void {
     this.listRefreshEvent.next();

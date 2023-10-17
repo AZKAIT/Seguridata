@@ -4,6 +4,7 @@ import com.seguridata.tools.dbmigrator.business.exception.DuplicateDataException
 import com.seguridata.tools.dbmigrator.business.exception.EmptyResultException;
 import com.seguridata.tools.dbmigrator.business.exception.MissingObjectException;
 import com.seguridata.tools.dbmigrator.business.exception.ObjectLockedException;
+import com.seguridata.tools.dbmigrator.data.constant.ConversionFunction;
 import com.seguridata.tools.dbmigrator.data.entity.ColumnEntity;
 import com.seguridata.tools.dbmigrator.data.entity.DefinitionEntity;
 import com.seguridata.tools.dbmigrator.data.entity.PlanEntity;
@@ -29,6 +30,9 @@ public class DefinitionService {
 
     public DefinitionEntity createDefinition(PlanEntity plan, DefinitionEntity definition) {
         definition.setPlan(plan);
+        if (Objects.isNull(definition.getConversionFunction())) {
+            definition.setConversionFunction(ConversionFunction.NONE);
+        }
 
         return this.definitionRepo.createDefinition(definition);
     }
@@ -60,9 +64,12 @@ public class DefinitionService {
     }
 
     public List<DefinitionEntity> createDefinitionList(PlanEntity plan, List<DefinitionEntity> definitions) {
-        definitions.forEach(col -> {
-            col.setId(null);
-            col.setPlan(plan);
+        definitions.forEach(def -> {
+            def.setId(null);
+            def.setPlan(plan);
+            if (Objects.isNull(def.getConversionFunction())) {
+                def.setConversionFunction(ConversionFunction.NONE);
+            }
         });
 
         return this.definitionRepo.createDefinitionList(definitions);

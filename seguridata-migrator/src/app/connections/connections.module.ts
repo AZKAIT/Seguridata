@@ -12,9 +12,13 @@ import { InputTextModule } from 'primeng/inputtext';
 import { InputTextareaModule } from 'primeng/inputtextarea';
 import { InputNumberModule } from 'primeng/inputnumber';
 import { PasswordModule } from 'primeng/password';
+import { DialogModule } from 'primeng/dialog';
+import { ScrollPanelModule } from 'primeng/scrollpanel';
+
 import { ConnectionDataFormComponent } from './components/forms/connection-data-form/connection-data-form.component';
 
 import { TablesModule } from '../tables/tables.module';
+import { ConnectionQuickAccessListComponent } from './components/lists/connection-quick-access-list/connection-quick-access-list.component';
 
 
 
@@ -22,7 +26,8 @@ import { TablesModule } from '../tables/tables.module';
   declarations: [
     ConnectionListComponent,
     ConnectionsContainerComponent,
-    ConnectionDataFormComponent
+    ConnectionDataFormComponent,
+    ConnectionQuickAccessListComponent
   ],
   imports: [
     FormsModule,
@@ -39,10 +44,15 @@ import { TablesModule } from '../tables/tables.module';
     InputTextModule,
     InputTextareaModule,
     InputNumberModule,
-    PasswordModule
+    PasswordModule,
+
+    DialogModule,
+    ScrollPanelModule
   ],
   exports: [
-    ConnectionsContainerComponent
+    ConnectionsContainerComponent,
+    ConnectionQuickAccessListComponent,
+    ConnectionDataFormComponent
   ]
 })
 export class ConnectionsModule { }

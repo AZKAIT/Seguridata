@@ -44,4 +44,11 @@ export class PlanService {
     return this.backend.serviceGet<DefinitionModel[]>(`/plans/${planId}/definitions`, undefined, params)
     .pipe(map(response => response.body?.data));
   }
+
+  createDefinitionsBatchForPlan(planId: string, definitions: DefinitionModel[]): Observable<DefinitionModel[] | undefined> {
+    const params = new HttpParams();
+
+    return this.backend.servicePost<DefinitionModel[]>(`/plans/${planId}/definitions/batch`, definitions, undefined, params)
+    .pipe(map(response => response.body?.data));
+  }
 }

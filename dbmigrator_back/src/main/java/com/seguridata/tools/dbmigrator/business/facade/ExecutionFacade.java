@@ -78,9 +78,10 @@ public class ExecutionFacade {
         } catch (Exception e) {
             LOGGER.error("Exception on Project execution: Project({}) -> {}", project.getId(), e.getMessage());
         } finally {
-            this.threadPoolExecutorFactory.removeExecutorForProject(project.getId());
             this.connectionService.unlockConnections(srcConn, tgtConn);
             this.projectService.updateProjectStatus(project, ProjectStatus.STOPPED);
+            this.threadPoolExecutorFactory.removeExecutorForProject(project.getId());
+            LOGGER.info("Execution of Project: {} is now unlocked", project.getId());
         }
     }
 

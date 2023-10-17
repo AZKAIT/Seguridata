@@ -1,6 +1,8 @@
-<app-plan-list [project]="project" [planList]="planList" [(selectedPlan)]="selectedPlan" (listRefreshEvent)="onExecuteRefresh();"
+<app-plan-list [project]="project" [planList]="planList" [(selectedPlan)]="selectedPlan" (listRefreshEvent)="onExecuteRefresh();" [tableLoading]="tableLoading" [deleteLoading]="deleteLoading"
 (editPlanEvent)="onEditPlan()" (deletePlanEvent)="onDeletePlan()" (createPlanEvent)="onCreatePlan()"></app-plan-list>
 
 <app-definitions-container [plan]="selectedPlan"></app-definitions-container>
 
-<app-plan-data-form *ngIf="project" [plan]="selectedPlan" [sourceTableList]="sourceTableList" [targetTableList]="targetTableList" (savePlan)="savePlanData($event)"></app-plan-data-form>
+<p-dialog header="Información del Plan" [(visible)]="showForm" [modal]="true" [style]="{width: '50vw'}">
+<app-plan-data-form *ngIf="project && showForm" [plan]="selectedPlan" [sourceTableList]="sourceTableList" [targetTableList]="targetTableList" (savePlan)="savePlanData($event)" [formLoading]="formLoading"></app-plan-data-form>
+</p-dialog>

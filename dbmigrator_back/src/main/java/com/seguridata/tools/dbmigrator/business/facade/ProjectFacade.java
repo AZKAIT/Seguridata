@@ -148,6 +148,9 @@ public class ProjectFacade {
             project = this.projectService.getProject(projectId);
             this.projectService.validateProjectStatus(project);
 
+            this.connectionService.validateConnectionStatus(project.getSourceConnection());
+            this.connectionService.validateConnectionStatus(project.getTargetConnection());
+
             this.appEventPublisher.publishEvent(new InitiateProjectEvent(this, project));
             execResponse.setData(true);
             execResponse.setCode("00");

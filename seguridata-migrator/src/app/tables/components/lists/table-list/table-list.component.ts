@@ -19,6 +19,9 @@ export class TableListComponent {
   @Input() selectedTable?: TableModel;
   @Output() selectedTableChange = new EventEmitter<TableModel | undefined>();
 
+  @Input() tableLoading?: boolean;
+  @Input() deleteLoading?: boolean;
+
 
   refreshList(): void {
     this.listRefreshEvent.next();

@@ -1,0 +1,108 @@
+<div class="grid min-h-screen">
+  <div class="col-12 lg:col-8">
+    <div class="flex flex-wrap min-w-full flex-grow-1">
+      <div class="flex align-items-center justify-content-start font-bold mt-2 ml-2 w-full">
+        <h2 class="mb-0">Inicio</h2>
+      </div>
+      <div class="flex align-content-start justify-content-start ml-2 w-full">
+        <h5 class="mt-1">Resumen de las tareas</h5>
+      </div>
+      <div
+        class="flex flex-wrap md:flex-nowrap align-items-center justify-content-evenly m-2 border-round w-full h-full">
+        <div class="flex flex-wrap bg-primary m-2 p-3 border-round-3xl w-5 md:w-4 h-8rem">
+          <div class="flex font-bold justify-content-between w-full">
+            <span>Conexiones</span>
+            <i class="pi pi-database text-lg md:text-2xl"></i>
+          </div>
+          <div class="flex font-bold align-items-end justify-content-end w-full text-4xl">
+            <span>4</span>
+          </div>
+        </div>
+        <div class="flex flex-wrap bg-primary m-2 p-3 border-round-3xl w-5 md:w-4 h-8rem">
+          <div class="flex font-bold justify-content-between w-full">
+            <span>Proyectos</span>
+            <i class="pi pi-briefcase text-lg md:text-2xl"></i>
+          </div>
+          <div class="flex font-bold align-items-end justify-content-end w-full text-4xl">
+            <span>2</span>
+          </div>
+        </div>
+        <div class="flex flex-wrap bg-primary m-2 p-3 border-round-3xl w-5 md:w-4 h-8rem">
+          <div class="flex font-bold justify-content-between w-full">
+            <span>Ejecuciones</span>
+            <i class="pi pi-bolt text-lg md:text-2xl"></i>
+          </div>
+          <div class="flex font-bold align-items-end justify-content-end w-full text-4xl">
+            <span>30</span>
+          </div>
+        </div>
+      </div>
+
+
+
+
+
+      <div class="flex align-items-center justify-content-start font-bold mt-2 ml-2 w-full">
+        <h2 class="mb-0">Pre-requisitos</h2>
+      </div>
+      <div class="flex align-content-start justify-content-start ml-2 w-full">
+        <h5 class="mt-1">Sigue estos pasos para comenzar a migrar los datos:</h5>
+      </div>
+      <div
+        class="flex flex-wrap md:flex-nowrap align-items-center justify-content-evenly m-2 border-round w-full h-full">
+        <div class="flex flex-wrap bg-primary m-2 p-3 border-round-3xl w-5 md:w-4 h-8rem">
+          <div class="flex font-bold justify-content-between w-full">
+            <span>1. Conexión Origen</span>
+            <i class="pi pi-database text-lg md:text-2xl"></i>
+          </div>
+          <div class="flex font-bold align-items-end justify-content-end w-full text-4xl">
+            <p-button label="Crear" severity="secondary" (onClick)="onShowConnectionWizard()"></p-button>
+          </div>
+        </div>
+        <div class="flex flex-wrap bg-primary m-2 p-3 border-round-3xl w-5 md:w-4 h-8rem">
+          <div class="flex font-bold justify-content-between w-full">
+            <span>2. Conexión Destino</span>
+            <i class="pi pi-database text-lg md:text-2xl"></i>
+          </div>
+          <div class="flex font-bold align-items-end justify-content-end w-full text-4xl">
+            <p-button label="Crear" severity="secondary" (onClick)="onShowConnectionWizard()"></p-button>
+          </div>
+        </div>
+        <div class="flex flex-wrap bg-primary m-2 p-3 border-round-3xl w-5 md:w-4 h-8rem">
+          <div class="flex font-bold justify-content-between w-full">
+            <span>3. Proyecto</span>
+            <i class="pi pi-briefcase text-lg md:text-2xl"></i>
+          </div>
+          <div class="flex font-bold align-items-end justify-content-end w-full text-4xl">
+            <p-button label="Crear" severity="secondary" (onClick)="onShowProjectWizard()"></p-button>
+          </div>
+        </div>
+      </div>
+      <app-project-creation-wizard [(showWizard)]="showProjectWizard"></app-project-creation-wizard>
+      <app-connection-creation-wizard [(showWizard)]="showConnWizard"></app-connection-creation-wizard>
+
+
+
+
+
+    </div>
+  </div>
+
+  <div class="col-12 lg:col-4 flex align-content-start">
+    <div class="min-w-full min-h-full align-content-start flex-grow-1">
+      <div class="align-items-center justify-content-start font-bold w-full ">
+        <h3>Acceso rápido</h3>
+      </div>
+      <div class="align-content-start justify-content-start w-full">
+        <p-tabView>
+          <p-tabPanel header="Conexiones">
+            <div connQuickAccessList [connectionList]="connectionList" [connectionsLoading]="connsLoading"></div>
+          </p-tabPanel>
+          <p-tabPanel header="Proyectos">
+            <div projQuickAccessList [projectList]="projectList" [projectsLoading]="projsLoading"></div>
+          </p-tabPanel>
+        </p-tabView>
+      </div>
+    </div>
+  </div>
+</div>

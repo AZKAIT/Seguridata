@@ -1,0 +1,33 @@
+<p-table [value]="defList" [tableStyle]="{ 'min-width': '50rem' }">
+  <ng-template pTemplate="caption">
+    <div class="flex align-items-center justify-content-between">
+      &nbsp;
+      <div>
+        <p-button icon="pi pi-plus" [text]="true" (onClick)="createDef()"></p-button>
+      </div>
+    </div>
+  </ng-template>
+  <ng-template pTemplate="header">
+    <tr>
+      <th>Col. Origen</th>
+      <th>&nbsp;</th>
+      <th>Función</th>
+      <th>&nbsp;</th>
+      <th>Col. Destino</th>
+      <th>&nbsp;</th>
+    </tr>
+  </ng-template>
+  <ng-template pTemplate="body" let-definition let-rowIndex="rowIndex">
+    <tr defDataRow [sourceColumnList]="sourceColumnList" [targetColumnList]="targetColumnList"
+      (removeDefinition)="onRemoveDefinition(rowIndex)"></tr>
+  </ng-template>
+  <ng-template pTemplate="summary">
+    &nbsp;
+    <div>
+      <p-button icon="pi pi-plus" [text]="true" (onClick)="createDef()"></p-button>
+    </div>
+  </ng-template>
+</p-table>
+
+<p-button (click)="submitDefinitions()" label="Guardar" styleClass="p-button-text"
+  [loading]="formLoading || false"></p-button>

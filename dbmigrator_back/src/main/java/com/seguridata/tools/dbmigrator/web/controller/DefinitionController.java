@@ -32,7 +32,7 @@ public class DefinitionController {
         if ("00".equals(definitionResponse.getCode())) {
             return ResponseEntity.ok(definitionResponse);
         } else {
-            return ResponseEntity.status(HttpStatus.CONFLICT).body(definitionResponse);
+            return ResponseEntity.status(HttpStatus.NO_CONTENT).body(definitionResponse);
         }
     }
 

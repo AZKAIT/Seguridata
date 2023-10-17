@@ -17,6 +17,9 @@ export class ConnectionListComponent {
   @Input() selectedConn?: ConnectionModel;
   @Output() selectedConnChange = new EventEmitter<ConnectionModel | undefined>();
 
+  @Input() tableLoading?: boolean;
+  @Input() deleteLoading?: boolean;
+
   refreshList(): void {
     this.listRefreshEvent.next();
   }

@@ -1,4 +1,15 @@
-<app-definition-list [plan]="plan" [defList]="defList" [(selectedDef)]="selectedDef" (listRefreshEvent)="onExecuteRefresh();"
-(editDefEvent)="onEditDefinition()" (deleteDefEvent)="onDeleteDef()" (createDefEvent)="onCreateDef()"></app-definition-list>
+<app-definition-list [plan]="plan" [defList]="defList" [(selectedDef)]="selectedDef"
+  (listRefreshEvent)="onExecuteRefresh();" [tableLoading]="tableLoading" [deleteLoading]="deleteLoading"
+  (editDefEvent)="onEditDefinition()" (deleteDefEvent)="onDeleteDef()"
+  (createDefEvent)="onCreateDef()"></app-definition-list>
 
-<app-definition-data-form *ngIf="plan" [definition]="selectedDef" [sourceColumnList]="sourceColumnList" [targetColumnList]="targetColumnList" (saveDef)="saveDefData($event)"></app-definition-data-form>
+<p-dialog header="Información de la Definición" [(visible)]="showUpdateForm" [style]="{width: '50vw'}">
+  <app-definition-data-form *ngIf="plan && showUpdateForm" [definition]="selectedDef"
+    [sourceColumnList]="sourceColumnList" [targetColumnList]="targetColumnList" (saveDef)="saveDefData($event)"
+    [formLoading]="formLoading"></app-definition-data-form>
+</p-dialog>
+
+<p-dialog header="Información de la Definición" [(visible)]="showCreateForm" [style]="{width: '50vw'}">
+<app-definition-batch-form *ngIf="showCreateForm" [sourceColumnList]="sourceColumnList" [formLoading]="formLoading"
+  [targetColumnList]="targetColumnList" (saveDefList)="saveDefinitionsBatch($event)"></app-definition-batch-form>
+</p-dialog>

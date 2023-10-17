@@ -1,7 +1,10 @@
-<app-connection-list [connectionList]="connectionList" [(selectedConn)]="selectedConn" (listRefreshEvent)="onExecuteRefresh();"
+<app-connection-list [connectionList]="connectionList" [(selectedConn)]="selectedConn" (listRefreshEvent)="onExecuteRefresh();" [tableLoading]="tableLoading" [deleteLoading]="deleteLoading"
   (editConnEvent)="onEditConnection()" (deleteConnEvent)="onDeleteConnection()" (createConnEvent)="onCreateConnection()"></app-connection-list>
 
 <app-tables-container [connection]="selectedConn"></app-tables-container>
 
-<app-connection-data-form *ngIf="showForm" [connection]="selectedConn"
+
+<p-dialog header="Información de la Conexión" [(visible)]="showForm" [modal]="true" [style]="{width: '50vw'}" >
+<app-connection-data-form  [connection]="selectedConn" [formLoading]="formLoading"
   (saveConnection)="saveConnectionData($event)"></app-connection-data-form>
+</p-dialog>

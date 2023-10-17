@@ -9,6 +9,7 @@ import { PlanListComponent } from './components/lists/plan-list/plan-list.compon
 import { TableModule } from 'primeng/table';
 import { ButtonModule } from 'primeng/button';
 import { CardModule } from 'primeng/card';
+import { DialogModule } from 'primeng/dialog';
 
 import { InputTextModule } from 'primeng/inputtext';
 import { DropdownModule } from 'primeng/dropdown';
@@ -33,13 +34,15 @@ import { DefinitionsModule } from '../definitions/definitions.module';
     TableModule,
     ButtonModule,
     CardModule,
+    DialogModule,
 
     InputTextModule,
     DropdownModule,
     InputNumberModule
   ],
   exports: [
-    PlansContainerComponent
+    PlansContainerComponent,
+    PlanDataFormComponent
   ]
 })
 export class PlansModule { }

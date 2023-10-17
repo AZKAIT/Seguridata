@@ -2,11 +2,7 @@ import { Component, Input, Output, EventEmitter } from '@angular/core';
 import { FormBuilder, FormGroup } from '@angular/forms';
 import { DatabaseType } from 'src/app/common/enums/database-type';
 import { ConnectionModel } from 'src/app/common/models/connection-model';
-
-type SelectionTypes = {
-  name: string;
-  code: string;
-};
+import { SelectionTypes } from 'src/app/common/types/selection-types';
 
 @Component({
   selector: 'app-connection-data-form',
@@ -16,13 +12,12 @@ type SelectionTypes = {
 export class ConnectionDataFormComponent {
 
   @Output() saveConnection = new EventEmitter<ConnectionModel>();
+  @Input() formLoading?: boolean;
 
   _connection: ConnectionModel | undefined;
 
   connFormGroup: FormGroup;
   dbTypes: SelectionTypes[];
-
-  password = '';
 
 
   constructor(private _formBuilder: FormBuilder) {
@@ -54,9 +49,6 @@ export class ConnectionDataFormComponent {
     this._connection = connection;
     if (connection) {
       this.connFormGroup.patchValue(connection);
-      if (connection.locked) {
-        this.connFormGroup.disable();
-      }
     } else {
       this.connFormGroup.reset();
     }

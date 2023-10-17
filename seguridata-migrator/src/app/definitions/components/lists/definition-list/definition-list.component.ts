@@ -19,6 +19,9 @@ export class DefinitionListComponent {
   @Input() selectedDef?: DefinitionModel;
   @Output() selectedDefChange = new EventEmitter<DefinitionModel | undefined>();
 
+  @Input() tableLoading?: boolean;
+  @Input() deleteLoading?: boolean;
+
 
   refreshList(): void {
     this.listRefreshEvent.next();

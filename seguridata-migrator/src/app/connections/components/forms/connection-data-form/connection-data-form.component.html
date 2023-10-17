@@ -1,61 +1,60 @@
-<p-card header="Información de la Conexión">
-  <form [formGroup]="connFormGroup">
-    <div class="field">
-      <span class="p-float-label">
-        <input pInputText id="name" formControlName="name" />
-        <label htmlFor="name">Nombre</label>
-      </span>
-    </div>
-    <div class="field">
-      <span class="p-float-label">
-        <textarea id="description" formControlName="description" rows="5" cols="30" pInputTextarea></textarea>
-        <label for="description">Descripción</label>
-      </span>
-    </div>
-    <div class="field">
-      <span class="p-float-label">
-        <input pInputText id="host" formControlName="host" />
-        <label htmlFor="host">Host</label>
-      </span>
-    </div>
-    <div class="field">
-      <span class="p-float-label">
-        <p-inputNumber inputId="port" formControlName="port"> </p-inputNumber>
-        <label htmlFor="port">Puerto</label>
-      </span>
-    </div>
-    <div class="field">
-      <span class="p-float-label">
-        <input pInputText id="object-service" formControlName="objectService" />
-        <label htmlFor="object-service">Servicio / Instancia</label>
-      </span>
-    </div>
-    <div class="field">
-      <span class="p-float-label">
-        <input pInputText id="database" formControlName="database" />
-        <label htmlFor="database">Base de Datos</label>
-      </span>
-    </div>
-    <div class="field">
-      <span class="p-float-label">
-        <input pInputText id="username" formControlName="username" />
-        <label htmlFor="username">Usuario</label>
-      </span>
-    </div>
-    <div class="field">
-      <span class="p-float-label">
-        <p-password formControlName="password" [feedback]="false"></p-password>
-        <label for="password">Password</label>
+<form [formGroup]="connFormGroup">
+  <div class="field">
+    <span class="p-float-label">
+      <input pInputText id="name" formControlName="name" />
+      <label htmlFor="name">Nombre</label>
     </span>
-    </div>
-    <div class="field">
-      <span class="p-float-label">
-        <p-dropdown formControlName="type" placeholder="Tipo de base" [options]="dbTypes" optionLabel="name"
-          optionValue="code" inputId="db-type"></p-dropdown>
-        <label for="db-type">Seleccione proveedor</label>
-      </span>
-    </div>
+  </div>
+  <div class="field">
+    <span class="p-float-label">
+      <textarea id="description" formControlName="description" rows="5" cols="30" pInputTextarea></textarea>
+      <label for="description">Descripción</label>
+    </span>
+  </div>
+  <div class="field">
+    <span class="p-float-label">
+      <input pInputText id="host" formControlName="host" />
+      <label htmlFor="host">Host</label>
+    </span>
+  </div>
+  <div class="field">
+    <span class="p-float-label">
+      <p-inputNumber inputId="port" formControlName="port" [useGrouping]="false"> </p-inputNumber>
+      <label htmlFor="port">Puerto</label>
+    </span>
+  </div>
+  <div class="field">
+    <span class="p-float-label">
+      <input pInputText id="object-service" formControlName="objectService" />
+      <label htmlFor="object-service">Servicio / Instancia</label>
+    </span>
+  </div>
+  <div class="field">
+    <span class="p-float-label">
+      <input pInputText id="database" formControlName="database" />
+      <label htmlFor="database">Base de Datos / Namespace</label>
+    </span>
+  </div>
+  <div class="field">
+    <span class="p-float-label">
+      <input pInputText id="username" formControlName="username" />
+      <label htmlFor="username">Usuario</label>
+    </span>
+  </div>
+  <div class="field">
+    <span class="p-float-label">
+      <input id="password" type="password" pPassword formControlName="password" [feedback]="false" />
+      <label for="password">Password</label>
+    </span>
+  </div>
+  <div class="field">
+    <span class="p-float-label">
+      <p-dropdown formControlName="type" placeholder="Tipo de base" appendTo="body" [options]="dbTypes"
+        optionLabel="name" optionValue="code" inputId="db-type"></p-dropdown>
+      <label for="db-type">Seleccione proveedor</label>
+    </span>
+  </div>
 
-    <p-button type="submit" label="Guardar" (onClick)="submit()" [disabled]="!connFormGroup.valid"></p-button>
-  </form>
-</p-card>
+  <p-button type="submit" label="Guardar" (onClick)="submit()" [loading]="formLoading || false"
+    [disabled]="!connFormGroup.valid"></p-button>
+</form>

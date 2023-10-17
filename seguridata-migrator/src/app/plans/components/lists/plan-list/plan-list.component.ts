@@ -19,6 +19,9 @@ export class PlanListComponent {
   @Input() selectedPlan?: PlanModel;
   @Output() selectedPlanChange = new EventEmitter<PlanModel | undefined>();
 
+  @Input() tableLoading?: boolean;
+  @Input() deleteLoading?: boolean;
+
 
   refreshList(): void {
     this.listRefreshEvent.next();

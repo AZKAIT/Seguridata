@@ -1,0 +1,37 @@
+<ng-container *ngIf="connectionsLoading">
+  <div class="flex flex-wrap justify-content-center min-w-full min-h-full">
+    <i class="pi pi-spin pi-spinner" style="font-size: 2rem"></i>
+  </div>
+</ng-container>
+<ng-container *ngIf="connectionList">
+  <div class="flex flex-wrap overflow-y-scroll min-w-full min-h-full">
+    <ng-container *ngFor="let connection of connectionList">
+      <div class="flex flex-nowrap my-1 w-full border-round-3xl hover:bg-primary">
+        <div class="flex flex-wrap m-0 w-6">
+          <div class="flex align-items-center justify-content-start font-bold mt-2 ml-2 w-full">
+            <h4 class="mb-0">{{connection.name}}</h4>
+          </div>
+          <div class="flex align-content-start justify-content-start ml-2 w-full">
+            <h6 class="mt-1">{{connection.description}}</h6>
+          </div>
+        </div>
+
+        <div class="flex flex-wrap m-0 w-3">
+          <div class="flex align-items-center justify-content-start font-bold mt-2 ml-2 w-full">
+            <h5 class="mb-0">Tipo</h5>
+          </div>
+          <div class="flex align-content-start justify-content-start ml-2 w-full">
+            <h6 class="mt-1">{{connection.type}}</h6>
+          </div>
+        </div>
+        <div class="flex flex-wrap m-0 w-3">
+
+        </div>
+      </div>
+    </ng-container>
+  </div>
+</ng-container>
+
+<ng-container *ngIf="!connectionList && !connectionsLoading">
+  No Hay Conexiones
+</ng-container>

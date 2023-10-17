@@ -32,7 +32,7 @@ public class PlanDefinitionController {
         if ("00".equals(definitionsResponse.getCode())) {
             return ResponseEntity.ok(definitionsResponse);
         } else {
-            return ResponseEntity.status(HttpStatus.CONFLICT).body(definitionsResponse);
+            return ResponseEntity.status(HttpStatus.NO_CONTENT).body(definitionsResponse);
         }
     }
 

@@ -1,3 +1,7 @@
 export enum ColumnDataType {
-  STRING, NUMBER, BINARY, DATE, CHAR
+  STRING = 'Texto',
+  NUMBER = 'Numérico',
+  BINARY = 'Binario',
+  DATE = 'Fecha',
+  CHAR = 'Caractér'
 }
