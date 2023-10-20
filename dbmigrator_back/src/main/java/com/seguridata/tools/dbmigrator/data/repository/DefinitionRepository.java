@@ -60,4 +60,8 @@ public class DefinitionRepository {
                 Criteria.where("targetColumn").is(new ObjectId(columnId)));
         return this.mongoTemplate.exists(query(containsColumn), DefinitionEntity.class);
     }
+
+    public List<DefinitionEntity> saveBatch(List<DefinitionEntity> plans) {
+        return new ArrayList<>(this.mongoTemplate.insert(plans, DefinitionEntity.class));
+    }
 }

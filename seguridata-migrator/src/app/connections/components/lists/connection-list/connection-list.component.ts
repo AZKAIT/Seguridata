@@ -1,4 +1,5 @@
 import { Component, EventEmitter, Input, Output } from '@angular/core';
+import { TableRowSelectEvent, TableRowUnSelectEvent } from 'primeng/table';
 import { ConnectionModel } from 'src/app/common/models/connection-model';
 
 @Component({
@@ -37,8 +38,11 @@ export class ConnectionListComponent {
   }
 
 
-  onSelectedConnectionFromList(connection: ConnectionModel) {
-    this.selectedConn = connection;
+  onRowSelect(event : TableRowSelectEvent) {
+    this.selectedConnChange.emit(this.selectedConn);
+  }
+
+  onRowUnselect(event : TableRowUnSelectEvent) {
     this.selectedConnChange.emit(this.selectedConn);
   }
 }

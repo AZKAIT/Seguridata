@@ -46,6 +46,7 @@ public class ColumnMapper {
         columnModel.setDescription(column.getDescription());
         columnModel.setDataType(column.getDataType());
         columnModel.setDataLength(column.getDataLength());
+        columnModel.setIdentity(column.getIdentity());
 
         return columnModel;
     }

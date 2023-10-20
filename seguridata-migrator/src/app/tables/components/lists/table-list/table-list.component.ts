@@ -1,4 +1,5 @@
 import { Component, EventEmitter, Input, Output } from '@angular/core';
+import { TableRowSelectEvent, TableRowUnSelectEvent } from 'primeng/table';
 import { ConnectionModel } from 'src/app/common/models/connection-model';
 import { TableModel } from 'src/app/common/models/table-model';
 
@@ -39,8 +40,11 @@ export class TableListComponent {
     this.createTableEvent.next();
   }
 
-  onSelectedTableFromList(table: TableModel) {
-    this.selectedTable = table;
+  onRowSelect(event : TableRowSelectEvent) {
+    this.selectedTableChange.emit(this.selectedTable);
+  }
+
+  onRowUnselect(event : TableRowUnSelectEvent) {
     this.selectedTableChange.emit(this.selectedTable);
   }
 }

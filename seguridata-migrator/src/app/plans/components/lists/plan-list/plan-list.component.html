@@ -1,6 +1,6 @@
 <ng-container *ngIf="planList">
   <p-card [header]="'Planes de ' + (project? project.name: 'N/A')">
-    <p-table [value]="planList" selectionMode="single" dataKey="id" [selection]="selectedPlan" (selectionChange)="onSelectedPlanFromList($event)" [loading]="tableLoading"
+    <p-table [value]="planList" selectionMode="single" dataKey="id" [(selection)]="selectedPlan" (onRowSelect)="onRowSelect($event)" (onRowUnselect)="onRowUnselect($event)" [loading]="tableLoading"
       [paginator]="true" [rows]="10" [tableStyle]="{ 'min-width': '50rem' }">
       <ng-template pTemplate="caption">
         <div class="flex align-items-center justify-content-between">
@@ -25,7 +25,7 @@
         </tr>
       </ng-template>
       <ng-template pTemplate="body" let-plan>
-        <tr [pSelectableRow]="plan">
+        <tr>
           <td>
             <p-tableRadioButton [value]="plan"></p-tableRadioButton>
           </td>

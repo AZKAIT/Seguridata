@@ -1,5 +1,6 @@
 package com.seguridata.tools.dbmigrator.business.service;
 
+import com.seguridata.tools.dbmigrator.business.client.StompMessageClient;
 import com.seguridata.tools.dbmigrator.data.entity.ErrorTrackingEntity;
 import com.seguridata.tools.dbmigrator.data.entity.ProjectEntity;
 import com.seguridata.tools.dbmigrator.data.repository.ErrorTrackingRepository;
@@ -13,10 +14,13 @@ import java.util.List;
 public class ErrorTrackingService {
 
     private final ErrorTrackingRepository errorTrackingRepo;
+    private final StompMessageClient stompMsgClient;
 
     @Autowired
-    public ErrorTrackingService(ErrorTrackingRepository errorTrackingRepo) {
+    public ErrorTrackingService(ErrorTrackingRepository errorTrackingRepo,
+                                StompMessageClient stompMsgClient) {
         this.errorTrackingRepo = errorTrackingRepo;
+        this.stompMsgClient = stompMsgClient;
     }
 
     public void createErrorTrackingForProject(ProjectEntity project, ErrorTrackingEntity errorTracking) {
@@ -24,7 +28,8 @@ public class ErrorTrackingService {
         errorTracking.setId(null);
         errorTracking.setProject(project);
 
-        this.errorTrackingRepo.createErrorTracking(errorTracking);
+        ErrorTrackingEntity errorTrack = this.errorTrackingRepo.createErrorTracking(errorTracking);
+        this.stompMsgClient.sendProjectExecutionError(project, errorTrack);
     }
 
     public List<ErrorTrackingEntity> getErrorTrackingForProject(String projectId) {

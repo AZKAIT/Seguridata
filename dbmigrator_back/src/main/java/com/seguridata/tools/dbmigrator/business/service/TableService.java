@@ -2,6 +2,7 @@ package com.seguridata.tools.dbmigrator.business.service;
 
 import com.seguridata.tools.dbmigrator.business.exception.DuplicateDataException;
 import com.seguridata.tools.dbmigrator.business.exception.EmptyResultException;
+import com.seguridata.tools.dbmigrator.business.exception.InvalidUpdateException;
 import com.seguridata.tools.dbmigrator.business.exception.MissingObjectException;
 import com.seguridata.tools.dbmigrator.data.entity.ConnectionEntity;
 import com.seguridata.tools.dbmigrator.data.entity.TableEntity;
@@ -68,6 +69,9 @@ public class TableService {
     }
 
     public List<TableEntity> saveBatch(ConnectionEntity connection, List<TableEntity> tables) {
+        if (CollectionUtils.isEmpty(tables)) {
+            throw new InvalidUpdateException("Empty Tables, cannot save");
+        }
         return tables.stream().map(table -> {
                     try {
                         return this.createNewTable(connection, table);

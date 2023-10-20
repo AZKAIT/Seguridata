@@ -1,4 +1,5 @@
 import { Component, EventEmitter, Input, Output } from '@angular/core';
+import { TableRowSelectEvent, TableRowUnSelectEvent } from 'primeng/table';
 import { ProjectStatus } from 'src/app/common/enums/project-status';
 import { ProjectModel } from 'src/app/common/models/project-model';
 
@@ -41,9 +42,11 @@ export class ProjectListComponent {
     this.createProjectEvent.next();
   }
 
+  onRowSelect(event : TableRowSelectEvent) {
+    this.selectedProjectChange.emit(this.selectedProject);
+  }
 
-  onSelectedProjectFromList(project: ProjectModel) {
-    this.selectedProject = project;
+  onRowUnselect(event : TableRowUnSelectEvent) {
     this.selectedProjectChange.emit(this.selectedProject);
   }
 

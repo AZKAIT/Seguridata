@@ -32,7 +32,8 @@ export class ProjectDataFormComponent {
       name: [''],
       description: [''],
       sourceConnection: [undefined],
-      targetConnection: [undefined]
+      targetConnection: [undefined],
+      autoPopulate: [false]
     });
   }
 

@@ -1,7 +1,7 @@
 <ng-container *ngIf="connectionList">
   <p-card header="Conexiones">
-    <p-table [value]="connectionList" selectionMode="single" dataKey="id" [selection]="selectedConn"
-      (selectionChange)="onSelectedConnectionFromList($event)" [paginator]="true" [rows]="10" [loading]="tableLoading"
+    <p-table [value]="connectionList" selectionMode="single" dataKey="id" [(selection)]="selectedConn"
+      (onRowSelect)="onRowSelect($event)" (onRowUnselect)="onRowUnselect($event)" [paginator]="true" [rows]="10" [loading]="tableLoading"
       [tableStyle]="{ 'min-width': '50rem' }">
       <ng-template pTemplate="caption">
         <div class="flex align-items-center justify-content-between">
@@ -27,7 +27,7 @@
         </tr>
       </ng-template>
       <ng-template pTemplate="body" let-connection>
-        <tr [pSelectableRow]="connection">
+        <tr>
           <td>
             <p-tableRadioButton [value]="connection"></p-tableRadioButton>
           </td>

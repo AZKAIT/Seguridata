@@ -1,6 +1,6 @@
 package com.seguridata.tools.dbmigrator.web.controller;
 
-import com.seguridata.tools.dbmigrator.business.facade.SyncUpFacade;
+import com.seguridata.tools.dbmigrator.business.facade.ConnectionSyncUpFacade;
 import com.seguridata.tools.dbmigrator.data.model.ColumnModel;
 import com.seguridata.tools.dbmigrator.data.model.TableModel;
 import com.seguridata.tools.dbmigrator.data.wrapper.ResponseWrapper;
@@ -18,16 +18,16 @@ import java.util.List;
 @RequestMapping("connections/{connectionId}/sync")
 public class ConnectionSyncUpController {
 
-    private final SyncUpFacade syncUpFacade;
+    private final ConnectionSyncUpFacade connectionSyncUpFacade;
 
     @Autowired
-    public ConnectionSyncUpController(SyncUpFacade syncUpFacade) {
-        this.syncUpFacade = syncUpFacade;
+    public ConnectionSyncUpController(ConnectionSyncUpFacade connectionSyncUpFacade) {
+        this.connectionSyncUpFacade = connectionSyncUpFacade;
     }
 
     @PostMapping("tables")
     public ResponseEntity<ResponseWrapper<List<TableModel>>> syncUpConnection(@PathVariable String connectionId) {
-        ResponseWrapper<List<TableModel>> tableResponse = this.syncUpFacade.syncUpConnectionTables(connectionId);
+        ResponseWrapper<List<TableModel>> tableResponse = this.connectionSyncUpFacade.syncUpConnectionTables(connectionId);
         if ("00".equals(tableResponse.getCode())) {
             return ResponseEntity.status(HttpStatus.CREATED).body(tableResponse);
         } else {
@@ -37,7 +37,7 @@ public class ConnectionSyncUpController {
 
     @PostMapping("columns")
     public ResponseEntity<ResponseWrapper<List<ColumnModel>>> syncUpTables(@PathVariable String connectionId) {
-        ResponseWrapper<List<ColumnModel>> columnResponse = this.syncUpFacade.syncUpConnectionColumns(connectionId);
+        ResponseWrapper<List<ColumnModel>> columnResponse = this.connectionSyncUpFacade.syncUpConnectionColumns(connectionId);
         if ("00".equals(columnResponse.getCode())) {
             return ResponseEntity.status(HttpStatus.CREATED).body(columnResponse);
         } else {

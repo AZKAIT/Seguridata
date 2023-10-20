@@ -1,6 +1,6 @@
 <ng-container *ngIf="columnList">
   <p-card [header]="'Columnas de ' + (table? table.name: 'N/A')">
-    <p-table [value]="columnList" selectionMode="single" dataKey="id" [selection]="selectedColumn" (selectionChange)="onSelectedColumnFromList($event)" [loading]="tableLoading"
+    <p-table [value]="columnList" selectionMode="single" dataKey="id" [(selection)]="selectedColumn" (onRowSelect)="onRowSelect($event)" (onRowUnselect)="onRowUnselect($event)" [loading]="tableLoading"
       [paginator]="true" [rows]="10" [tableStyle]="{ 'min-width': '50rem' }">
       <ng-template pTemplate="caption">
         <div class="flex align-items-center justify-content-between">
@@ -23,14 +23,14 @@
         </tr>
       </ng-template>
       <ng-template pTemplate="body" let-column>
-        <tr [pSelectableRow]="column">
+        <tr>
           <td>
             <p-tableRadioButton [value]="column"></p-tableRadioButton>
           </td>
           <td>{{ column.name }}</td>
           <td>{{ column.description }}</td>
           <td>{{ column.dataType }}</td>
-          <td>{{ column.orderCodataLengthlumnName }}</td>
+          <td>{{ column.dataLength }}</td>
         </tr>
       </ng-template>
     </p-table>

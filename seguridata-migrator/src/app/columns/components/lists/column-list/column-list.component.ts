@@ -1,4 +1,5 @@
 import { Component, Input, Output, EventEmitter } from '@angular/core';
+import { TableRowSelectEvent, TableRowUnSelectEvent } from 'primeng/table';
 import { ColumnModel } from 'src/app/common/models/column-model';
 import { TableModel } from 'src/app/common/models/table-model';
 
@@ -39,8 +40,11 @@ export class ColumnListComponent {
     this.createColumnEvent.next();
   }
 
-  onSelectedColumnFromList(column: ColumnModel) {
-    this.selectedColumn = column;
+  onRowSelect(event : TableRowSelectEvent) {
+    this.selectedColumnChange.emit(this.selectedColumn);
+  }
+
+  onRowUnselect(event : TableRowUnSelectEvent) {
     this.selectedColumnChange.emit(this.selectedColumn);
   }
 }

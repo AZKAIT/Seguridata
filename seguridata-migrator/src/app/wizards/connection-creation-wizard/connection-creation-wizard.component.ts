@@ -4,6 +4,7 @@ import { Subscription } from 'rxjs';
 import { WizardStepConfig } from '../types/wizard-step-config';
 import { WizardFormWrapper } from '../wrappers/wizard-form-wrapper';
 import { ConnectionFormWrapperComponent } from '../wrappers/connection-form-wrapper/connection-form-wrapper.component';
+import { Dialog } from 'primeng/dialog';
 import { TableFormWrapperComponent } from '../wrappers/table-form-wrapper/table-form-wrapper.component';
 import { ColumnFormWrapperComponent } from '../wrappers/column-form-wrapper/column-form-wrapper.component';
 
@@ -18,10 +19,11 @@ const columnsName = 'Columnas';
 })
 export class ConnectionCreationWizardComponent implements OnDestroy {
   @ViewChild(WizardStepContainerComponent) wzStepContainer!: WizardStepContainerComponent;
+  @ViewChild(Dialog, { static: true }) dialog!: Dialog;
 
   @Output() showWizardChange = new EventEmitter<boolean>();
 
-  private _showWizard: boolean = false;
+  _showWizard: boolean = false;
   private subsList: Subscription[] = [];
 
   wzStepConfigs: WizardStepConfig[];
@@ -85,7 +87,8 @@ export class ConnectionCreationWizardComponent implements OnDestroy {
     const projectForm = component as ConnectionFormWrapperComponent;
     this.subsList.push(projectForm.getResult()
       .subscribe(projectResult => {
-        this._showWizard = false;
+        console.log('Should close dialog')
+        this.dialog.close(new MouseEvent('click'));
       }));
   }
 }

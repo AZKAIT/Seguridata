@@ -8,6 +8,7 @@ import org.springframework.data.mongodb.core.query.Criteria;
 import org.springframework.data.mongodb.core.query.Query;
 import org.springframework.stereotype.Repository;
 
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -54,5 +55,9 @@ public class PlanRepository {
         Criteria containsTable = Criteria.where("").orOperator(Criteria.where("sourceTable").is(new ObjectId(tableId)),
                 Criteria.where("targetTable").is(new ObjectId(tableId)));
         return this.mongoTemplate.exists(query(containsTable), PlanEntity.class);
+    }
+
+    public List<PlanEntity> saveBatch(List<PlanEntity> plans) {
+        return new ArrayList<>(this.mongoTemplate.insert(plans, PlanEntity.class));
     }
 }

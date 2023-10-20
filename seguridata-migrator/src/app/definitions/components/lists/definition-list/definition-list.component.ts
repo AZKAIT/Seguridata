@@ -1,4 +1,5 @@
 import { Component, Input, Output, EventEmitter } from '@angular/core';
+import { TableRowSelectEvent, TableRowUnSelectEvent } from 'primeng/table';
 import { DefinitionModel } from 'src/app/common/models/definition-model';
 import { PlanModel } from 'src/app/common/models/plan-model';
 
@@ -39,8 +40,12 @@ export class DefinitionListComponent {
     this.createDefEvent.next();
   }
 
-  onSelectedDefFromList(def: DefinitionModel) {
-    this.selectedDef = def;
+
+  onRowSelect(event : TableRowSelectEvent) {
+    this.selectedDefChange.emit(this.selectedDef);
+  }
+
+  onRowUnselect(event : TableRowUnSelectEvent) {
     this.selectedDefChange.emit(this.selectedDef);
   }
 }

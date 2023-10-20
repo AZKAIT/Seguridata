@@ -6,6 +6,7 @@ import { PlanFormWrapperComponent } from '../wrappers/plan-form-wrapper/plan-for
 import { DefinitionFormWrapperComponent } from '../wrappers/definition-form-wrapper/definition-form-wrapper.component';
 import { WizardFormWrapper } from '../wrappers/wizard-form-wrapper';
 import { Subscription } from 'rxjs';
+import { Dialog } from 'primeng/dialog';
 
 const projectsName = 'Proyectos';
 const plansName = 'Planes';
@@ -18,10 +19,11 @@ const defsName = 'Definiciones';
 })
 export class ProjectCreationWizardComponent implements OnDestroy {
   @ViewChild(WizardStepContainerComponent) wzStepContainer!: WizardStepContainerComponent;
+  @ViewChild(Dialog, { static: true }) dialog!: Dialog;
 
   @Output() showWizardChange = new EventEmitter<boolean>();
 
-  private _showWizard: boolean = false;
+  _showWizard: boolean = false;
   private subsList: Subscription[] = [];
 
   wzStepConfigs: WizardStepConfig[];
@@ -104,7 +106,7 @@ export class ProjectCreationWizardComponent implements OnDestroy {
     const defForm = component as DefinitionFormWrapperComponent;
     this.subsList.push(defForm.getResult()
     .subscribe(defsResult => {
-      this._showWizard = false;
+      this.dialog.close(new MouseEvent('click'));
     }));
   }
 }

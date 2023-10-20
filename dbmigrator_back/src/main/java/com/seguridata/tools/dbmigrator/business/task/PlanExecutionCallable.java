@@ -2,6 +2,7 @@ package com.seguridata.tools.dbmigrator.business.task;
 
 import com.seguridata.tools.dbmigrator.business.exception.DBValidationException;
 import com.seguridata.tools.dbmigrator.business.exception.EmptyResultException;
+import com.seguridata.tools.dbmigrator.business.exception.MissingObjectException;
 import com.seguridata.tools.dbmigrator.business.manager.DatabaseQueryManager;
 import com.seguridata.tools.dbmigrator.business.service.ErrorTrackingService;
 import com.seguridata.tools.dbmigrator.data.constant.ConversionFunction;
@@ -10,6 +11,7 @@ import com.seguridata.tools.dbmigrator.data.entity.ErrorTrackingEntity;
 import com.seguridata.tools.dbmigrator.data.entity.PlanEntity;
 import com.seguridata.tools.dbmigrator.data.entity.ProjectEntity;
 import com.seguridata.tools.dbmigrator.data.entity.TableEntity;
+import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.dao.DuplicateKeyException;
@@ -67,6 +69,10 @@ public class PlanExecutionCallable implements Callable<String> {
         }
 
         try {
+            if (StringUtils.isBlank(sourceTable.getOrderColumnName())) {
+                throw new MissingObjectException(String.format("Order column for Table %s is not configured", sourceTable.getName()));
+            }
+
             List<DefinitionEntity> dataProcessDefinitions = this.plan.getDefinitions();
             if (CollectionUtils.isEmpty(dataProcessDefinitions)) {
                 throw new EmptyResultException("Definitions list is empty");
@@ -114,6 +120,8 @@ public class PlanExecutionCallable implements Callable<String> {
                 LOGGER.info("Processed {} rows of ({} / {}) next skip is {} for {} => {}",
                         currentRows, totalRowsSource, maxRows, skip, sourceTable.getName(), targetTable.getName());
             }
+        } catch (InterruptedException e) {
+            LOGGER.warn("Process was interrupted: {}", e.getMessage());
         } catch (Exception e) {
             LOGGER.error("Exception occurred on Task: {}", getStackTrace(e));
             ErrorTrackingEntity errorTracking = new ErrorTrackingEntity();

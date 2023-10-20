@@ -2,6 +2,7 @@ package com.seguridata.tools.dbmigrator.business.service;
 
 import com.seguridata.tools.dbmigrator.business.exception.DuplicateDataException;
 import com.seguridata.tools.dbmigrator.business.exception.EmptyResultException;
+import com.seguridata.tools.dbmigrator.business.exception.InvalidUpdateException;
 import com.seguridata.tools.dbmigrator.business.exception.MissingObjectException;
 import com.seguridata.tools.dbmigrator.data.entity.ColumnEntity;
 import com.seguridata.tools.dbmigrator.data.entity.TableEntity;
@@ -88,6 +89,9 @@ public class ColumnService {
     }
 
     public List<ColumnEntity> saveBatch(TableEntity table, List<ColumnEntity> columns) {
+        if (CollectionUtils.isEmpty(columns)) {
+            throw new InvalidUpdateException("Column list for %s is empty", table.getName());
+        }
         return columns.stream().map(column -> {
                     try {
                         return this.createColumn(table, column);

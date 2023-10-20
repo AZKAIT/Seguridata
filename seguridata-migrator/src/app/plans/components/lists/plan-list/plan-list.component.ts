@@ -1,4 +1,5 @@
 import { Component, Input, Output, EventEmitter } from '@angular/core';
+import { TableRowSelectEvent, TableRowUnSelectEvent } from 'primeng/table';
 import { PlanModel } from 'src/app/common/models/plan-model';
 import { ProjectModel } from 'src/app/common/models/project-model';
 
@@ -39,9 +40,11 @@ export class PlanListComponent {
     this.createPlanEvent.next();
   }
 
-  onSelectedPlanFromList(plan: PlanModel) {
-    this.selectedPlan = plan;
+  onRowSelect(event : TableRowSelectEvent) {
     this.selectedPlanChange.emit(this.selectedPlan);
   }
 
+  onRowUnselect(event : TableRowUnSelectEvent) {
+    this.selectedPlanChange.emit(this.selectedPlan);
+  }
 }

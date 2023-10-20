@@ -31,6 +31,8 @@ import java.util.Map;
 import java.util.Objects;
 import java.util.Optional;
 
+import static java.lang.Boolean.TRUE;
+
 @Component
 @Scope(value = ConfigurableBeanFactory.SCOPE_PROTOTYPE)
 public class DatabaseQueryManager {
@@ -114,10 +116,25 @@ public class DatabaseQueryManager {
     }
 
     public int insertDataBlockTo(TableEntity targetTable, List<DefinitionEntity> targetDefinitions, Map<String, Object> data) {
+        String turnIdentityInsertOn = StringUtils.EMPTY;
+        String turnIdentityInsertOff = StringUtils.EMPTY;
+        if (this.hasIdentity(targetTable)) {
+            turnIdentityInsertOn = this.queryResolver.identityInsertToggleQuery(targetTable, true);
+            turnIdentityInsertOff = this.queryResolver.identityInsertToggleQuery(targetTable, false);
+        }
+
         String query = this.queryResolver.insertToTargetTableQuery(targetTable, targetDefinitions);
+        query = String.format("%s; %s; %s", turnIdentityInsertOn, query, turnIdentityInsertOff);
         SqlParameterSource parameters = this.createParameters(targetDefinitions, data);
 
         return this.namedParamJdbcTemplate.update(query, parameters);
+    }
+
+    public boolean toggleIdentityInsert(TableEntity targetTable, boolean status) {
+        String query = this.queryResolver.identityInsertToggleQuery(targetTable, status);
+
+        this.namedParamJdbcTemplate.update(query, Collections.emptyMap());
+        return true;
     }
 
 
@@ -128,5 +145,9 @@ public class DatabaseQueryManager {
             namedParameters.addValue(paramName, data.get(paramName));
         });
         return namedParameters;
+    }
+
+    private boolean hasIdentity(TableEntity table) {
+        return table.getColumns().stream().map(ColumnEntity::getIdentity).anyMatch(TRUE::equals);
     }
 }

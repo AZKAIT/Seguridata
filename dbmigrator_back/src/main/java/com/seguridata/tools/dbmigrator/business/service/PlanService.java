@@ -82,4 +82,13 @@ public class PlanService {
             throw new ObjectLockedException("Table is present in Plan, can't delete");
         }
     }
+
+    public List<PlanEntity> savePlanListForProject(ProjectEntity project, List<PlanEntity> newPlans) {
+        newPlans.forEach(plan -> {
+            plan.setId(null);
+            plan.setProject(project);
+        });
+
+        return this.planRepo.saveBatch(newPlans);
+    }
 }

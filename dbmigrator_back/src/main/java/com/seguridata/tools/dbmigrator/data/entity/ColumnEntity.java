@@ -17,6 +17,7 @@ public class ColumnEntity {
     private ColumnDataType dataType;
     private Long dataLength;
     private Boolean sorting;
+    private Boolean identity;
     @DocumentReference(lazy = true)
     private TableEntity table;
 }

@@ -51,6 +51,10 @@
       <label for="select-conn-drop">Conexión Destino</label>
     </span>
   </div>
+  <div class="field">
+    <label>Auto-Generar dependencias <br /><p-toggleButton formControlName="autoPopulate" onLabel="Sí"
+        offLabel="No"></p-toggleButton></label>
+  </div>
 
   <p-button type="submit" label="Guardar" (onClick)="submit()" [disabled]="!projectFormGroup.valid"
     [loading]="formLoading || false"></p-button>

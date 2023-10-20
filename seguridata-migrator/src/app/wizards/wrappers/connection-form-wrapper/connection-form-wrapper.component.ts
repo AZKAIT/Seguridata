@@ -71,6 +71,8 @@ export class ConnectionFormWrapperComponent implements WizardFormWrapper<Connect
             if (this.ongoingConn && updatedConn) {
               this.ongoingConn = updatedConn;
               this.postSuccess('Actualizar Conexión', `Conexión ${updatedConn?.name} actualizada`);
+              this.emitNextIndex();
+              this._resultEmitter.next(this.ongoingConn);
             }
             this.formLoading = false;
           },
@@ -86,6 +88,8 @@ export class ConnectionFormWrapperComponent implements WizardFormWrapper<Connect
             if (newConn) {
               this.ongoingConn = newConn;
               this.postSuccess('Crear Conexión', `Conexión ${newConn?.name} creada`);
+              this.emitNextIndex();
+              this._resultEmitter.next(this.ongoingConn);
             }
             this.formLoading = false;
           },

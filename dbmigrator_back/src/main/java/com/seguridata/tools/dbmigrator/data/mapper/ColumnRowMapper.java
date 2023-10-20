@@ -14,6 +14,7 @@ public class ColumnRowMapper implements RowMapper<ColumnEntity> {
         column.setName(rs.getString("name"));
         column.setDataType(this.resolveDataType(rs.getString("dataType")));
         column.setDataLength(rs.getLong("dataLength"));
+        column.setIdentity(rs.getBoolean("isIdentity"));
 
         return column;
     }
@@ -39,6 +40,8 @@ public class ColumnRowMapper implements RowMapper<ColumnEntity> {
                 break;
             case "BLOB":
             case "image":
+            case "RAW":
+            case "varbinary":
                 columnDataType = ColumnDataType.BINARY;
                 break;
             default:

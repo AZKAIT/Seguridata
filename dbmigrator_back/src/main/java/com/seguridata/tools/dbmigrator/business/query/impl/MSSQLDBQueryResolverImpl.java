@@ -25,7 +25,7 @@ public class MSSQLDBQueryResolverImpl implements DBQueryResolver {
 
     @Override
     public String getColumnsQuery() {
-        return "SELECT TABLE_NAME AS 'tableName', COLUMN_NAME AS 'name', DATA_TYPE AS 'dataType', CHARACTER_MAXIMUM_LENGTH AS 'dataLength'" +
+        return "SELECT TABLE_NAME AS 'tableName', COLUMN_NAME AS 'name', DATA_TYPE AS 'dataType', CHARACTER_MAXIMUM_LENGTH AS 'dataLength', columnproperty(object_id(TABLE_NAME),COLUMN_NAME,'IsIdentity') AS 'isIdentity'" +
                 " FROM INFORMATION_SCHEMA.COLUMNS" +
                 " WHERE TABLE_NAME = :tableName AND TABLE_SCHEMA = :schema AND TABLE_CATALOG = :namespace";
     }
@@ -72,6 +72,15 @@ public class MSSQLDBQueryResolverImpl implements DBQueryResolver {
     @Override
     public String countQuery(String schemaTableName) {
         return "SELECT COUNT(*) AS Total FROM " + schemaTableName;
+    }
+
+
+    public String identityInsertToggleQuery(TableEntity table, boolean status) {
+        String statusText = "OFF";
+        if (status) {
+            statusText = "ON";
+        }
+        return String.format("SET IDENTITY_INSERT %s.%s %s", table.getSchema(), table.getName(), statusText);
     }
 
 

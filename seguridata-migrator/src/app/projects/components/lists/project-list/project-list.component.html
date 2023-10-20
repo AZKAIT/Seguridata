@@ -1,7 +1,7 @@
 <ng-container *ngIf="projectList">
   <p-card header="Proyectos">
-    <p-table [value]="projectList" selectionMode="single" dataKey="id" [selection]="selectedProject"
-      [loading]="tableLoading" (selectionChange)="onSelectedProjectFromList($event)" [paginator]="true" [rows]="10"
+    <p-table [value]="projectList" selectionMode="single" dataKey="id" [(selection)]="selectedProject"
+      [loading]="tableLoading" (onRowSelect)="onRowSelect($event)" (onRowUnselect)="onRowUnselect($event)" [paginator]="true" [rows]="10"
       [tableStyle]="{ 'min-width': '50rem' }">
       <ng-template pTemplate="caption">
         <div class="flex align-items-center justify-content-between">
@@ -32,7 +32,7 @@
         </tr>
       </ng-template>
       <ng-template pTemplate="body" let-project>
-        <tr [pSelectableRow]="project">
+        <tr>
           <td>
             <p-tableRadioButton [value]="project"></p-tableRadioButton>
           </td>

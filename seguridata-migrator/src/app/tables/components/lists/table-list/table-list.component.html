@@ -1,14 +1,16 @@
 <ng-container *ngIf="tableList">
   <p-card [header]="'Tablas de ' + (connection? connection.name: 'N/A')">
-    <p-table [value]="tableList" selectionMode="single" dataKey="id" [selection]="selectedTable" (selectionChange)="onSelectedTableFromList($event)" [loading]="tableLoading"
+    <p-table [value]="tableList" selectionMode="single" dataKey="id" [(selection)]="selectedTable"
+      (onRowSelect)="onRowSelect($event)" (onRowUnselect)="onRowUnselect($event)" [loading]="tableLoading"
       [paginator]="true" [rows]="10" [tableStyle]="{ 'min-width': '50rem' }">
       <ng-template pTemplate="caption">
         <div class="flex align-items-center justify-content-between">
           Tablas
-          <div >
+          <div>
             <p-button icon="pi pi-refresh" [text]="true" (onClick)="refreshList();"></p-button>
             <p-button icon="pi pi-pencil" [text]="true" (onClick)="editTable()" [disabled]="!selectedTable"></p-button>
-            <p-button icon="pi pi-trash" [text]="true" (onClick)="deleteTable()" [disabled]="!selectedTable" [loading]="deleteLoading || false"></p-button>
+            <p-button icon="pi pi-trash" [text]="true" (onClick)="deleteTable()" [disabled]="!selectedTable"
+              [loading]="deleteLoading || false"></p-button>
             <p-button icon="pi pi-plus" [text]="true" (onClick)="createTable()"></p-button>
           </div>
         </div>
@@ -23,7 +25,7 @@
         </tr>
       </ng-template>
       <ng-template pTemplate="body" let-table>
-        <tr [pSelectableRow]="table">
+        <tr>
           <td>
             <p-tableRadioButton [value]="table"></p-tableRadioButton>
           </td>

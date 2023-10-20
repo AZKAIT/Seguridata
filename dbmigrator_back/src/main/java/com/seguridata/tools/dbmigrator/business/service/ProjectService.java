@@ -1,5 +1,6 @@
 package com.seguridata.tools.dbmigrator.business.service;
 
+import com.seguridata.tools.dbmigrator.business.client.StompMessageClient;
 import com.seguridata.tools.dbmigrator.business.exception.EmptyResultException;
 import com.seguridata.tools.dbmigrator.business.exception.InvalidUpdateException;
 import com.seguridata.tools.dbmigrator.business.exception.MissingObjectException;
@@ -26,10 +27,13 @@ import static com.seguridata.tools.dbmigrator.data.constant.ProjectStatus.STOPPI
 public class ProjectService {
 
     private final ProjectRepository projectRepo;
+    private final StompMessageClient stompMsgClient;
 
     @Autowired
-    public ProjectService(ProjectRepository projectRepo) {
+    public ProjectService(ProjectRepository projectRepo,
+                          StompMessageClient stompMsgClient) {
         this.projectRepo = projectRepo;
+        this.stompMsgClient = stompMsgClient;
     }
 
     public ProjectEntity createProject(ProjectEntity project) {
@@ -103,7 +107,11 @@ public class ProjectService {
         }
 
         project.setStatus(newStatus);
-        return this.projectRepo.updateProjectStatus(project.getId(), newStatus);
+        boolean updated = this.projectRepo.updateProjectStatus(project.getId(), newStatus);
+        if (updated) {
+            this.stompMsgClient.sendProjectStatusChange(project, newStatus);
+        }
+        return updated;
     }
 
     public void projectContainsConn(ConnectionEntity connection) {

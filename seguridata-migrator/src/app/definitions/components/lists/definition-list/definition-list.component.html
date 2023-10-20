@@ -1,6 +1,6 @@
 <ng-container *ngIf="defList">
   <p-card [header]="'Definiciones de ' + (plan? plan.sourceTable.name + ' -> ' + plan.targetTable.name : 'N/A')">
-    <p-table [value]="defList" selectionMode="single" dataKey="id" [selection]="selectedDef" (selectionChange)="onSelectedDefFromList($event)" [loading]="tableLoading"
+    <p-table [value]="defList" selectionMode="single" dataKey="id" [(selection)]="selectedDef" (onRowSelect)="onRowSelect($event)" (onRowUnselect)="onRowUnselect($event)" [loading]="tableLoading"
       [paginator]="true" [rows]="10" [tableStyle]="{ 'min-width': '50rem' }">
       <ng-template pTemplate="caption">
         <div class="flex align-items-center justify-content-between">
@@ -22,7 +22,7 @@
         </tr>
       </ng-template>
       <ng-template pTemplate="body" let-definition>
-        <tr [pSelectableRow]="definition">
+        <tr>
           <td>
             <p-tableRadioButton [value]="definition"></p-tableRadioButton>
           </td>

@@ -6,3 +6,5 @@ spring:
   mongodb:
     embedded:
       version: 4.0.2
+      storage:
+        database-dir: "C:/Users/nacho/Development/azka/seguridata/migrator/"

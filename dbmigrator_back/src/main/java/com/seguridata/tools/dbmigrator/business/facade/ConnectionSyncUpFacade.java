@@ -1,5 +1,6 @@
 package com.seguridata.tools.dbmigrator.business.facade;
 
+import com.seguridata.tools.dbmigrator.business.client.StompMessageClient;
 import com.seguridata.tools.dbmigrator.business.event.TableCreatedEvent;
 import com.seguridata.tools.dbmigrator.business.exception.BaseCodeException;
 import com.seguridata.tools.dbmigrator.business.manager.DatabaseQueryManager;
@@ -26,11 +27,12 @@ import java.sql.SQLException;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
+import java.util.Objects;
 import java.util.stream.Collectors;
 
 @Component
-public class SyncUpFacade {
-    private static final Logger LOGGER = LoggerFactory.getLogger(SyncUpFacade.class);
+public class ConnectionSyncUpFacade {
+    private static final Logger LOGGER = LoggerFactory.getLogger(ConnectionSyncUpFacade.class);
 
     private final ApplicationContext appContext;
     private final ConnectionMapper connectionMapper;
@@ -41,15 +43,17 @@ public class SyncUpFacade {
     private final ColumnService columnService;
     private final ColumnMapper columnMapper;
 
-    @Autowired
-    public SyncUpFacade(ApplicationContext appContext,
-                        ConnectionMapper connectionMapper,
-                        ConnectionService connectionService,
-                        TableService tableService,
-                        TableMapper tableMapper,
+    private final StompMessageClient stompMsgClient;
 
-                        ColumnService columnService,
-                        ColumnMapper columnMapper) {
+    @Autowired
+    public ConnectionSyncUpFacade(ApplicationContext appContext,
+                                  ConnectionMapper connectionMapper,
+                                  ConnectionService connectionService,
+                                  TableService tableService,
+                                  TableMapper tableMapper,
+
+                                  ColumnService columnService,
+                                  ColumnMapper columnMapper) {
         this.appContext = appContext;
         this.connectionMapper = connectionMapper;
         this.connectionService = connectionService;
@@ -58,6 +62,7 @@ public class SyncUpFacade {
 
         this.columnService = columnService;
         this.columnMapper = columnMapper;
+        this.stompMsgClient = this.appContext.getBean(StompMessageClient.class);
     }
 
     public ResponseWrapper<List<TableModel>> syncUpConnectionTables(String connectionId) {
@@ -81,11 +86,16 @@ public class SyncUpFacade {
     }
 
     public void syncUpConnectionTables(ConnectionModel connectionModel) {
+        ConnectionEntity entity = null;
         try {
-            ConnectionEntity entity = this.connectionMapper.mapConnectionEntity(connectionModel);
+            entity = this.connectionMapper.mapConnectionEntity(connectionModel);
+            this.stompMsgClient.sendConnSyncUpStatusChange(entity, "STARTED - Table Sync Up");
+
             this.syncUpConnectionTables(entity);
+            this.stompMsgClient.sendConnSyncUpStatusChange(entity, "FINISHED - Table Sync Up");
         } catch (SQLException e) {
             LOGGER.error("SyncUp failed: {}", e.getMessage());
+            this.stompMsgClient.sendConnSyncUpError(entity, String.format("ERROR - Table Sync Up: %s", e.getMessage()));
         }
     }
 
@@ -99,7 +109,7 @@ public class SyncUpFacade {
             DatabaseQueryManager queryManager = this.appContext.getBean(DatabaseQueryManager.class, this.appContext);
             queryManager.initializeConnection(entity);
 
-            List<ColumnEntity> createdColumns = this.syncUpTableColumns(queryManager, tables);
+            List<ColumnEntity> createdColumns = this.syncUpTableColumns(entity, queryManager, tables);
             queryManager.closeConnection();
 
             columnsResponse.setCode("00");
@@ -115,17 +125,24 @@ public class SyncUpFacade {
         return columnsResponse;
     }
 
-    public void syncUpSingleTableColumn(ConnectionModel connectionModel, List<TableModel> tableModels) {
+    public void syncUpAllTableColumns(ConnectionModel connectionModel, List<TableModel> tableModels) {
+        ConnectionEntity entity = null;
         try {
-            ConnectionEntity entity = this.connectionMapper.mapConnectionEntity(connectionModel);
+            entity = this.connectionMapper.mapConnectionEntity(connectionModel);
+            this.stompMsgClient.sendConnSyncUpStatusChange(entity, "STARTED - Column Sync Up");
+
             List<TableEntity> table = this.tableMapper.mapTableEntityList(tableModels);
 
             DatabaseQueryManager queryManager = this.appContext.getBean(DatabaseQueryManager.class, this.appContext);
             queryManager.initializeConnection(entity);
-            this.syncUpTableColumns(queryManager, table);
+            this.syncUpTableColumns(entity, queryManager, table);
             queryManager.closeConnection();
+            this.stompMsgClient.sendConnSyncUpStatusChange(entity, "FINISHED - Column Sync Up");
         } catch (SQLException e) {
             LOGGER.error("SyncUp failed: {}", e.getMessage());
+            this.stompMsgClient.sendConnSyncUpError(entity, String.format("ERROR - Column Sync Up: %s", e.getMessage()));
+        } catch (BaseCodeException e) {
+            this.stompMsgClient.sendConnSyncUpError(entity, String.format("ERROR - Column Sync Up: %s", String.join(", ", e.getMessages())));
         }
     }
 
@@ -145,10 +162,17 @@ public class SyncUpFacade {
         return tableModels;
     }
 
-    private List<ColumnEntity> syncUpTableColumns(DatabaseQueryManager queryManager, List<TableEntity> tables) {
+    private List<ColumnEntity> syncUpTableColumns(ConnectionEntity connection, DatabaseQueryManager queryManager, List<TableEntity> tables) {
         return tables.stream().flatMap(table -> {
-            List<ColumnEntity> tableColumns = queryManager.findColumnForTable(table);
-            return this.columnService.saveBatch(table, tableColumns).stream();
-        }).collect(Collectors.toList());
+                    try {
+                        List<ColumnEntity> tableColumns = queryManager.findColumnForTable(table);
+                        return this.columnService.saveBatch(table, tableColumns).stream();
+                    } catch (BaseCodeException e) {
+                        this.stompMsgClient.sendConnSyncUpError(connection, String.format("ERROR - Column Sync Up: %s", String.join(", ", e.getMessages())));
+                        return null;
+                    }
+                })
+                .filter(Objects::nonNull)
+                .collect(Collectors.toList());
     }
 }

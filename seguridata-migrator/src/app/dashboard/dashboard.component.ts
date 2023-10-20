@@ -76,9 +76,6 @@ export class DashboardComponent implements OnInit, OnDestroy {
     this._messageService.add({ severity: 'error', summary: title, detail: message });
   }
 
-  private postSuccess(title: string, message: string) {
-    this._messageService.add({ severity: 'success', summary: title, detail: message });
-  }
 
 
 

@@ -6,6 +6,7 @@ import { ProjectDataFormComponent } from './components/forms/project-data-form/p
 import { ProjectListComponent } from './components/lists/project-list/project-list.component';
 import { ConnectionsModule } from '../connections/connections.module';
 import { PlansModule } from '../plans/plans.module';
+import { ProjectQuickAccessListComponent } from './components/lists/project-quick-access-list/project-quick-access-list.component';
 
 import { TableModule } from 'primeng/table';
 import { ButtonModule } from 'primeng/button';
@@ -15,7 +16,7 @@ import { DropdownModule } from 'primeng/dropdown';
 import { InputTextModule } from 'primeng/inputtext';
 import { InputTextareaModule } from 'primeng/inputtextarea';
 import { DialogModule } from 'primeng/dialog';
-import { ProjectQuickAccessListComponent } from './components/lists/project-quick-access-list/project-quick-access-list.component';
+import { ToggleButtonModule } from 'primeng/togglebutton';
 
 
 @NgModule({
@@ -40,6 +41,7 @@ import { ProjectQuickAccessListComponent } from './components/lists/project-quic
     DropdownModule,
     InputTextModule,
     InputTextareaModule,
+    ToggleButtonModule,
 
     StepsModule
   ],

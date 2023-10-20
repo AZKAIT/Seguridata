@@ -19,6 +19,7 @@ public class ColumnModel {
     private ColumnDataType dataType;
     @NotNull
     private Long dataLength;
+    private Boolean identity;
 
     public ColumnModel() {
     }
