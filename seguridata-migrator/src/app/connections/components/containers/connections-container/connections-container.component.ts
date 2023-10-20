@@ -55,7 +55,7 @@ export class ConnectionsContainerComponent implements OnInit, OnDestroy {
         .subscribe({
           next: delConn => {
             if (this.selectedConn) {
-              this.connectionList.splice(this.connectionList.indexOf(this.selectedConn, 1))
+              this.connectionList.splice(this.connectionList.indexOf(this.selectedConn), 1);
               this.selectedConn = undefined;
               this.postSuccess('Eliminar Conexión', `Conexión ${delConn?.name} eliminada`);
             }

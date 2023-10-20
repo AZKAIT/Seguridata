@@ -61,7 +61,7 @@ export class ProjectsContainerComponent implements OnInit, OnDestroy {
         .subscribe({
           next: delProj => {
             if (this.selectedProject) {
-              this.projectList.splice(this.projectList.indexOf(this.selectedProject, 1))
+              this.projectList.splice(this.projectList.indexOf(this.selectedProject), 1);
               this.selectedProject = undefined;
               this.postSuccess('Eliminar Proyecto', `Proyecto ${delProj?.name} eliminado`);
             }

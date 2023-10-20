@@ -7,6 +7,7 @@ import { MessageService } from 'primeng/api';
 import { webSocket, WebSocketSubject } from 'rxjs/webSocket';
 import { Observable, of, filter, map, switchMap, retry, delay, Subject, takeUntil } from 'rxjs';
 import { NotificationModel } from '../models/notification-model';
+import { ErrorTrackingEntity } from '../models/error-tracking-entity';
 
 
 const RETRY_SECONDS = 10;
@@ -62,22 +63,92 @@ export class NotificationsService {
   }
 
   connectToNotifs(): void {
-    this._stompClient.watch('/topic/project/status')
+    this._stompClient.watch('/topic/project/execution/status')
       .pipe(takeUntil(this._destroyed))
-      .subscribe(this.postProjStatusChangeNotif.bind(this));
+      .subscribe(this.postProjExecStatusNotif.bind(this));
+
+    this._stompClient.watch('/topic/project/execution/error')
+      .pipe(takeUntil(this._destroyed))
+      .subscribe(this.postProjExecErrorNotif.bind(this));
+
+    this._stompClient.watch('/topic/project/syncup/status')
+      .pipe(takeUntil(this._destroyed))
+      .subscribe(this.postProjSyncUpStatusNotif.bind(this));
+
+    this._stompClient.watch('/topic/project/syncup/error')
+      .pipe(takeUntil(this._destroyed))
+      .subscribe(this.postProjSyncUpErrorNotif.bind(this));
+
+    this._stompClient.watch('/topic/connection/syncup/status')
+      .pipe(takeUntil(this._destroyed))
+      .subscribe(this.postConnSyncUpStatusNotif.bind(this));
+
+    this._stompClient.watch('/topic/connection/syncup/error')
+      .pipe(takeUntil(this._destroyed))
+      .subscribe(this.postConnSyncUpErrorNotif.bind(this));
   }
 
   closeConnection(): void {
     this._destroyed.next();
   }
 
-  private postProjStatusChangeNotif(message: Message) {
+  private postProjExecStatusNotif(message: Message) {
     const statusChange: NotificationModel = JSON.parse(message.body) as NotificationModel;
 
     this._messageService.add({
       severity: 'info',
       summary: `Proyecto: ${statusChange.objectName}`,
       detail: `Proyecto cambió de estatus a ${statusChange.data}`
+    });
+  }
+
+  private postProjExecErrorNotif(message: Message) {
+    const statusChange: NotificationModel = JSON.parse(message.body) as NotificationModel;
+
+    this._messageService.add({
+      severity: 'error',
+      summary: `Error en Proyecto: ${statusChange.objectName}`,
+      detail: `Ocurrió un error al ejecutar el proyecto: ${statusChange.data}`
+    });
+  }
+
+  private postProjSyncUpStatusNotif(message: Message) {
+    const statusChange: NotificationModel = JSON.parse(message.body) as NotificationModel;
+
+    this._messageService.add({
+      severity: 'info',
+      summary: `Sincronización de Proyecto: ${statusChange.objectName}`,
+      detail: `El estatus de la sincronización del Proyecto es: ${statusChange.data}`
+    });
+  }
+
+  private postProjSyncUpErrorNotif(message: Message) {
+    const statusChange: NotificationModel = JSON.parse(message.body) as NotificationModel;
+
+    this._messageService.add({
+      severity: 'error',
+      summary: `Sincronización de Proyecto: ${statusChange.objectName}`,
+      detail: `Error al sincronizar: ${statusChange.data}`
+    });
+  }
+
+  private postConnSyncUpStatusNotif(message: Message) {
+    const statusChange: NotificationModel = JSON.parse(message.body) as NotificationModel;
+
+    this._messageService.add({
+      severity: 'info',
+      summary: `Sincronización de Conexión: ${statusChange.objectName}`,
+      detail: `El estatus de la sincronización de la Conexión es: ${statusChange.data}`
+    });
+  }
+
+  private postConnSyncUpErrorNotif(message: Message) {
+    const statusChange: NotificationModel = JSON.parse(message.body) as NotificationModel;
+
+    this._messageService.add({
+      severity: 'error',
+      summary: `Error en sincronización de Conexión: ${statusChange.objectName}`,
+      detail: `Ocurrió un error al sincronizar la Conexión: ${statusChange.data}`
     });
   }
 

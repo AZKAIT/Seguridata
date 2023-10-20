@@ -1,8 +1,10 @@
 package com.seguridata.tools.dbmigrator.web.listener;
 
 import com.seguridata.tools.dbmigrator.business.event.ConnectionCreatedEvent;
+import com.seguridata.tools.dbmigrator.business.event.ProjectCreatedEvent;
 import com.seguridata.tools.dbmigrator.business.event.TableCreatedEvent;
 import com.seguridata.tools.dbmigrator.business.facade.ConnectionSyncUpFacade;
+import com.seguridata.tools.dbmigrator.business.facade.ProjectSyncUpFacade;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -14,11 +16,14 @@ import org.springframework.stereotype.Component;
 public class ConnectionCreatedEventListener {
     private static final Logger LOGGER = LoggerFactory.getLogger(ConnectionCreatedEventListener.class);
 
-    public final ConnectionSyncUpFacade connectionSyncUpFacade;
+    private final ConnectionSyncUpFacade connectionSyncUpFacade;
+    private final ProjectSyncUpFacade projectSyncUpFacade;
 
     @Autowired
-    public ConnectionCreatedEventListener(ConnectionSyncUpFacade connectionSyncUpFacade) {
+    public ConnectionCreatedEventListener(ConnectionSyncUpFacade connectionSyncUpFacade,
+                                          ProjectSyncUpFacade projectSyncUpFacade) {
         this.connectionSyncUpFacade = connectionSyncUpFacade;
+        this.projectSyncUpFacade = projectSyncUpFacade;
     }
 
     @Async
@@ -33,5 +38,12 @@ public class ConnectionCreatedEventListener {
     public void onTablesCreated(TableCreatedEvent tableCreatedEvent) {
         LOGGER.info("Handle onTableCreated");
         this.connectionSyncUpFacade.syncUpAllTableColumns(tableCreatedEvent.getConnection(), tableCreatedEvent.getTable());
+    }
+
+    @Async
+    @EventListener
+    public void onProjectCreated(ProjectCreatedEvent projectCreatedEvent) {
+        LOGGER.info("Handle onProjectCreated");
+        this.projectSyncUpFacade.syncUpProjectPlans(projectCreatedEvent.getProjectModel());
     }
 }

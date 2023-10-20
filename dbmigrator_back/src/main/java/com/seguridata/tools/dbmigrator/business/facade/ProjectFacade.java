@@ -1,6 +1,7 @@
 package com.seguridata.tools.dbmigrator.business.facade;
 
 import com.seguridata.tools.dbmigrator.business.event.InitiateProjectEvent;
+import com.seguridata.tools.dbmigrator.business.event.ProjectCreatedEvent;
 import com.seguridata.tools.dbmigrator.business.event.StopProjectEvent;
 import com.seguridata.tools.dbmigrator.business.exception.BaseCodeException;
 import com.seguridata.tools.dbmigrator.business.exception.ObjectLockedException;
@@ -22,6 +23,8 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 import java.util.Objects;
+
+import static java.lang.Boolean.TRUE;
 
 
 @Component
@@ -71,8 +74,14 @@ public class ProjectFacade {
             this.validateConnections(project);
             project = this.projectService.createProject(project);
 
+            ProjectModel newProjectModel = this.projectMapper.mapProjectModel(project);
+            newProjectModel.setAutoPopulate(projectModel.getAutoPopulate());
             projectResponse.setCode("00");
-            projectResponse.setData(this.projectMapper.mapProjectModel(project));
+            projectResponse.setData(newProjectModel);
+
+            if (TRUE.equals(newProjectModel.getAutoPopulate())) {
+                this.appEventPublisher.publishEvent(new ProjectCreatedEvent(this, newProjectModel));
+            }
         } catch (BaseCodeException e) {
             projectResponse.setCode(e.getCode());
             projectResponse.setMessages(Arrays.asList(e.getMessages()));

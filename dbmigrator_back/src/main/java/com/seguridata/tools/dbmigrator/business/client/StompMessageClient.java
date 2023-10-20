@@ -59,7 +59,7 @@ public class StompMessageClient {
         String projName = Objects.isNull(project) ? "N/A" : project.getName();
 
         NotificationDTO notification = new NotificationDTO(projId, ProjectEntity.class.getCanonicalName(),
-                projName, errorTrack);
+                projName, errorTrack.getMessage());
 
         this.sendNotification(PROJECT_EXECUTION_ERROR, notification);
     }

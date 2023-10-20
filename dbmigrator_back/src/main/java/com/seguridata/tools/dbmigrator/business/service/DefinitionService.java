@@ -99,6 +99,7 @@ public class DefinitionService {
         newDefinitions.forEach(def -> {
             def.setId(null);
             def.setPlan(plan);
+            def.setConversionFunction(ConversionFunction.NONE);
         });
 
         return this.definitionRepo.saveBatch(newDefinitions);

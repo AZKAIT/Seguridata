@@ -89,6 +89,11 @@ export class ProjectCreationWizardComponent implements OnDestroy {
     this.subsList.push(projectForm.getResult()
       .subscribe(projectResult => {
         const planForm = this.stepInstances.get(plansName) as PlanFormWrapperComponent;
+
+        if (projectResult.autoPopulate) {
+          this.dialog.close(new MouseEvent('click'));
+        }
+
         planForm.inputProject = projectResult;
       }));
   }

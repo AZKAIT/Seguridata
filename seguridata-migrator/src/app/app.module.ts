@@ -11,14 +11,15 @@ import { ColumnsModule } from './columns/columns.module';
 import { PlansModule } from './plans/plans.module';
 import { DefinitionsModule } from './definitions/definitions.module';
 import { GlobalHttpInterceptorService } from './common/interceptor/global-http-interceptor.service';
+import { WizardsModule } from './wizards/wizards.module';
+import { AppRoutingModule } from './app-routing.module';
+import { DashboardComponent } from './dashboard/dashboard.component';
 
 import { MessageService } from 'primeng/api';
 import { ToastModule } from 'primeng/toast';
 import { ButtonModule } from 'primeng/button';
 import { TabViewModule } from 'primeng/tabview';
-import { WizardsModule } from './wizards/wizards.module';
-import { AppRoutingModule } from './app-routing.module';
-import { DashboardComponent } from './dashboard/dashboard.component';
+import { ImageModule } from 'primeng/image';
 
 @NgModule({
   declarations: [
@@ -40,7 +41,8 @@ import { DashboardComponent } from './dashboard/dashboard.component';
 
     ToastModule,
     ButtonModule,
-    TabViewModule
+    TabViewModule,
+    ImageModule
   ],
   providers: [
     {

@@ -72,7 +72,7 @@ export class DefinitionsContainerComponent implements OnDestroy {
         .subscribe({
           next: delDef => {
             if (this.selectedDef) {
-              this.defList.splice(this.defList.indexOf(this.selectedDef, 1))
+              this.defList.splice(this.defList.indexOf(this.selectedDef), 1);
               this.selectedDef = undefined;
               this.postSuccess('Eliminar Definición', 'Definición eliminada');
             }

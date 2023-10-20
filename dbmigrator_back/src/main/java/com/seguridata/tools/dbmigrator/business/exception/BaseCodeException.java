@@ -1,5 +1,8 @@
 package com.seguridata.tools.dbmigrator.business.exception;
 
+import java.util.Arrays;
+import java.util.stream.Collectors;
+
 public abstract class BaseCodeException extends RuntimeException {
     private final String code;
     protected String[] messages;
@@ -18,5 +21,10 @@ public abstract class BaseCodeException extends RuntimeException {
 
     public void setMessages(String[] messages) {
         this.messages = messages;
+    }
+
+    @Override
+    public String getMessage() {
+        return String.join(",", this.messages);
     }
 }

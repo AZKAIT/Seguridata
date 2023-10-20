@@ -26,6 +26,6 @@ public class ProjectModel {
     private ProjectStatus status;
     @JsonProperty(access = JsonProperty.Access.READ_ONLY)
     private Date lastStatusDate;
-    @JsonProperty(access = JsonProperty.Access.WRITE_ONLY)
+    @JsonProperty(access = JsonProperty.Access.READ_WRITE)
     private Boolean autoPopulate;
 }
