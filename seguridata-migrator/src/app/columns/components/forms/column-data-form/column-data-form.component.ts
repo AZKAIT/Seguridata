@@ -1,5 +1,5 @@
 import { Component, Input, Output, EventEmitter } from '@angular/core';
-import { FormBuilder, FormGroup } from '@angular/forms';
+import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { ColumnDataType } from 'src/app/common/enums/column-data-type';
 
 import { ColumnModel } from 'src/app/common/models/column-model';
@@ -34,10 +34,10 @@ export class ColumnDataFormComponent {
 
     this.columnFormGroup = this._formBuilder.group({
       id: [''],
-      name: [''],
+      name: ['', Validators.required],
       description: [''],
-      dataType: [''],
-      dataLength: ['']
+      dataType: ['', Validators.required],
+      dataLength: ['', Validators.required]
     });
   }
 

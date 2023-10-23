@@ -1,28 +1,22 @@
 <form [formGroup]="columnFormGroup">
-  <div class="field">
-    <span class="p-float-label">
-      <input pInputText id="name" formControlName="name" />
-      <label htmlFor="name">Nombre</label>
-    </span>
-  </div>
-  <div class="field">
-    <span class="p-float-label">
-      <textarea id="description" formControlName="description" rows="5" cols="30" pInputTextarea></textarea>
-      <label for="description">Descripción</label>
-    </span>
-  </div>
-  <div class="field">
-    <span class="p-float-label">
+  <div class="formgrid grid m-2">
+    <div class="field p-float-label col-12">
+      <input pInputText id="colName" class="w-full" formControlName="name" />
+      <label for="colName">Nombre</label>
+    </div>
+    <div class="field p-float-label col-12">
+      <textarea id="colDesc" class="w-full" formControlName="description" rows="5" cols="30" pInputTextarea></textarea>
+      <label for="colDesc">Descripción</label>
+    </div>
+    <div class="field p-float-label col-6">
       <p-dropdown [options]="dataTypes" formControlName="dataType" placeholder="Tipo Dato" optionLabel="name"
-        optionValue="code" inputId="float-label" appendTo="body"></p-dropdown>
-      <label for="float-label">Tipo Dato</label>
-    </span>
-  </div>
-  <div class="field">
-    <span class="p-float-label">
-      <input pInputText id="data-length" formControlName="dataLength" />
-      <label htmlFor="data-length">Tamaño Dato</label>
-    </span>
+        optionValue="code" inputId="data-type" styleClass="w-full" appendTo="body"></p-dropdown>
+      <label for="data-type">Tipo Dato</label>
+    </div>
+    <div class="field p-float-label col-6">
+      <input pInputText id="data-length" class="w-full" formControlName="dataLength" />
+      <label for="data-length">Tamaño Dato</label>
+    </div>
   </div>
   <p-button type="submit" label="Guardar" (onClick)="submit()" [disabled]="!columnFormGroup.valid"
     [loading]="formLoading || false"></p-button>

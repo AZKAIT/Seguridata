@@ -1,5 +1,5 @@
 import { Component, Input, Output, EventEmitter } from '@angular/core';
-import { FormBuilder, FormGroup } from '@angular/forms';
+import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { DropdownChangeEvent } from 'primeng/dropdown';
 import { ConversionFunction } from 'src/app/common/enums/conversion-function';
 import { ColumnModel } from 'src/app/common/models/column-model';
@@ -41,9 +41,9 @@ export class DefinitionDataFormComponent {
 
     this.defFormGroup = this._formBuilder.group({
       id: [''],
-      conversionFunction: [''],
-      sourceColumn: [undefined],
-      targetColumn: [undefined]
+      conversionFunction: [ConversionFunction.NONE, Validators.required],
+      sourceColumn: [undefined, Validators.required],
+      targetColumn: [undefined, Validators.required]
     });
   }
 

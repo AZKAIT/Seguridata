@@ -1,5 +1,5 @@
 import { Component, EventEmitter, Input, Output } from '@angular/core';
-import { FormBuilder, FormGroup } from '@angular/forms';
+import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { DropdownChangeEvent } from 'primeng/dropdown';
 import { ProjectStatus } from 'src/app/common/enums/project-status';
 import { ConnectionModel } from 'src/app/common/models/connection-model';
@@ -29,11 +29,11 @@ export class ProjectDataFormComponent {
   constructor(private _formBuilder: FormBuilder) {
     this.projectFormGroup = this._formBuilder.group({
       id: [''],
-      name: [''],
+      name: ['', Validators.required],
       description: [''],
-      sourceConnection: [undefined],
-      targetConnection: [undefined],
-      autoPopulate: [false]
+      sourceConnection: [undefined, Validators.required],
+      targetConnection: [undefined, Validators.required],
+      autoPopulate: [false, Validators.required]
     });
   }
 

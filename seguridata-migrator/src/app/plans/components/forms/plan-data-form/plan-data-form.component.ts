@@ -1,5 +1,5 @@
 import { Component, Input, Output, EventEmitter } from '@angular/core';
-import { FormBuilder, FormGroup } from '@angular/forms';
+import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { DropdownChangeEvent } from 'primeng/dropdown';
 
 import { PlanModel } from 'src/app/common/models/plan-model';
@@ -30,12 +30,12 @@ export class PlanDataFormComponent {
   constructor(private _formBuilder: FormBuilder) {
     this.planFormGroup = this._formBuilder.group({
       id: [''],
-      orderNum: [''],
-      sourceTable: [undefined],
-      targetTable: [undefined],
-      initialSkip: [''],
-      rowLimit: [''],
-      maxRows: ['']
+      orderNum: ['', Validators.required],
+      sourceTable: [undefined, Validators.required],
+      targetTable: [undefined, Validators.required],
+      initialSkip: ['', Validators.required],
+      rowLimit: ['', Validators.required],
+      maxRows: ['', Validators.required]
     });
   }
 

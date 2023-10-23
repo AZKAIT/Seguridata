@@ -1,9 +1,9 @@
 <form [formGroup]="defFormGroup">
-  <div class="field">
-    <span class="p-float-label">
-      <p-dropdown inputId="select-conn-drop" [options]="sourceColumnList" formControlName="sourceColumn" dataKey="id"
-        [filter]="true" filterBy="name" [showClear]="true" placeholder="Columna Origen" appendTo="body"
-        (onChange)="changeSourceColumn($event)">
+  <div class="formgrid grid m-2">
+    <div class="field p-float-label col-4">
+      <p-dropdown inputId="select-scol-drop" styleClass="w-full" [options]="sourceColumnList"
+        formControlName="sourceColumn" dataKey="id" [filter]="true" filterBy="name" [showClear]="true"
+        placeholder="Columna Origen" appendTo="body" (onChange)="changeSourceColumn($event)">
         <ng-template pTemplate="selectedItem">
           <div class="flex align-items-center gap-2" *ngIf="selSourceColumn">
             <div>{{ selSourceColumn.name }}</div>
@@ -15,14 +15,17 @@
           </div>
         </ng-template>
       </p-dropdown>
-      <label for="select-conn-drop">Columna Origen</label>
-    </span>
-  </div>
-  <div class="field">
-    <span class="p-float-label">
-      <p-dropdown inputId="select-conn-drop" [options]="targetColumnList" formControlName="targetColumn" dataKey="id"
-        [filter]="true" filterBy="name" [showClear]="true" placeholder="Columna Destino" appendTo="body"
-        (onChange)="changeTargetColumn($event)">
+      <label for="select-scol-drop">Columna Origen</label>
+    </div>
+    <div class="field p-float-label col-4">
+      <p-dropdown formControlName="conversionFunction" placeholder="Función de Conversión" [options]="convFunctions"
+        optionLabel="name" optionValue="code" inputId="conv-func" styleClass="w-full" appendTo="body"></p-dropdown>
+      <label for="conv-func">Función de Conversión</label>
+    </div>
+    <div class="field p-float-label col-4">
+      <p-dropdown inputId="select-tcol-drop" styleClass="w-full" [options]="targetColumnList"
+        formControlName="targetColumn" dataKey="id" [filter]="true" filterBy="name" [showClear]="true"
+        placeholder="Columna Destino" appendTo="body" (onChange)="changeTargetColumn($event)">
         <ng-template pTemplate="selectedItem">
           <div class="flex align-items-center gap-2" *ngIf="selTargetColumn">
             <div>{{ selTargetColumn.name }}</div>
@@ -34,15 +37,9 @@
           </div>
         </ng-template>
       </p-dropdown>
-      <label for="select-conn-drop">Columna Destino</label>
-    </span>
-  </div>
-  <div class="field">
-    <span class="p-float-label">
-      <p-dropdown formControlName="conversionFunction" placeholder="Función de Conversión" [options]="convFunctions"
-        optionLabel="name" optionValue="code" inputId="conv-func" appendTo="body"></p-dropdown>
-      <label for="conv-func">Función de Conversión</label>
-    </span>
+      <label for="select-tcol-drop">Columna Destino</label>
+    </div>
+
   </div>
 
   <p-button type="submit" label="Guardar" (onClick)="submit()" [disabled]="!defFormGroup.valid"

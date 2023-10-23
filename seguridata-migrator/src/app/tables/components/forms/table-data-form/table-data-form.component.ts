@@ -1,5 +1,5 @@
 import { Component, Input, Output, EventEmitter } from '@angular/core';
-import { FormBuilder, FormGroup } from '@angular/forms';
+import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { TableModel } from 'src/app/common/models/table-model';
 
 @Component({
@@ -22,9 +22,9 @@ export class TableDataFormComponent {
     this.tableFormGroup = this._formBuilder.group({
       id: [''],
       schema: [''],
-      name: [''],
+      name: ['', Validators.required],
       description: [''],
-      orderColumnName: ['']
+      orderColumnName: ['', Validators.required]
     });
   }
 

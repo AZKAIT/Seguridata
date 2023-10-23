@@ -1,14 +1,7 @@
 <form [formGroup]="planFormGroup">
-  <div class="field">
-    <span class="p-float-label">
-      <p-inputNumber inputId="order-num" formControlName="orderNum" [showButtons]="true" buttonLayout="stacked"
-        [min]="1"></p-inputNumber>
-      <label htmlFor="order-num">Orden de ejecución</label>
-    </span>
-  </div>
-  <div class="field">
-    <span class="p-float-label">
-      <p-dropdown inputId="select-conn-drop" [options]="sourceTableList" formControlName="sourceTable" dataKey="id"
+  <div class="formgrid grid m-2">
+    <div class="field p-float-label col-12">
+      <p-dropdown inputId="select-sconn-drop" styleClass="w-full" [options]="sourceTableList" formControlName="sourceTable" dataKey="id"
         [filter]="true" filterBy="name" [showClear]="true" placeholder="Tabla Origen" appendTo="body"
         (onChange)="changeSourceTable($event)">
         <ng-template pTemplate="selectedItem">
@@ -22,12 +15,10 @@
           </div>
         </ng-template>
       </p-dropdown>
-      <label for="select-conn-drop">Tabla Origen</label>
-    </span>
-  </div>
-  <div class="field">
-    <span class="p-float-label">
-      <p-dropdown inputId="select-conn-drop" [options]="targetTableList" formControlName="targetTable" dataKey="id"
+      <label for="select-sconn-drop">Tabla Origen</label>
+    </div>
+    <div class="field p-float-label col-12">
+      <p-dropdown inputId="select-tconn-drop" styleClass="w-full" [options]="targetTableList" formControlName="targetTable" dataKey="id"
         [filter]="true" filterBy="name" [showClear]="true" placeholder="Tabla Destino" appendTo="body"
         (onChange)="changeTargetTable($event)">
         <ng-template pTemplate="selectedItem">
@@ -41,29 +32,28 @@
           </div>
         </ng-template>
       </p-dropdown>
-      <label for="select-conn-drop">Tabla Destino</label>
-    </span>
-  </div>
-  <div class="field">
-    <span class="p-float-label">
-      <p-inputNumber inputId="initial-skip" formControlName="initialSkip" [showButtons]="true" buttonLayout="stacked"
+      <label for="select-tconn-drop">Tabla Destino</label>
+    </div>
+    <div class="field p-float-label col-6">
+      <p-inputNumber inputId="order-num" class="w-full" styleClass="w-full" inputStyleClass="w-full" formControlName="orderNum" [showButtons]="true" buttonLayout="stacked"
+        [min]="1"></p-inputNumber>
+      <label htmlFor="order-num">Orden de ejecución</label>
+    </div>
+    <div class="field p-float-label col-6">
+      <p-inputNumber inputId="initial-skip" class="w-full" styleClass="w-full" inputStyleClass="w-full" formControlName="initialSkip" [showButtons]="true" buttonLayout="stacked"
         [min]="0"> </p-inputNumber>
       <label htmlFor="initial-skip">Omisión Inicial</label>
-    </span>
-  </div>
-  <div class="field">
-    <span class="p-float-label">
-      <p-inputNumber inputId="row-limit" formControlName="rowLimit" [showButtons]="true" buttonLayout="stacked"
+    </div>
+    <div class="field p-float-label col-6">
+      <p-inputNumber inputId="row-limit" class="w-full" styleClass="w-full" inputStyleClass="w-full" formControlName="rowLimit" [showButtons]="true" buttonLayout="stacked"
         [min]="1"> </p-inputNumber>
       <label htmlFor="row-limit">Límite de bloque</label>
-    </span>
-  </div>
-  <div class="field">
-    <span class="p-float-label">
-      <p-inputNumber inputId="max-rows" formControlName="maxRows" [showButtons]="true" buttonLayout="stacked"
+    </div>
+    <div class="field p-float-label col-6">
+      <p-inputNumber inputId="max-rows" class="w-full" styleClass="w-full" inputStyleClass="w-full" formControlName="maxRows" [showButtons]="true" buttonLayout="stacked"
         [min]="-1"> </p-inputNumber>
       <label htmlFor="max-rows">Máximo de Registros</label>
-    </span>
+    </div>
   </div>
 
 

@@ -1,5 +1,5 @@
 import { Component, Input, Output, EventEmitter } from '@angular/core';
-import { FormBuilder, FormGroup } from '@angular/forms';
+import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { DatabaseType } from 'src/app/common/enums/database-type';
 import { ConnectionModel } from 'src/app/common/models/connection-model';
 import { SelectionTypes } from 'src/app/common/types/selection-types';
@@ -30,15 +30,15 @@ export class ConnectionDataFormComponent {
 
     this.connFormGroup = this._formBuilder.group({
       id: [''],
-      name: [''],
+      name: ['', Validators.required],
       description: [''],
-      host: [''],
-      port: [''],
+      host: ['', Validators.required],
+      port: ['', Validators.required],
       objectService: [''],
       database: [''],
-      username: [''],
-      password: [''],
-      type: [''],
+      username: ['', Validators.required],
+      password: ['', Validators.required],
+      type: ['', Validators.required],
       locked: ['']
     });
   }

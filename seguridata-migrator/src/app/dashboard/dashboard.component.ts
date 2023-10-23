@@ -5,6 +5,7 @@ import { Subscription } from 'rxjs';
 import { ConnectionModel } from '../common/models/connection-model';
 import { ProjectModel } from '../common/models/project-model';
 import { ProjectService } from '../common/service/project.service';
+import { DashboardService } from '../common/service/dashboard.service';
 
 @Component({
   selector: 'app-dashboard',
@@ -24,12 +25,16 @@ export class DashboardComponent implements OnInit, OnDestroy {
   showProjectWizard = false;
   showConnWizard = false;
 
-  constructor(private _connectionService: ConnectionService, private _projectService: ProjectService, private _messageService: MessageService) {
+  connCount = 0;
+  projCount = 0;
+
+  constructor(private _connectionService: ConnectionService, private _projectService: ProjectService, private _dashboardService: DashboardService, private _messageService: MessageService) {
   }
 
   ngOnInit(): void {
     this.fetchConnections();
     this.fetchProjects();
+    this.fetchDashboardData();
   }
 
   ngOnDestroy(): void {
@@ -70,6 +75,16 @@ export class DashboardComponent implements OnInit, OnDestroy {
           this.postError('Error al cargar Proyectos', err?.messages?.join(','));
         }
       }));
+  }
+
+  private fetchDashboardData() {
+    this._subsList.push(this._dashboardService.getDashboardData()
+      .subscribe(dd => {
+        if (dd) {
+          this.connCount = dd.connectionTotal;
+          this.projCount = dd.projectTotal;
+        }
+      }))
   }
 
   private postError(title: string, message: string) {

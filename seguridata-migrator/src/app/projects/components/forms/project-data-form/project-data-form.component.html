@@ -1,21 +1,18 @@
 <form [formGroup]="projectFormGroup">
-  <div class="field">
-    <span class="p-float-label">
-      <input pInputText id="name" formControlName="name" />
-      <label htmlFor="name">Nombre</label>
-    </span>
-  </div>
-  <div class="field">
-    <span class="p-float-label">
-      <textarea id="description" formControlName="description" rows="5" cols="30" pInputTextarea></textarea>
-      <label for="description">Descripción</label>
-    </span>
-  </div>
-  <div class="field">
-    <span class="p-float-label">
-      <p-dropdown inputId="select-conn-drop" [options]="connectionList" formControlName="sourceConnection" dataKey="id"
-        [filter]="true" filterBy="name" [showClear]="true" placeholder="Conexión Origen" appendTo="body"
-        (onChange)="changeSourceConn($event)">
+  <div class="formgrid grid m-2">
+    <div class="field p-float-label col-12">
+      <input pInputText id="projName" class="w-full" formControlName="name" />
+      <label htmlFor="projName">Nombre</label>
+    </div>
+    <div class="field p-float-label col-12">
+      <textarea id="projDesc" class="w-full" formControlName="description" rows="5" cols="30"
+        pInputTextarea></textarea>
+      <label for="projDesc">Descripción</label>
+    </div>
+    <div class="field p-float-label col-6">
+      <p-dropdown inputId="select-sconn-drop" styleClass="w-full" [options]="connectionList"
+        formControlName="sourceConnection" dataKey="id" [filter]="true" filterBy="name" [showClear]="true"
+        placeholder="Conexión Origen" appendTo="body" (onChange)="changeSourceConn($event)">
         <ng-template pTemplate="selectedItem">
           <div class="flex align-items-center gap-2" *ngIf="selSourceConn">
             <div>{{ selSourceConn.name }}</div>
@@ -28,14 +25,12 @@
           </div>
         </ng-template>
       </p-dropdown>
-      <label for="select-conn-drop">Conexión Origen</label>
-    </span>
-  </div>
-  <div class="field">
-    <span class="p-float-label">
-      <p-dropdown inputId="select-conn-drop" [options]="connectionList" formControlName="targetConnection" dataKey="id"
-        [filter]="true" filterBy="name" [showClear]="true" placeholder="Conexión Destino" appendTo="body"
-        (onChange)="changeTargetConn($event)">
+      <label for="select-sconn-drop">Conexión Origen</label>
+    </div>
+    <div class="field p-float-label col-6">
+      <p-dropdown inputId="select-tconn-drop" styleClass="w-full" [options]="connectionList"
+        formControlName="targetConnection" dataKey="id" [filter]="true" filterBy="name" [showClear]="true"
+        placeholder="Conexión Destino" appendTo="body" (onChange)="changeTargetConn($event)">
         <ng-template pTemplate="selectedItem">
           <div class="flex align-items-center gap-2" *ngIf="selTargetConn">
             <div>{{ selTargetConn.name }}</div>
@@ -48,14 +43,17 @@
           </div>
         </ng-template>
       </p-dropdown>
-      <label for="select-conn-drop">Conexión Destino</label>
-    </span>
-  </div>
-  <div class="field">
-    <label>Auto-Generar dependencias <br /><p-toggleButton formControlName="autoPopulate" onLabel="Sí"
-        offLabel="No"></p-toggleButton></label>
+      <label for="select-tconn-drop">Conexión Destino</label>
+    </div>
+    <div class="field p-float-label col-12">
+      <label>Auto-Generar dependencias <br /><p-toggleButton formControlName="autoPopulate" onLabel="Sí"
+          offLabel="No"></p-toggleButton></label>
+    </div>
+
   </div>
 
-  <p-button type="submit" label="Guardar" (onClick)="submit()" [disabled]="!projectFormGroup.valid"
-    [loading]="formLoading || false"></p-button>
+  <div class="formgrid grid mt-6">
+    <p-button type="submit" label="Guardar" (onClick)="submit()" [disabled]="!projectFormGroup.valid"
+      [loading]="formLoading || false"></p-button>
+  </div>
 </form>

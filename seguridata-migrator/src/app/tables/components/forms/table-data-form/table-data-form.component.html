@@ -1,28 +1,23 @@
 <form [formGroup]="tableFormGroup">
-  <div class="field">
-    <span class="p-float-label">
-      <input pInputText id="schema" formControlName="schema" />
+  <div class="formgrid grid m-2">
+    <div class="field p-float-label col-6">
+      <input pInputText id="schema" class="w-full" formControlName="schema" />
       <label htmlFor="schema">Schema</label>
-    </span>
-  </div>
-  <div class="field">
-    <span class="p-float-label">
-      <input pInputText id="name" formControlName="name" />
+    </div>
+    <div class="field p-float-label col-6">
+      <input pInputText id="name" class="w-full" formControlName="name" />
       <label htmlFor="name">Nombre</label>
-    </span>
-  </div>
-  <div class="field">
-    <span class="p-float-label">
-      <textarea id="description" formControlName="description" rows="5" cols="30" pInputTextarea></textarea>
+    </div>
+    <div class="field p-float-label col-12">
+      <textarea id="description" class="w-full" formControlName="description" rows="5" cols="30" pInputTextarea></textarea>
       <label for="description">Descripción</label>
-    </span>
-  </div>
-  <div class="field">
-    <span class="p-float-label">
-      <input pInputText id="order-col" formControlName="orderColumnName" />
+    </div>
+    <div class="field p-float-label col-12">
+      <input pInputText id="order-col" class="w-full" formControlName="orderColumnName" />
       <label htmlFor="order-col">Col. Ordenamiento</label>
-    </span>
+    </div>
   </div>
+
   <p-button type="submit" label="Guardar" (onClick)="submit()" [disabled]="!tableFormGroup.valid"
     [loading]="formLoading || false"></p-button>
 </form>

@@ -1,5 +1,5 @@
 import { Component, EventEmitter, Input, Output } from '@angular/core';
-import { FormBuilder, FormGroup } from '@angular/forms';
+import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { ConversionFunction } from 'src/app/common/enums/conversion-function';
 import { ColumnModel } from 'src/app/common/models/column-model';
 import { SelectionTypes } from 'src/app/common/types/selection-types';
@@ -32,9 +32,9 @@ export class DefinitionDataRowComponent {
 
     this.defFormGroup = this._formBuilder.group({
       id: [''],
-      conversionFunction: [ConversionFunction.NONE],
-      sourceColumn: [undefined],
-      targetColumn: [undefined]
+      conversionFunction: [ConversionFunction.NONE, Validators.required],
+      sourceColumn: [undefined, Validators.required],
+      targetColumn: [undefined, Validators.required]
     });
   }
 
