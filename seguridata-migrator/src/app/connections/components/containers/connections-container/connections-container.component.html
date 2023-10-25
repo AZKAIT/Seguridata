@@ -1,5 +1,5 @@
 <app-connection-list [connectionList]="connectionList" [(selectedConn)]="selectedConn" (listRefreshEvent)="onExecuteRefresh();" [tableLoading]="tableLoading" [deleteLoading]="deleteLoading"
-  (editConnEvent)="onEditConnection()" (deleteConnEvent)="onDeleteConnection()" (createConnEvent)="onCreateConnection()"></app-connection-list>
+  (editConnEvent)="onEditConnection()" (deleteConnEvent)="onDeleteConnection()" (createConnEvent)="onCreateConnection()" (syncUpEvent)="onSyncUpEvent()" [syncUpLoading]="syncLoading"></app-connection-list>
 
 <app-tables-container [connection]="selectedConn"></app-tables-container>
 

@@ -20,6 +20,7 @@ import { ToastModule } from 'primeng/toast';
 import { ButtonModule } from 'primeng/button';
 import { TabViewModule } from 'primeng/tabview';
 import { ImageModule } from 'primeng/image';
+import { TooltipModule } from 'primeng/tooltip';
 
 @NgModule({
   declarations: [
@@ -42,7 +43,8 @@ import { ImageModule } from 'primeng/image';
     ToastModule,
     ButtonModule,
     TabViewModule,
-    ImageModule
+    ImageModule,
+    TooltipModule
   ],
   providers: [
     {

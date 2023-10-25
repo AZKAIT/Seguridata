@@ -8,6 +8,7 @@ import { TableModule } from 'primeng/table';
 import { ButtonModule } from 'primeng/button';
 import { CardModule } from 'primeng/card';
 import { DialogModule } from 'primeng/dialog';
+import { TooltipModule } from 'primeng/tooltip';
 
 import { InputTextModule } from 'primeng/inputtext';
 import { InputTextareaModule } from 'primeng/inputtextarea';
@@ -32,6 +33,7 @@ import { ColumnsModule } from '../columns/columns.module';
     ButtonModule,
     CardModule,
     DialogModule,
+    TooltipModule,
 
     InputTextModule,
     InputTextareaModule

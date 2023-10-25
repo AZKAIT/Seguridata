@@ -14,6 +14,7 @@ import { DragDropModule } from 'primeng/dragdrop';
 import { InputTextModule } from 'primeng/inputtext';
 import { DropdownModule } from 'primeng/dropdown';
 import { ScrollerModule } from 'primeng/scroller';
+import { TooltipModule } from 'primeng/tooltip';
 import { DefinitionBatchFormComponent } from './components/forms/definition-batch-form/definition-batch-form.component';
 import { DefinitionDataRowComponent } from './directives/definition-data-row/definition-data-row.component';
 
@@ -37,6 +38,7 @@ import { DefinitionDataRowComponent } from './directives/definition-data-row/def
     CardModule,
     DialogModule,
     ScrollerModule,
+    TooltipModule,
 
     InputTextModule,
     DropdownModule,

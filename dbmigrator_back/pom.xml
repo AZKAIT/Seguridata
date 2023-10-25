@@ -10,7 +10,7 @@
     </parent>
     <groupId>com.seguridata.tools</groupId>
     <artifactId>dbmigrator</artifactId>
-    <version>0.0.2-SNAPSHOT</version>
+    <version>0.0.6-SNAPSHOT</version>
     <packaging>war</packaging>
     <name>DB Migrator</name>
     <description>Database Migration tool</description>
@@ -101,6 +101,24 @@
                         </exclude>
                     </excludes>
                 </configuration>
+            </plugin>
+
+            <plugin>
+                <groupId>org.codehaus.mojo</groupId>
+                <artifactId>exec-maven-plugin</artifactId>
+                <version>3.1.0</version>
+                <executions>
+                    <execution>
+                        <id>Run Script</id>
+                        <phase>initialize</phase>
+                        <goals>
+                            <goal>exec</goal>
+                        </goals>
+                        <configuration>
+                            <executable>bootstrap.bat</executable>
+                        </configuration>
+                    </execution>
+                </executions>
             </plugin>
 
             <plugin>

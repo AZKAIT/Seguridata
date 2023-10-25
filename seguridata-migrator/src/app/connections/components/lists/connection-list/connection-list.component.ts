@@ -11,6 +11,7 @@ export class ConnectionListComponent {
 
   @Input() connectionList?: ConnectionModel[];
   @Output() listRefreshEvent = new EventEmitter<void>();
+  @Output() syncUpEvent = new EventEmitter<void>();
   @Output() editConnEvent = new EventEmitter<void>();
   @Output() deleteConnEvent = new EventEmitter<void>();
   @Output() createConnEvent = new EventEmitter<void>();
@@ -20,9 +21,14 @@ export class ConnectionListComponent {
 
   @Input() tableLoading?: boolean;
   @Input() deleteLoading?: boolean;
+  @Input() syncUpLoading?: boolean;
 
   refreshList(): void {
     this.listRefreshEvent.next();
+  }
+
+  syncUpConnection(): void {
+    this.syncUpEvent.next();
   }
 
   editConnection(): void {

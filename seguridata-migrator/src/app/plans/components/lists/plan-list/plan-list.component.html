@@ -5,11 +5,11 @@
       <ng-template pTemplate="caption">
         <div class="flex align-items-center justify-content-between">
           Planes
-          <div >
-            <p-button icon="pi pi-refresh" [text]="true" (onClick)="refreshList();"></p-button>
-            <p-button icon="pi pi-pencil" [text]="true" (onClick)="editPlan()" [disabled]="!selectedPlan"></p-button>
-            <p-button icon="pi pi-trash" [text]="true" (onClick)="deletePlan()" [disabled]="!selectedPlan" [loading]="deleteLoading || false"></p-button>
-            <p-button icon="pi pi-plus" [text]="true" (onClick)="createPlan()"></p-button>
+          <div class="flex">
+            <p-button class="h-full" icon="pi pi-refresh" [text]="true" (onClick)="refreshList();" pTooltip="Refrescar lista" tooltipPosition="top"></p-button>
+            <p-button class="h-full" icon="pi pi-pencil" [text]="true" (onClick)="editPlan()" [disabled]="!selectedPlan" pTooltip="Editar Plan" tooltipPosition="top"></p-button>
+            <p-button class="h-full" icon="pi pi-trash" [text]="true" (onClick)="deletePlan()" [disabled]="!selectedPlan" [loading]="deleteLoading || false" pTooltip="Eliminar Plan" tooltipPosition="top"></p-button>
+            <p-button class="h-full" icon="pi pi-plus" [text]="true" (onClick)="createPlan()" pTooltip="Crear nuevo Plan" tooltipPosition="top"></p-button>
           </div>
         </div>
       </ng-template>

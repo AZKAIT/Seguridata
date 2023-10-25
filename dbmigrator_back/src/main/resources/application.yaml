@@ -3,6 +3,9 @@ server:
     context-path: /migrator
 
 spring:
+  data:
+    mongodb:
+      auto-index-creation: true
   mongodb:
     embedded:
       version: 4.0.2

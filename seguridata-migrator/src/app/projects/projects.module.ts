@@ -17,6 +17,7 @@ import { InputTextModule } from 'primeng/inputtext';
 import { InputTextareaModule } from 'primeng/inputtextarea';
 import { DialogModule } from 'primeng/dialog';
 import { ToggleButtonModule } from 'primeng/togglebutton';
+import { TooltipModule } from 'primeng/tooltip';
 
 
 @NgModule({
@@ -42,6 +43,7 @@ import { ToggleButtonModule } from 'primeng/togglebutton';
     InputTextModule,
     InputTextareaModule,
     ToggleButtonModule,
+    TooltipModule,
 
     StepsModule
   ],

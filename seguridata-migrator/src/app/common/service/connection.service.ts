@@ -61,4 +61,11 @@ export class ConnectionService {
     return this.backend.serviceGet<TableModel[]>(`/connections/${connectionId}/tables`, undefined, params)
     .pipe(map(response => response.body?.data));
   }
+
+  syncUpTables(connectionId: string): Observable<any> {
+    const params = new HttpParams();
+
+    return this.backend.servicePost<TableModel[]>(`/connections/${connectionId}/sync/tables`, undefined, undefined, params)
+    .pipe(map(response => response.body?.data));
+  }
 }

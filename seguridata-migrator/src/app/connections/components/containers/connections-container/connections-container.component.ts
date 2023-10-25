@@ -21,6 +21,7 @@ export class ConnectionsContainerComponent implements OnInit, OnDestroy {
   tableLoading: boolean = false;
   formLoading: boolean = false;
   deleteLoading: boolean = false;
+  syncLoading = false;
 
 
   constructor(private _connectionService: ConnectionService, private _messageService: MessageService) {
@@ -46,6 +47,26 @@ export class ConnectionsContainerComponent implements OnInit, OnDestroy {
 
   onEditConnection() {
     this.showForm = true;
+  }
+
+  onSyncUpEvent() {
+    this.syncLoading = true;
+    if (this.selectedConn?.id) {
+      this._subsList.push(this._connectionService.syncUpTables(this.selectedConn.id)
+      .subscribe({
+        next: result => {
+          if (result) {
+            this.selectedConn = undefined;
+            this.postSuccess('Conexión Sincronizada', `La Conexión se ha sincronizado`);
+          }
+          this.syncLoading = false;
+        },
+        error: err => {
+          this.postError('Error al sincronizar Conexión', err?.messages?.join(','));
+          this.syncLoading = false;
+        }
+      }));
+    }
   }
 
   onDeleteConnection() {

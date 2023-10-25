@@ -11,7 +11,7 @@ import org.springframework.data.mongodb.core.mapping.DocumentReference;
 import java.util.List;
 
 @Document(collection = "tables")
-@CompoundIndex(name = "email_age", def = "{'connection': 1, 'schema': 1, 'name': 1}", unique = true)
+@CompoundIndex(name = "connection_schema_name", def = "{'connection': 1, 'schema': 1, 'name': 1}", unique = true)
 @Getter @Setter
 public class TableEntity {
     @Id

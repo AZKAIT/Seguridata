@@ -14,6 +14,7 @@ import { DialogModule } from 'primeng/dialog';
 import { DropdownModule } from 'primeng/dropdown';
 import { InputTextModule } from 'primeng/inputtext';
 import { InputTextareaModule } from 'primeng/inputtextarea';
+import { TooltipModule } from 'primeng/tooltip';
 
 
 
@@ -34,7 +35,8 @@ import { InputTextareaModule } from 'primeng/inputtextarea';
     DialogModule,
     DropdownModule,
     InputTextModule,
-    InputTextareaModule
+    InputTextareaModule,
+    TooltipModule
   ],
   exports: [
     ColumnsContainerComponent

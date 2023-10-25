@@ -14,6 +14,7 @@ import { DialogModule } from 'primeng/dialog';
 import { InputTextModule } from 'primeng/inputtext';
 import { DropdownModule } from 'primeng/dropdown';
 import { InputNumberModule } from 'primeng/inputnumber';
+import { TooltipModule } from 'primeng/tooltip';
 import { DefinitionsModule } from '../definitions/definitions.module';
 
 
@@ -38,7 +39,8 @@ import { DefinitionsModule } from '../definitions/definitions.module';
 
     InputTextModule,
     DropdownModule,
-    InputNumberModule
+    InputNumberModule,
+    TooltipModule
   ],
   exports: [
     PlansContainerComponent,

@@ -5,11 +5,11 @@
       <ng-template pTemplate="caption">
         <div class="flex align-items-center justify-content-between">
           Definiciones
-          <div >
-            <p-button icon="pi pi-refresh" [text]="true" (onClick)="refreshList();"></p-button>
-            <p-button icon="pi pi-pencil" [text]="true" (onClick)="editDef()" [disabled]="!selectedDef"></p-button>
-            <p-button icon="pi pi-trash" [text]="true" (onClick)="deleteDef()" [disabled]="!selectedDef" [loading]="deleteLoading || false"></p-button>
-            <p-button icon="pi pi-plus" [text]="true" (onClick)="createDef()"></p-button>
+          <div class="flex">
+            <p-button class="h-full" icon="pi pi-refresh" [text]="true" (onClick)="refreshList();" pTooltip="Refrescar lista" tooltipPosition="top"></p-button>
+            <p-button class="h-full" icon="pi pi-pencil" [text]="true" (onClick)="editDef()" [disabled]="!selectedDef" pTooltip="Editar Definición" tooltipPosition="top"></p-button>
+            <p-button class="h-full" icon="pi pi-trash" [text]="true" (onClick)="deleteDef()" [disabled]="!selectedDef" [loading]="deleteLoading || false" pTooltip="Eliminar Definición" tooltipPosition="top"></p-button>
+            <p-button class="h-full" icon="pi pi-plus" [text]="true" (onClick)="createDef()" pTooltip="Crear nueva Definición" tooltipPosition="top"></p-button>
           </div>
         </div>
       </ng-template>

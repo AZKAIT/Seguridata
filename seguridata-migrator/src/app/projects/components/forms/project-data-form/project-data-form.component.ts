@@ -33,7 +33,7 @@ export class ProjectDataFormComponent {
       description: [''],
       sourceConnection: [undefined, Validators.required],
       targetConnection: [undefined, Validators.required],
-      autoPopulate: [false, Validators.required]
+      autoPopulate: [false]
     });
   }
 

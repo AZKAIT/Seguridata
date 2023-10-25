@@ -9,6 +9,7 @@ import { DefinitionsModule } from '../definitions/definitions.module';
 import { DialogModule } from 'primeng/dialog';
 import { StepsModule } from 'primeng/steps';
 import { ButtonModule } from 'primeng/button';
+import { TooltipModule } from 'primeng/tooltip';
 import { WizardStepTargetDirective } from './wizard-step-target.directive';
 import { WizardStepContainerComponent } from './wizard-step-container/wizard-step-container.component';
 import { ProjectFormWrapperComponent } from './wrappers/project-form-wrapper/project-form-wrapper.component';
@@ -48,7 +49,8 @@ import { ColumnsModule } from '../columns/columns.module';
 
     DialogModule,
     StepsModule,
-    ButtonModule
+    ButtonModule,
+    TooltipModule
   ],
   exports: [
     ProjectCreationWizardComponent,

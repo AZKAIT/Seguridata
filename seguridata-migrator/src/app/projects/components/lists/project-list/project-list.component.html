@@ -6,16 +6,16 @@
       <ng-template pTemplate="caption">
         <div class="flex align-items-center justify-content-between">
           Proyectos
-          <div>
-            <p-button icon="pi pi-refresh" [text]="true" (onClick)="refreshList();"></p-button>
-            <p-button icon="pi pi-pencil" [text]="true" (onClick)="editProject()"
-              [disabled]="!selectedProject"></p-button>
-            <p-button icon="pi pi-trash" [text]="true" (onClick)="deleteProject()" [disabled]="!selectedProject"
-              [loading]="deleteLoading || false"></p-button>
-            <p-button icon="pi pi-plus" [text]="true" (onClick)="createProject()"></p-button>
-            <p-button [icon]="'pi ' + (!selectedProject || isExecutable(selectedProject) ? 'pi-play' : 'pi-stop')"
+          <div class="flex">
+            <p-button class="h-full" icon="pi pi-refresh" [text]="true" (onClick)="refreshList();" pTooltip="Refrescar lista" tooltipPosition="top"></p-button>
+            <p-button class="h-full" icon="pi pi-pencil" [text]="true" (onClick)="editProject()"
+              [disabled]="!selectedProject" pTooltip="Editar Proyecto" tooltipPosition="top"></p-button>
+            <p-button class="h-full" icon="pi pi-trash" [text]="true" (onClick)="deleteProject()" [disabled]="!selectedProject"
+              [loading]="deleteLoading || false" pTooltip="Eliminar Proyecto" tooltipPosition="top"></p-button>
+            <p-button class="h-full" icon="pi pi-plus" [text]="true" (onClick)="createProject()" pTooltip="Crear nuevo Proyecto" tooltipPosition="top"></p-button>
+            <p-button class="h-full" [icon]="'pi ' + (!selectedProject || isExecutable(selectedProject) ? 'pi-play' : 'pi-stop')"
               [text]="true" [disabled]="!selectedProject" (onClick)="onScheduleProject()"
-              [loading]="schedulingLoading || false"></p-button>
+              [loading]="schedulingLoading || false" pTooltip="Ejecutar / Detener Proyecto" tooltipPosition="top"></p-button>
           </div>
         </div>
       </ng-template>

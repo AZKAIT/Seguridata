@@ -5,11 +5,11 @@
       <ng-template pTemplate="caption">
         <div class="flex align-items-center justify-content-between">
           Columnas
-          <div >
-            <p-button icon="pi pi-refresh" [text]="true" (onClick)="refreshList();"></p-button>
-            <p-button icon="pi pi-pencil" [text]="true" (onClick)="editColumn()" [disabled]="!selectedColumn"></p-button>
-            <p-button icon="pi pi-trash" [text]="true" (onClick)="deleteColumn()" [disabled]="!selectedColumn" [loading]="deleteLoading || false"></p-button>
-            <p-button icon="pi pi-plus" [text]="true" (onClick)="createColumn()"></p-button>
+          <div class="flex">
+            <p-button class="h-full" icon="pi pi-refresh" [text]="true" (onClick)="refreshList();" pTooltip="Refrescar lista" tooltipPosition="top"></p-button>
+            <p-button class="h-full" icon="pi pi-pencil" [text]="true" (onClick)="editColumn()" [disabled]="!selectedColumn" pTooltip="Editar Columna" tooltipPosition="top"></p-button>
+            <p-button class="h-full" icon="pi pi-trash" [text]="true" (onClick)="deleteColumn()" [disabled]="!selectedColumn" [loading]="deleteLoading || false" pTooltip="Eliminar Columna" tooltipPosition="top"></p-button>
+            <p-button class="h-full" icon="pi pi-plus" [text]="true" (onClick)="createColumn()" pTooltip="Crear nueva Columna" tooltipPosition="top"></p-button>
           </div>
         </div>
       </ng-template>

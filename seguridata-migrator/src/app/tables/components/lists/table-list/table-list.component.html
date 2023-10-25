@@ -6,12 +6,12 @@
       <ng-template pTemplate="caption">
         <div class="flex align-items-center justify-content-between">
           Tablas
-          <div>
-            <p-button icon="pi pi-refresh" [text]="true" (onClick)="refreshList();"></p-button>
-            <p-button icon="pi pi-pencil" [text]="true" (onClick)="editTable()" [disabled]="!selectedTable"></p-button>
-            <p-button icon="pi pi-trash" [text]="true" (onClick)="deleteTable()" [disabled]="!selectedTable"
-              [loading]="deleteLoading || false"></p-button>
-            <p-button icon="pi pi-plus" [text]="true" (onClick)="createTable()"></p-button>
+          <div class="flex">
+            <p-button class="h-full" icon="pi pi-refresh" [text]="true" (onClick)="refreshList();" pTooltip="Refrescar lista" tooltipPosition="top"></p-button>
+            <p-button class="h-full" icon="pi pi-pencil" [text]="true" (onClick)="editTable()" [disabled]="!selectedTable" pTooltip="Editar Tabla" tooltipPosition="top"></p-button>
+            <p-button class="h-full" icon="pi pi-trash" [text]="true" (onClick)="deleteTable()" [disabled]="!selectedTable"
+              [loading]="deleteLoading || false" pTooltip="Eliminar Tabla" tooltipPosition="top"></p-button>
+            <p-button class="h-full" icon="pi pi-plus" [text]="true" (onClick)="createTable()" pTooltip="Crear Nueva Tabla" tooltipPosition="top"></p-button>
           </div>
         </div>
       </ng-template>

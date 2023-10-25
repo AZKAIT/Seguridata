@@ -6,13 +6,15 @@
       <ng-template pTemplate="caption">
         <div class="flex align-items-center justify-content-between">
           Conexiones
-          <div>
-            <p-button icon="pi pi-refresh" [text]="true" (onClick)="refreshList();"></p-button>
-            <p-button icon="pi pi-pencil" [text]="true" (onClick)="editConnection()"
-              [disabled]="!selectedConn"></p-button>
-            <p-button icon="pi pi-trash" [text]="true" (onClick)="deleteConnection()"
-              [disabled]="!selectedConn" [loading]="deleteLoading || false"></p-button>
-            <p-button icon="pi pi-plus" [text]="true" (onClick)="createConnection()"></p-button>
+          <div class="flex">
+            <p-button class="h-full" icon="pi pi-refresh" [text]="true" (onClick)="refreshList();" pTooltip="Refrescar lista" tooltipPosition="top"></p-button>
+            <p-button class="h-full" icon="pi pi-sync" [text]="true" (onClick)="syncUpConnection();"
+              [disabled]="!selectedConn" pTooltip="Sincronizar Tablas y Columnas" tooltipPosition="top" [loading]="syncUpLoading || false"></p-button>
+            <p-button class="h-full" icon="pi pi-pencil" [text]="true" (onClick)="editConnection()"
+              [disabled]="!selectedConn" pTooltip="Editar Conexión" tooltipPosition="top"></p-button>
+            <p-button class="h-full" icon="pi pi-trash" [text]="true" (onClick)="deleteConnection()"
+              [disabled]="!selectedConn" [loading]="deleteLoading || false" pTooltip="Eliminar Conexión" tooltipPosition="top"></p-button>
+            <p-button class="h-full" icon="pi pi-plus" [text]="true" (onClick)="createConnection()" pTooltip="Crear nueva Conexión" tooltipPosition="top"></p-button>
           </div>
         </div>
       </ng-template>
