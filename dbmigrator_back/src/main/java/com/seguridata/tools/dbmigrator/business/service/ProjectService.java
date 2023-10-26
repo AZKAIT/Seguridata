@@ -49,7 +49,7 @@ public class ProjectService {
         ProjectEntity project = this.projectRepo.getProject(projectId);
 
         if (Objects.isNull(project)) {
-            throw new MissingObjectException("Project doesn't exist");
+            throw new MissingObjectException("El Proyecto no existe");
         }
 
         return project;
@@ -59,7 +59,7 @@ public class ProjectService {
         List<ProjectEntity> projects = this.projectRepo.getAllProjects();
 
         if (CollectionUtils.isEmpty(projects)) {
-            throw new EmptyResultException("No Projects found");
+            throw new EmptyResultException("No se encontraron Proyectos");
         }
 
         return projects;
@@ -80,30 +80,30 @@ public class ProjectService {
 
     public void validateProjectStatus(ProjectEntity project) {
         if (Objects.isNull(project)) {
-            throw new MissingObjectException("Couldn't find Project");
+            throw new MissingObjectException("No se encontró el Proyecto");
         }
 
         if (!CREATED.equals(project.getStatus()) && !STOPPED.equals(project.getStatus())) {
-            throw new ObjectLockedException("Project should be in CREATED or STOPPED state to update values");
+            throw new ObjectLockedException("El Proyecto debe estar en estatus CREATED o STOPPED para actualizar los valores");
         }
     }
 
     public boolean updateProjectStatus(ProjectEntity project, ProjectStatus newStatus) {
         if (CREATED.equals(newStatus)) {
-            throw new InvalidUpdateException("Can't update Project status to CREATED");
+            throw new InvalidUpdateException("No se puede regresar el estatus del Proyecto a CREATED");
         }
 
         ProjectStatus currentStatus = project.getStatus();
         if (CREATED.equals(currentStatus) && !STARTING.equals(newStatus)) {
-            throw new InvalidUpdateException("CREATED Project status can only transition to STARTING");
+            throw new InvalidUpdateException("Proyectos en estatus CREATED solo pueden transicionar a estatus STARTING");
         }
 
         if (STARTING.equals(currentStatus) && (!RUNNING.equals(newStatus) && !STOPPED.equals(newStatus))) {
-            throw new InvalidUpdateException("STARTING Project status can only transition to RUNNING or STOPPED");
+            throw new InvalidUpdateException("Proyectos en estatus STARTING solo pueden transicionar a estatus RUNNING o STOPPED");
         }
 
         if (STOPPING.equals(currentStatus) && !STOPPED.equals(newStatus)) {
-            throw new InvalidUpdateException("STOPPING Project status can only transition to STOPPED");
+            throw new InvalidUpdateException("Proyectos en estatus STOPPING solo pueden transicionar a estatus STOPPED");
         }
 
         project.setStatus(newStatus);
@@ -116,7 +116,7 @@ public class ProjectService {
 
     public void projectContainsConn(ConnectionEntity connection) {
         if (this.projectRepo.projectContainsConn(connection.getId())) {
-            throw new ObjectLockedException("Connection is present in Project, can't delete");
+            throw new ObjectLockedException("La Conexión está asociada a un Proyecto, no se puede eliminar");
         }
     }
 }

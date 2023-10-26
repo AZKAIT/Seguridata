@@ -97,7 +97,7 @@ public class ColumnFacade {
             ColumnEntity existingColumn = this.columnService.getColumn(columnId);
             TableEntity table = existingColumn.getTable();
             if (Objects.isNull(table)) {
-                throw new MissingObjectException("Table not found on column");
+                throw new MissingObjectException("No existe la tabla asociada a esta Columna");
             }
 
             this.connectionService.validateConnectionStatus(table.getConnection());
@@ -123,7 +123,7 @@ public class ColumnFacade {
 
             List<ColumnEntity> columns = this.columnMapper.mapColumnEntityList(columnModelList);
             if (CollectionUtils.isEmpty(columns)) {
-                throw new EmptyResultException("Input Column list is empty");
+                throw new EmptyResultException("La lista de Columnas de entrada está vacía");
             }
             columns = this.columnService.createColumnList(table, columns);
 
@@ -142,7 +142,7 @@ public class ColumnFacade {
             ColumnEntity existingColumn = this.columnService.getColumn(columnId);
             TableEntity table = existingColumn.getTable();
             if (Objects.isNull(table)) {
-                throw new MissingObjectException("Table not found on column");
+                throw new MissingObjectException("No existe la tabla asociada a esta Columna");
             }
 
             this.connectionService.validateConnectionStatus(table.getConnection());

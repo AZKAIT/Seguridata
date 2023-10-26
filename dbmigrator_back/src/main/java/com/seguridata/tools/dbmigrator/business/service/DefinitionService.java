@@ -39,7 +39,7 @@ public class DefinitionService {
     public List<DefinitionEntity> getDefinitionsForPlan(String planId) {
         List<DefinitionEntity> definitions = this.definitionRepo.findDefinitionListByPlan(planId);
         if (CollectionUtils.isEmpty(definitions)) {
-            throw new EmptyResultException("Empty definition list for plan");
+            throw new EmptyResultException("La lista de Definiciones para este Plan está vacía");
         }
 
         return definitions;
@@ -49,7 +49,7 @@ public class DefinitionService {
         DefinitionEntity definitionEntity = this.definitionRepo.findDefinition(definitionId);
 
         if (Objects.isNull(definitionEntity)) {
-            throw new MissingObjectException("Definition doesn't exist");
+            throw new MissingObjectException("La Definición no existe");
         }
 
         return definitionEntity;
@@ -91,7 +91,7 @@ public class DefinitionService {
 
     public void defContainsColumn(ColumnEntity column) {
         if (this.definitionRepo.defContainsColumn(column.getId())) {
-            throw new ObjectLockedException("Column is present in Definition, can't delete");
+            throw new ObjectLockedException("La Columna está asociada a una Definición, no se puede eliminar");
         }
     }
 

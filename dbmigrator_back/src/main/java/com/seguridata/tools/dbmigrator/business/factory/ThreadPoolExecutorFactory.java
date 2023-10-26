@@ -22,7 +22,7 @@ public class ThreadPoolExecutorFactory {
 
     public MigrationThreadPoolExecutor getExecutorForProject(String projectId, boolean createNew) {
         if (StringUtils.isBlank(projectId)) {
-            throw new MissingObjectException("Project Id for Executor Service cannot be empty");
+            throw new MissingObjectException("el ID del Proyecto para el Ejecutor no puede estar vacío");
         }
 
         MigrationThreadPoolExecutor threadPoolExecutor;
@@ -31,7 +31,7 @@ public class ThreadPoolExecutorFactory {
                 threadPoolExecutor = this.createThreadPoolTaskExecutor();
                 this.executorServices.put(projectId, threadPoolExecutor);
             } else {
-                throw new EmptyResultException("No Executor Service for given Project");
+                throw new EmptyResultException("No se encontró el servicio ejecutor para este Proyecto");
             }
         } else {
             threadPoolExecutor = this.executorServices.get(projectId);

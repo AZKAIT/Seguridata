@@ -30,7 +30,7 @@ public class TableService {
         table.setConnection(connection);
 
         if (this.tableRepo.validateTableData(connection.getId(), table)) {
-            throw new DuplicateDataException("Table already exists for given connection");
+            throw new DuplicateDataException("La Tabla ya existe para esta Conexión");
         }
 
         return this.tableRepo.createTable(table);
@@ -39,7 +39,7 @@ public class TableService {
     public List<TableEntity> getTablesForConnection(String connectionId) {
         List<TableEntity> tables = this.tableRepo.getTableListByConnection(connectionId);
         if (CollectionUtils.isEmpty(tables)) {
-            throw new EmptyResultException("Empty tables for connection");
+            throw new EmptyResultException("Lista de Tablas vacía para el Proyecto");
         }
 
         return tables;
@@ -49,7 +49,7 @@ public class TableService {
         TableEntity tableEntity = this.tableRepo.getTable(tableId);
 
         if (Objects.isNull(tableEntity)) {
-            throw new MissingObjectException("Table doesn't exist");
+            throw new MissingObjectException("La Tabla no existe");
         }
 
         return tableEntity;
@@ -70,7 +70,7 @@ public class TableService {
 
     public List<TableEntity> saveBatch(ConnectionEntity connection, List<TableEntity> tables) {
         if (CollectionUtils.isEmpty(tables)) {
-            throw new InvalidUpdateException("Empty Tables, cannot save");
+            throw new InvalidUpdateException("Lista de Tablas vacía, no se puede guardar");
         }
         return tables.stream().map(table -> {
                     try {

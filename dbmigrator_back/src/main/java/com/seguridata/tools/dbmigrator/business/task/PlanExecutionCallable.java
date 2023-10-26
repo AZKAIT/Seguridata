@@ -65,7 +65,7 @@ public class PlanExecutionCallable implements Callable<String> {
         LOGGER.info("Executing Task: {}", Thread.currentThread().getName());
         if (Objects.isNull(this.latch)) {
             LOGGER.error("Latch is null");
-            throw new IllegalStateException("Task should be initialized with a latch");
+            throw new IllegalStateException("La tarea se debe inicializar con un objeto Latch");
         }
 
         try {
@@ -75,7 +75,7 @@ public class PlanExecutionCallable implements Callable<String> {
 
             List<DefinitionEntity> dataProcessDefinitions = this.plan.getDefinitions();
             if (CollectionUtils.isEmpty(dataProcessDefinitions)) {
-                throw new EmptyResultException("Definitions list is empty");
+                throw new EmptyResultException("La lista de Definiciones está vacía");
             }
 
 
@@ -89,7 +89,7 @@ public class PlanExecutionCallable implements Callable<String> {
             final long initialSkip = this.plan.getInitialSkip();
 
             if (initialSkip > totalRowsSource) {
-                throw new IllegalStateException("Initial Skip is greater than total Rows in table");
+                throw new IllegalStateException("El número de filas omitidas es mayor al número total de registros");
             }
 
             long currentRows = 0;
@@ -172,9 +172,7 @@ public class PlanExecutionCallable implements Callable<String> {
                     throw new InterruptedException();
                 }
             } catch (DuplicateKeyException e) {
-                LOGGER.warn("Duplicate Key found, ignoring");
-                failed = true;
-                failMessage = e.getMessage();
+                LOGGER.warn("Duplicate Key found, ignoring: {}", e.getMessage());
                 insertedRows++;
             } catch(InterruptedException e) {
                 throw e;
@@ -199,7 +197,7 @@ public class PlanExecutionCallable implements Callable<String> {
         }
         // TODO: Define what to do if data couldn't be inserted
 
-        LOGGER.info("Inserted rows after execution: {}", insertedRows);
+        LOGGER.debug("Inserted rows after execution: {}", insertedRows);
         return insertedRows;
     }
 

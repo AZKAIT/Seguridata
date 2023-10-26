@@ -28,7 +28,7 @@ public class PlanService {
     public List<PlanEntity> getPlansForProject(String projectId) {
         List<PlanEntity> plans = this.planRepo.getPlansForProject(projectId);
         if (CollectionUtils.isEmpty(plans)) {
-            throw new EmptyResultException("No plans found for given project");
+            throw new EmptyResultException("No se encontraron Planes para este Proyecto");
         }
 
         return plans;
@@ -37,7 +37,7 @@ public class PlanService {
     public PlanEntity getPlan(String planId) {
         PlanEntity plan = this.planRepo.getPlan(planId);
         if (Objects.isNull(plan)) {
-            throw new MissingObjectException("Plan not found");
+            throw new MissingObjectException("No se encontró el Plan");
         }
 
         return plan;
@@ -79,7 +79,7 @@ public class PlanService {
 
     public void planContainsTable(TableEntity table) {
         if (this.planRepo.planContainsTable(table.getId())) {
-            throw new ObjectLockedException("Table is present in Plan, can't delete");
+            throw new ObjectLockedException("La Tabla está asociada a un Plan, no se puede eliminar");
         }
     }
 

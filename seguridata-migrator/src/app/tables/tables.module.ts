@@ -9,6 +9,7 @@ import { ButtonModule } from 'primeng/button';
 import { CardModule } from 'primeng/card';
 import { DialogModule } from 'primeng/dialog';
 import { TooltipModule } from 'primeng/tooltip';
+import { DropdownModule } from 'primeng/dropdown';
 
 import { InputTextModule } from 'primeng/inputtext';
 import { InputTextareaModule } from 'primeng/inputtextarea';
@@ -34,6 +35,7 @@ import { ColumnsModule } from '../columns/columns.module';
     CardModule,
     DialogModule,
     TooltipModule,
+    DropdownModule,
 
     InputTextModule,
     InputTextareaModule

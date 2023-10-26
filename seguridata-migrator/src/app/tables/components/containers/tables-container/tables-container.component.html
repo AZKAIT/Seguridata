@@ -3,6 +3,6 @@
 
 <app-columns-container [table]="selectedTable"></app-columns-container>
 
-<p-dialog header="Información de la tabla" [(visible)]="showForm" [modal]="true" [style]="{width: '50vw'}">
-<app-table-data-form *ngIf="connection && showForm" [table]="selectedTable" (saveTable)="saveTableData($event)" [formLoading]="formLoading"></app-table-data-form>
+<p-dialog header="Información de la tabla" [(visible)]="showForm" [modal]="true" [style]="{width: '50vw'}" (onShow)="fetchTableColumns()">
+<app-table-data-form *ngIf="connection && showForm" [table]="selectedTable" (saveTable)="saveTableData($event)" [formLoading]="formLoading" [columnList]="columnList"></app-table-data-form>
 </p-dialog>

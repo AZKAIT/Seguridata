@@ -59,17 +59,17 @@ public class ProjectSyncUpFacade {
         ProjectEntity project = null;
         try {
             project = this.projectMapper.mapProjectEntity(projectModel);
-            this.stompMsgClient.sendProjectSyncUpStatusChange(project, "STARTED - Project Plan and Definitions");
+            this.stompMsgClient.sendProjectSyncUpStatusChange(project, "STARTED - Creación de Planes y Definiciones");
 
             List<TableEntity> sourceTables = this.getConnectionTables(project.getSourceConnection());
             List<TableEntity> targetTables = this.getConnectionTables(project.getTargetConnection());
             if (CollectionUtils.isEmpty(sourceTables) || CollectionUtils.isEmpty(targetTables)) {
-                throw new EmptyResultException("Either Source and/or Target Tables are empty");
+                throw new EmptyResultException("La Conexión Origen o Destino no tiene Tablas presentes");
             }
 
             List<PlanEntity> createdPlans = this.createPlansForTables(project, sourceTables, targetTables);
             if (CollectionUtils.isEmpty(createdPlans)) {
-                throw new EmptyResultException("Couldn't create new Plans");
+                throw new EmptyResultException("No se pudieron crear los Planes nuevos");
             }
 
             List<DefinitionEntity> newDefs = createdPlans.stream()
@@ -77,12 +77,12 @@ public class ProjectSyncUpFacade {
                     .flatMap(Collection::stream)
                     .collect(Collectors.toList());
             if (CollectionUtils.isEmpty(newDefs)) {
-                throw new EmptyResultException("Couldn't Definitions for Plans");
+                throw new EmptyResultException("No se pudieron crear las Definiciones para los Planes");
             }
-            this.stompMsgClient.sendProjectSyncUpStatusChange(project, "FINISHED - Project Plan and Definitions");
+            this.stompMsgClient.sendProjectSyncUpStatusChange(project, "FINISHED - Creación de Planes y Definiciones");
         } catch (BaseCodeException e) {
             LOGGER.error("Error Syncing Up Plans / Definitions: {}", e.getMessage());
-            this.stompMsgClient.sendProjectSyncUpError(project, String.format("ERROR - Project Plan and Definitions: %s", String.join(", ", e.getMessages())));
+            this.stompMsgClient.sendProjectSyncUpError(project, String.format("ERROR - Creación de Planes y Definiciones: %s", String.join(", ", e.getMessages())));
         }
     }
 

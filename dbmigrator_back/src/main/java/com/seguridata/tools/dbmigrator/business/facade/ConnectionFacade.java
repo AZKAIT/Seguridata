@@ -61,7 +61,7 @@ public class ConnectionFacade {
             // Testing if the connection works
             ConnectionTestResult connectionTestResult = this.dbConnFactory.createAndTestConnection(connection);
             if (!connectionTestResult.isSuccessful()) {
-                throw new DBValidationException("Connection to DB failed");
+                throw new DBValidationException("Falló conexión a la Base de Datos");
             }
 
             // Saving connection to Database
@@ -116,7 +116,7 @@ public class ConnectionFacade {
         try {
             ConnectionEntity currentConnection = this.connectionService.getConnection(connectionId);
             if (TRUE.equals(currentConnection.getLocked())) {
-                throw new ObjectLockedException("Connection is locked, cannot update");
+                throw new ObjectLockedException("Conexión bloqueada, no se puede actualizar");
             }
 
             currentConnection = this.connectionService.updateConnection(currentConnection, this.connMapper.mapConnectionEntity(connectionModel));
@@ -135,7 +135,7 @@ public class ConnectionFacade {
         try {
             ConnectionEntity currentConnection = this.connectionService.getConnection(connectionId);
             if (TRUE.equals(currentConnection.getLocked())) {
-                throw new ObjectLockedException("Connection is locked, cannot update");
+                throw new ObjectLockedException("Conexión bloqueada, no se puede actualizar");
             }
             this.projectService.projectContainsConn(currentConnection);
 

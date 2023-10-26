@@ -105,7 +105,7 @@ public class DatabaseQueryManager {
 
         BigDecimal result = this.namedParamJdbcTemplate.queryForObject(query, Collections.emptyMap(), BigDecimal.class);
         if (Objects.isNull(result)) {
-            throw new DataAccessResourceFailureException("Total Rows is null");
+            throw new DataAccessResourceFailureException("El número total de filas en la tabla es nulo");
         }
         return result.longValue();
     }

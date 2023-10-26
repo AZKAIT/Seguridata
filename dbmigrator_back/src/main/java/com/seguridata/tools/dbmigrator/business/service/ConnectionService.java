@@ -35,7 +35,7 @@ public class ConnectionService {
         connection.setLocked(false);
 
         if (this.connectionRepo.validateConnectionData(connection)) {
-            throw new DuplicateDataException("Connection already exists");
+            throw new DuplicateDataException("Esta Conexión ya existe");
         }
 
         return this.connectionRepo.insertConnection(connection);
@@ -45,7 +45,7 @@ public class ConnectionService {
         ConnectionEntity connection = this.connectionRepo.getConnection(id);
 
         if (Objects.isNull(connection)) {
-            throw new MissingObjectException("Connection doesn't exist");
+            throw new MissingObjectException("Esta Conexión no existe");
         }
 
         return connection;
@@ -54,7 +54,7 @@ public class ConnectionService {
     public List<ConnectionEntity> getAllConnections() {
         List<ConnectionEntity> connectionList = this.connectionRepo.getConnectionList();
         if (CollectionUtils.isEmpty(connectionList)) {
-            throw new EmptyResultException("No connections found");
+            throw new EmptyResultException("No se encontraron Conexiones");
         }
         return connectionList;
     }
@@ -72,11 +72,11 @@ public class ConnectionService {
 
     public void validateConnectionStatus(ConnectionEntity connection) {
         if (Objects.isNull(connection)) {
-            throw new MissingObjectException("Connection not found for related-column table");
+            throw new MissingObjectException("No se encontró la Conexión asociada");
         }
 
         if (TRUE.equals(connection.getLocked())) {
-            throw new ObjectLockedException("Connection is locked, cannot proceed");
+            throw new ObjectLockedException("La Conexión está bloqueada, no se puede proceder");
         }
     }
 

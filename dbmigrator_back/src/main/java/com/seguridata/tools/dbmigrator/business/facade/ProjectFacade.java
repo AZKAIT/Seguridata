@@ -181,7 +181,7 @@ public class ProjectFacade {
         try {
             project = this.projectService.getProject(projectId);
             if (!ProjectStatus.RUNNING.equals(project.getStatus())) {
-                throw new ObjectLockedException("Project should be in RUNNING state to stop execution");
+                throw new ObjectLockedException("Proyecto debe estar en estatus RUNNING para detener la ejecución");
             }
 
             this.appEventPublisher.publishEvent(new StopProjectEvent(this, project));

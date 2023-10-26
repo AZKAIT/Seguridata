@@ -1,6 +1,7 @@
 import { Component, OnDestroy, Input } from '@angular/core';
 import { MessageService } from 'primeng/api';
 import { Subscription } from 'rxjs';
+import { ColumnModel } from 'src/app/common/models/column-model';
 
 import { ConnectionModel } from 'src/app/common/models/connection-model';
 import { TableModel } from 'src/app/common/models/table-model';
@@ -80,6 +81,7 @@ export class TablesContainerComponent implements OnDestroy {
   onCreateTable() {
     this.selectedTable = undefined;
     this.showForm = true;
+    this.columnList = [];
   }
 
   saveTableData(table: TableModel) {
@@ -122,6 +124,23 @@ export class TablesContainerComponent implements OnDestroy {
     }
   }
 
+  // TODO: Delete when getting rid for order_column
+  columnList: ColumnModel[] = [];
+  fetchTableColumns() {
+    if (this.selectedTable?.id) {
+      this._subsList.push(this._tableService.getColumnsForTable(this.selectedTable.id)
+      .subscribe({
+        next: colList => {
+          if (colList) {
+            this.columnList = colList;
+          }
+        },
+        error: err => {
+          this.postError('Error al obtener las Columnas de la tabla', err?.messages?.join(','));
+        }
+      }));
+    }
+  }
 
   private fetchTables(connection: ConnectionModel | undefined) {
     this.selectedTable = undefined;

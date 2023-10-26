@@ -113,7 +113,7 @@ public class ExecutionFacade {
             errorTracking.setReferenceId(connection.getId());
             this.errorTrackingService.createErrorTrackingForProject(project, errorTracking);
 
-            throw new RuntimeException("Initialization of Target Query Manager failed");
+            throw new RuntimeException("Falló la inicialización del manejador de dato de Base Destino");
         }
     }
 
@@ -124,7 +124,7 @@ public class ExecutionFacade {
         try {
             List<PlanEntity> plans = project.getPlans();
             if (CollectionUtils.isEmpty(plans)) {
-                throw new EmptyResultException("Plan list is empty");
+                throw new EmptyResultException("La lista de Planes está vacía");
             }
 
             return plans.stream()

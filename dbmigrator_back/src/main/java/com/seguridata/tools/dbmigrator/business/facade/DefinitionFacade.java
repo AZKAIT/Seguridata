@@ -87,7 +87,7 @@ public class DefinitionFacade {
 
             List<DefinitionEntity> definitionList = this.definitionMapper.mapDefinitionEntityList(definitionModelList);
             if (CollectionUtils.isEmpty(definitionList)) {
-                throw new EmptyResultException("Input Column list is empty");
+                throw new EmptyResultException("La lista de Columnas de entrada está vacía");
             }
             definitionList.forEach(this::validateColumns);
 
@@ -123,7 +123,7 @@ public class DefinitionFacade {
             DefinitionEntity existingDefinition = this.definitionService.getDefinition(definitionId);
             PlanEntity plan = existingDefinition.getPlan();
             if (Objects.isNull(plan)) {
-                throw new MissingObjectException("Plan not found for column");
+                throw new MissingObjectException("No existe el Plan asociado a esta Definición");
             }
 
             this.projectService.validateProjectStatus(plan.getProject());

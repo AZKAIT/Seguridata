@@ -1,5 +1,6 @@
 import { Component, Input, Output, EventEmitter } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
+import { ColumnModel } from 'src/app/common/models/column-model';
 import { TableModel } from 'src/app/common/models/table-model';
 
 @Component({
@@ -14,6 +15,9 @@ export class TableDataFormComponent {
   @Input() formLoading?: boolean;
   @Input() showForm?: boolean;
 
+  // TODO: Remove when getting rid of order_column
+  @Input() columnList?: ColumnModel[];
+
   _table: TableModel | undefined;
 
   tableFormGroup: FormGroup;
@@ -24,7 +28,7 @@ export class TableDataFormComponent {
       schema: [''],
       name: ['', Validators.required],
       description: [''],
-      orderColumnName: ['', Validators.required]
+      orderColumnName: [undefined]
     });
   }
 
@@ -43,4 +47,5 @@ export class TableDataFormComponent {
   submit() {
     this.saveTable.emit(this.tableFormGroup.value);
   }
+
 }

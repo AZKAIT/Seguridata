@@ -89,13 +89,13 @@ public class ConnectionSyncUpFacade {
         ConnectionEntity entity = null;
         try {
             entity = this.connectionMapper.mapConnectionEntity(connectionModel);
-            this.stompMsgClient.sendConnSyncUpStatusChange(entity, "STARTED - Table Sync Up");
+            this.stompMsgClient.sendConnSyncUpStatusChange(entity, "STARTED - Sincronización de Tablas");
 
             this.syncUpConnectionTables(entity);
-            this.stompMsgClient.sendConnSyncUpStatusChange(entity, "FINISHED - Table Sync Up");
+            this.stompMsgClient.sendConnSyncUpStatusChange(entity, "FINISHED - Sincronización de Tablas");
         } catch (SQLException e) {
             LOGGER.error("SyncUp failed: {}", e.getMessage());
-            this.stompMsgClient.sendConnSyncUpError(entity, String.format("ERROR - Table Sync Up: %s", e.getMessage()));
+            this.stompMsgClient.sendConnSyncUpError(entity, String.format("ERROR - Sincronización de Tablas: %s", e.getMessage()));
         }
     }
 
@@ -129,7 +129,7 @@ public class ConnectionSyncUpFacade {
         ConnectionEntity entity = null;
         try {
             entity = this.connectionMapper.mapConnectionEntity(connectionModel);
-            this.stompMsgClient.sendConnSyncUpStatusChange(entity, "STARTED - Column Sync Up");
+            this.stompMsgClient.sendConnSyncUpStatusChange(entity, "STARTED - Sincronización de Columnas");
 
             List<TableEntity> table = this.tableMapper.mapTableEntityList(tableModels);
 
@@ -137,12 +137,12 @@ public class ConnectionSyncUpFacade {
             queryManager.initializeConnection(entity);
             this.syncUpTableColumns(entity, queryManager, table);
             queryManager.closeConnection();
-            this.stompMsgClient.sendConnSyncUpStatusChange(entity, "FINISHED - Column Sync Up");
+            this.stompMsgClient.sendConnSyncUpStatusChange(entity, "FINISHED - Sincronización de Columnas");
         } catch (SQLException e) {
             LOGGER.error("SyncUp failed: {}", e.getMessage());
-            this.stompMsgClient.sendConnSyncUpError(entity, String.format("ERROR - Column Sync Up: %s", e.getMessage()));
+            this.stompMsgClient.sendConnSyncUpError(entity, String.format("ERROR - Sincronización de Columnas: %s", e.getMessage()));
         } catch (BaseCodeException e) {
-            this.stompMsgClient.sendConnSyncUpError(entity, String.format("ERROR - Column Sync Up: %s", String.join(", ", e.getMessages())));
+            this.stompMsgClient.sendConnSyncUpError(entity, String.format("ERROR - Sincronización de Columnas: %s", String.join(", ", e.getMessages())));
         }
     }
 
@@ -168,7 +168,7 @@ public class ConnectionSyncUpFacade {
                         List<ColumnEntity> tableColumns = queryManager.findColumnForTable(table);
                         return this.columnService.saveBatch(table, tableColumns).stream();
                     } catch (BaseCodeException e) {
-                        this.stompMsgClient.sendConnSyncUpError(connection, String.format("ERROR - Column Sync Up: %s", String.join(", ", e.getMessages())));
+                        this.stompMsgClient.sendConnSyncUpError(connection, String.format("ERROR - Sincronización de Columnas: %s", String.join(", ", e.getMessages())));
                         return null;
                     }
                 })

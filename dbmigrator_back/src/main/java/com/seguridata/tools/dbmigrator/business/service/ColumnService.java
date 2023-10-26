@@ -35,7 +35,7 @@ public class ColumnService {
         }
 
         if (this.columnRepo.validateColumnData(table.getId(), column)) {
-            throw new DuplicateDataException("Column already exists for given table");
+            throw new DuplicateDataException("La Columna ya existe en esta Tabla");
         }
 
         return this.columnRepo.createColumn(column);
@@ -44,7 +44,7 @@ public class ColumnService {
     public List<ColumnEntity> getColumnsForTable(String tableId) {
         List<ColumnEntity> columns = this.columnRepo.findColumnListByTable(tableId);
         if (CollectionUtils.isEmpty(columns)) {
-            throw new EmptyResultException("Empty column list for table");
+            throw new EmptyResultException("Lista de Columnas vacía para esta Tabla");
         }
 
         return columns;
@@ -54,7 +54,7 @@ public class ColumnService {
         ColumnEntity columnEntity = this.columnRepo.findColumn(columnId);
 
         if (Objects.isNull(columnEntity)) {
-            throw new MissingObjectException("Column doesn't exist");
+            throw new MissingObjectException("La Columna no existe");
         }
 
         return columnEntity;
