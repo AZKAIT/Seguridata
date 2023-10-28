@@ -1,5 +1,5 @@
 <ng-container *ngIf="errorList">
-  <p-card [header]="'Errores de ' + (job? job.projectName + '#' + job.execNumber: 'N/A')">
+  <p-card [header]="'Errores de ' + (job? job.projectName + ' #' + job.execNumber: 'N/A')">
     <p-table [value]="errorList" selectionMode="single" dataKey="id" [(selection)]="selectedError"
       [loading]="tableLoading" (onRowSelect)="onRowSelect($event)" (onRowUnselect)="onRowUnselect($event)" [paginator]="true" [rows]="10"
       [tableStyle]="{ 'min-width': '50rem' }">
