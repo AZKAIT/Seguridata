@@ -8,8 +8,8 @@ import com.seguridata.tools.dbmigrator.business.service.ErrorTrackingService;
 import com.seguridata.tools.dbmigrator.data.constant.ConversionFunction;
 import com.seguridata.tools.dbmigrator.data.entity.DefinitionEntity;
 import com.seguridata.tools.dbmigrator.data.entity.ErrorTrackingEntity;
+import com.seguridata.tools.dbmigrator.data.entity.JobEntity;
 import com.seguridata.tools.dbmigrator.data.entity.PlanEntity;
-import com.seguridata.tools.dbmigrator.data.entity.ProjectEntity;
 import com.seguridata.tools.dbmigrator.data.entity.TableEntity;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
@@ -30,7 +30,7 @@ import java.util.stream.Collectors;
 public class PlanExecutionCallable implements Callable<String> {
     private static final Logger LOGGER = LoggerFactory.getLogger(PlanExecutionCallable.class);
 
-    private final ProjectEntity project;
+    private final JobEntity job;
     private final PlanEntity plan;
     private final DatabaseQueryManager sourceQueryManager;
     private final DatabaseQueryManager targetQueryManager;
@@ -38,12 +38,12 @@ public class PlanExecutionCallable implements Callable<String> {
 
     private CountDownLatch latch;
 
-    public PlanExecutionCallable(ProjectEntity project,
+    public PlanExecutionCallable(JobEntity job,
                                  PlanEntity plan,
                                  DatabaseQueryManager sourceQueryManager,
                                  DatabaseQueryManager targetQueryManager,
                                  ErrorTrackingService errorTrackingService) {
-        this.project = project;
+        this.job = job;
         this.plan = plan;
         this.sourceQueryManager = sourceQueryManager;
         this.targetQueryManager = targetQueryManager;
@@ -128,7 +128,7 @@ public class PlanExecutionCallable implements Callable<String> {
             errorTracking.setMessage(e.getMessage());
             errorTracking.setReferenceType(PlanEntity.class.getCanonicalName());
             errorTracking.setReferenceId(this.plan.getId());
-            this.errorTrackingService.createErrorTrackingForProject(this.project, errorTracking);
+            this.errorTrackingService.createErrorTrackingForProject(this.job, errorTracking);
         } finally {
             this.latch.countDown();
             LOGGER.info("Terminating Task: {}", Thread.currentThread().getName());
@@ -149,12 +149,7 @@ public class PlanExecutionCallable implements Callable<String> {
                 .retrieveDataBlockFrom(table, this.plan.getDefinitions(), skip, limit);
 
         if (CollectionUtils.isEmpty(resultList)) {
-            ErrorTrackingEntity errorTracking = new ErrorTrackingEntity();
-            errorTracking.setMessage("Source Data is Empty");
-            errorTracking.setReferenceType(TableEntity.class.getCanonicalName());
-            errorTracking.setReferenceId(table.getId());
-            this.errorTrackingService.createErrorTrackingForProject(this.project, errorTracking);
-            throw new EmptyResultException(errorTracking.getMessage());
+            throw new EmptyResultException("Source Data is Empty");
         }
 
         return resultList;
@@ -163,9 +158,6 @@ public class PlanExecutionCallable implements Callable<String> {
     private long insertTargetData(List<Map<String, Object>> sourceData, TableEntity table, List<DefinitionEntity> dataProcessDefinitions) throws InterruptedException {
         long insertedRows = 0;
         for (Map<String, Object> resultSet : sourceData) {
-            boolean failed = false;
-            boolean stopExecution = false;
-            String failMessage = "";
             try {
                 insertedRows += this.targetQueryManager.insertDataBlockTo(table, dataProcessDefinitions, resultSet);
                 if (Thread.interrupted()) {
@@ -177,25 +169,10 @@ public class PlanExecutionCallable implements Callable<String> {
             } catch(InterruptedException e) {
                 throw e;
             } catch (Exception e) {
-                failed = true;
-                failMessage = e.getMessage();
-                stopExecution = true;
                 LOGGER.error("Unexpected error: {}", e.getMessage());
-            } finally {
-                if (failed) {
-                    ErrorTrackingEntity errorTracking = new ErrorTrackingEntity();
-                    errorTracking.setMessage(failMessage);
-                    errorTracking.setReferenceType(TableEntity.class.getCanonicalName());
-                    errorTracking.setReferenceId(table.getId());
-                    this.errorTrackingService.createErrorTrackingForProject(this.project, errorTracking);
-                }
-            }
-
-            if (stopExecution) {
-                throw new DBValidationException(failMessage);
+                throw new DBValidationException(e.getMessage());
             }
         }
-        // TODO: Define what to do if data couldn't be inserted
 
         LOGGER.debug("Inserted rows after execution: {}", insertedRows);
         return insertedRows;

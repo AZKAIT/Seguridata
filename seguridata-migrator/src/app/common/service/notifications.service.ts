@@ -7,7 +7,6 @@ import { MessageService } from 'primeng/api';
 import { webSocket, WebSocketSubject } from 'rxjs/webSocket';
 import { Observable, of, filter, map, switchMap, retry, delay, Subject, takeUntil } from 'rxjs';
 import { NotificationModel } from '../models/notification-model';
-import { ErrorTrackingEntity } from '../models/error-tracking-entity';
 
 
 const RETRY_SECONDS = 10;
@@ -63,11 +62,11 @@ export class NotificationsService {
   }
 
   connectToNotifs(): void {
-    this._stompClient.watch('/topic/project/execution/status')
+    this._stompClient.watch('/topic/job/execution/status')
       .pipe(takeUntil(this._destroyed))
       .subscribe(this.postProjExecStatusNotif.bind(this));
 
-    this._stompClient.watch('/topic/project/execution/error')
+    this._stompClient.watch('/topic/job/execution/error')
       .pipe(takeUntil(this._destroyed))
       .subscribe(this.postProjExecErrorNotif.bind(this));
 
@@ -97,8 +96,8 @@ export class NotificationsService {
 
     this._messageService.add({
       severity: 'info',
-      summary: `Proyecto: ${statusChange.objectName}`,
-      detail: `Proyecto cambió de estatus a ${statusChange.data}`
+      summary: `Tarea: ${statusChange.objectName}`,
+      detail: `Tarea cambió de estatus a ${statusChange.data}`
     });
   }
 
@@ -107,8 +106,8 @@ export class NotificationsService {
 
     this._messageService.add({
       severity: 'error',
-      summary: `Error en Proyecto: ${statusChange.objectName}`,
-      detail: `Ocurrió un error al ejecutar el proyecto: ${statusChange.data}`
+      summary: `Error en Tarea: ${statusChange.objectName}`,
+      detail: `Ocurrió un error al ejecutar la Tarea: ${statusChange.data}`
     });
   }
 

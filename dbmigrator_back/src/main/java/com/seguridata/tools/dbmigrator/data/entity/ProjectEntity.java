@@ -1,6 +1,5 @@
 package com.seguridata.tools.dbmigrator.data.entity;
 
-import com.seguridata.tools.dbmigrator.data.constant.ProjectStatus;
 import lombok.Getter;
 import lombok.Setter;
 import org.springframework.data.annotation.Id;
@@ -23,8 +22,8 @@ public class ProjectEntity {
     @DocumentReference
     private ConnectionEntity targetConnection;
     private Date createdAt;
-    private ProjectStatus status;
-    private Date lastStatusDate;
+    private Boolean locked;
+    private Integer parallelThreads;
     @ReadOnlyProperty
     @DocumentReference(lookup="{'project':?#{#self._id} }")
     private List<PlanEntity> plans;

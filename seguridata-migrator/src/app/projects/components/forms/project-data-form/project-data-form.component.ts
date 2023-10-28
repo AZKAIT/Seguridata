@@ -1,7 +1,7 @@
 import { Component, EventEmitter, Input, Output } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { DropdownChangeEvent } from 'primeng/dropdown';
-import { ProjectStatus } from 'src/app/common/enums/project-status';
+import { JobStatus } from 'src/app/common/enums/job-status';
 import { ConnectionModel } from 'src/app/common/models/connection-model';
 import { ProjectModel } from 'src/app/common/models/project-model';
 
@@ -33,7 +33,8 @@ export class ProjectDataFormComponent {
       description: [''],
       sourceConnection: [undefined, Validators.required],
       targetConnection: [undefined, Validators.required],
-      autoPopulate: [false]
+      autoPopulate: [false],
+      parallelThreads: [1, Validators.required]
     });
   }
 
@@ -42,12 +43,8 @@ export class ProjectDataFormComponent {
   set project(project: ProjectModel | undefined) {
     this._project = project;
     if (project) {
-      let projStatus = project.status;
-      if (typeof projStatus === 'string') {
-        projStatus = ProjectStatus[projStatus as keyof typeof ProjectStatus];
-      }
       this.projectFormGroup.patchValue(project);
-      if (!projStatus && ProjectStatus.CREATED != projStatus && ProjectStatus.STOPPED != projStatus) {
+      if (project.locked) {
         this.projectFormGroup.disable();
       }
       this.selSourceConn = project.sourceConnection;

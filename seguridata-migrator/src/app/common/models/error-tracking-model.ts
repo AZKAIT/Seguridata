@@ -1,4 +1,4 @@
-export interface ErrorTrackingEntity {
+export interface ErrorTrackingModel {
   id: string;
   date: Date;
   message: string;

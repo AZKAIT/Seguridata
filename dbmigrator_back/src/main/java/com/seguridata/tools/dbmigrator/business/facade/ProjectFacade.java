@@ -8,9 +8,11 @@ import com.seguridata.tools.dbmigrator.business.exception.ObjectLockedException;
 import com.seguridata.tools.dbmigrator.business.mapper.ProjectMapper;
 import com.seguridata.tools.dbmigrator.business.service.ConnectionService;
 import com.seguridata.tools.dbmigrator.business.service.DefinitionService;
+import com.seguridata.tools.dbmigrator.business.service.JobService;
 import com.seguridata.tools.dbmigrator.business.service.PlanService;
 import com.seguridata.tools.dbmigrator.business.service.ProjectService;
-import com.seguridata.tools.dbmigrator.data.constant.ProjectStatus;
+import com.seguridata.tools.dbmigrator.data.constant.JobStatus;
+import com.seguridata.tools.dbmigrator.data.entity.JobEntity;
 import com.seguridata.tools.dbmigrator.data.entity.PlanEntity;
 import com.seguridata.tools.dbmigrator.data.entity.ProjectEntity;
 import com.seguridata.tools.dbmigrator.data.model.ProjectModel;
@@ -34,6 +36,7 @@ public class ProjectFacade {
     private final ProjectService projectService;
     private final PlanService planService;
     private final DefinitionService definitionService;
+    private final JobService jobService;
     private final ProjectMapper projectMapper;
     private final ApplicationEventPublisher appEventPublisher;
 
@@ -42,12 +45,14 @@ public class ProjectFacade {
                          ProjectService projectService,
                          PlanService planService,
                          DefinitionService definitionService,
+                         JobService jobService,
                          ProjectMapper projectMapper,
                          ApplicationEventPublisher appEventPublisher) {
         this.connectionService = connectionService;
         this.projectService = projectService;
         this.planService = planService;
         this.definitionService = definitionService;
+        this.jobService = jobService;
         this.projectMapper = projectMapper;
         this.appEventPublisher = appEventPublisher;
     }
@@ -160,7 +165,10 @@ public class ProjectFacade {
             this.connectionService.validateConnectionStatus(project.getSourceConnection());
             this.connectionService.validateConnectionStatus(project.getTargetConnection());
 
-            this.appEventPublisher.publishEvent(new InitiateProjectEvent(this, project));
+            this.projectService.updateProjectLocked(project, true);
+
+            JobEntity job = this.jobService.createJobForProject(project);
+            this.appEventPublisher.publishEvent(new InitiateProjectEvent(this, job));
             execResponse.setData(true);
             execResponse.setCode("00");
         } catch (BaseCodeException e) {
@@ -180,11 +188,12 @@ public class ProjectFacade {
         ProjectEntity project = null;
         try {
             project = this.projectService.getProject(projectId);
-            if (!ProjectStatus.RUNNING.equals(project.getStatus())) {
-                throw new ObjectLockedException("Proyecto debe estar en estatus RUNNING para detener la ejecución");
+            if (!TRUE.equals(project.getLocked())) {
+                throw new ObjectLockedException("Proyecto no está en ejecución");
             }
+            JobEntity currentJob = this.jobService.findLatestJob(project);
 
-            this.appEventPublisher.publishEvent(new StopProjectEvent(this, project));
+            this.appEventPublisher.publishEvent(new StopProjectEvent(this, currentJob));
             execResponse.setData(true);
             execResponse.setCode("00");
         } catch (BaseCodeException e) {

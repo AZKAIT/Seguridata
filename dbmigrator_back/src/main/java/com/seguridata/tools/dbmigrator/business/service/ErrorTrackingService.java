@@ -2,7 +2,7 @@ package com.seguridata.tools.dbmigrator.business.service;
 
 import com.seguridata.tools.dbmigrator.business.client.StompMessageClient;
 import com.seguridata.tools.dbmigrator.data.entity.ErrorTrackingEntity;
-import com.seguridata.tools.dbmigrator.data.entity.ProjectEntity;
+import com.seguridata.tools.dbmigrator.data.entity.JobEntity;
 import com.seguridata.tools.dbmigrator.data.repository.ErrorTrackingRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -23,16 +23,16 @@ public class ErrorTrackingService {
         this.stompMsgClient = stompMsgClient;
     }
 
-    public void createErrorTrackingForProject(ProjectEntity project, ErrorTrackingEntity errorTracking) {
+    public void createErrorTrackingForProject(JobEntity job, ErrorTrackingEntity errorTracking) {
         errorTracking.setDate(new Date());
         errorTracking.setId(null);
-        errorTracking.setProject(project);
+        errorTracking.setJob(job);
 
         ErrorTrackingEntity errorTrack = this.errorTrackingRepo.createErrorTracking(errorTracking);
-        this.stompMsgClient.sendProjectExecutionError(project, errorTrack);
+        this.stompMsgClient.sendJobExecutionError(job, errorTrack);
     }
 
-    public List<ErrorTrackingEntity> getErrorTrackingForProject(String projectId) {
-        return this.errorTrackingRepo.findErrorTrackingForProject(projectId);
+    public List<ErrorTrackingEntity> getErrorTrackingForJob(JobEntity job) {
+        return this.errorTrackingRepo.findErrorTrackingForJob(job.getId());
     }
 }

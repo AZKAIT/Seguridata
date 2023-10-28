@@ -2,6 +2,7 @@ package com.seguridata.tools.dbmigrator.data.repository;
 
 import com.seguridata.tools.dbmigrator.data.dto.DashboardDataDTO;
 import com.seguridata.tools.dbmigrator.data.entity.ConnectionEntity;
+import com.seguridata.tools.dbmigrator.data.entity.JobEntity;
 import com.seguridata.tools.dbmigrator.data.entity.ProjectEntity;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.mongodb.core.MongoTemplate;
@@ -21,10 +22,12 @@ public class DashboardRepository {
     public DashboardDataDTO executeDashboardDataAggregation() {
         Long connCount = this.mongoTemplate.count(new Query(), ConnectionEntity.class);
         Long projCount = this.mongoTemplate.count(new Query(), ProjectEntity.class);
+        Long jobCount = this.mongoTemplate.count(new Query(), JobEntity.class);
 
         DashboardDataDTO dashboardData = new DashboardDataDTO();
         dashboardData.setConnectionTotal(connCount);
         dashboardData.setProjectTotal(projCount);
+        dashboardData.setJobCount(jobCount);
         return dashboardData;
     }
 }

@@ -25,13 +25,13 @@ public class InitiateProjectEventListener {
     @EventListener
     public void handleProjectExecStart(InitiateProjectEvent initiateProjectEvent) {
         LOGGER.debug("On handleContextStart");
-        this.executionFacade.startExecution(initiateProjectEvent.getProject());
+        this.executionFacade.startExecution(initiateProjectEvent.getJob());
     }
 
     @Async
     @EventListener
     public void handleProjectExecStop(StopProjectEvent stopProjectEvent) {
         LOGGER.debug("On handleProjectExecStop");
-        this.executionFacade.stopExecution(stopProjectEvent.getProject());
+        this.executionFacade.stopExecution(stopProjectEvent.getJob());
     }
 }

@@ -27,6 +27,7 @@ export class DashboardComponent implements OnInit, OnDestroy {
 
   connCount = 0;
   projCount = 0;
+  jobCount = 0;
 
   constructor(private _connectionService: ConnectionService, private _projectService: ProjectService, private _dashboardService: DashboardService, private _messageService: MessageService) {
   }
@@ -83,6 +84,7 @@ export class DashboardComponent implements OnInit, OnDestroy {
         if (dd) {
           this.connCount = dd.connectionTotal;
           this.projCount = dd.projectTotal;
+          this.jobCount = dd.jobCount;
         }
       }))
   }

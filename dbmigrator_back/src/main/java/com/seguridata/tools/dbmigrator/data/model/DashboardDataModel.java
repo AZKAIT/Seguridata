@@ -7,4 +7,5 @@ import lombok.Setter;
 public class DashboardDataModel {
     private Long connectionTotal;
     private Long projectTotal;
+    private Long jobCount;
 }

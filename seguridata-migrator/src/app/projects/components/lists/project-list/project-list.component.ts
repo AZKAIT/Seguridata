@@ -1,6 +1,6 @@
 import { Component, EventEmitter, Input, Output } from '@angular/core';
 import { TableRowSelectEvent, TableRowUnSelectEvent } from 'primeng/table';
-import { ProjectStatus } from 'src/app/common/enums/project-status';
+import { JobStatus } from 'src/app/common/enums/job-status';
 import { ProjectModel } from 'src/app/common/models/project-model';
 
 @Component({
@@ -63,20 +63,15 @@ export class ProjectListComponent {
       return false;
     }
 
-    let projStatus = project.status;
-    if (typeof projStatus === 'string') {
-      projStatus = ProjectStatus[projStatus as keyof typeof ProjectStatus];
-    }
-
-    return (ProjectStatus.CREATED === projStatus || ProjectStatus.STOPPED == projStatus);
+    return !project.locked;
   }
 
-  parseStatus(status: any): ProjectStatus | string {
+  parseStatus(status: any): JobStatus | string {
     let projStatus = status;
     if (typeof projStatus === 'string') {
-      projStatus = ProjectStatus[ProjectStatus[projStatus as keyof typeof ProjectStatus]];
+      projStatus = JobStatus[JobStatus[projStatus as keyof typeof JobStatus]];
     } else if (typeof projStatus === 'number') {
-      projStatus = ProjectStatus[status]
+      projStatus = JobStatus[status]
     }
     return projStatus;
   }

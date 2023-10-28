@@ -45,11 +45,15 @@
       </p-dropdown>
       <label for="select-tconn-drop">Conexión Destino</label>
     </div>
+    <div class="field p-float-label col-12">
+      <p-inputNumber inputId="par-threads" class="w-full" styleClass="w-full" inputStyleClass="w-full" formControlName="parallelThreads" [showButtons]="true" buttonLayout="stacked"
+        [min]="1" [max]="15"></p-inputNumber>
+      <label htmlFor="par-threads">Ejecuciones Paralelas</label>
+    </div>
     <div class="field col-12">
       <label>Auto-Generar dependencias <br /><p-toggleButton formControlName="autoPopulate" onLabel="Sí"
           offLabel="No"></p-toggleButton></label>
     </div>
-
   </div>
 
   <div class="formgrid grid mt-6">

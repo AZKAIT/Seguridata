@@ -25,8 +25,8 @@ public class ErrorTrackingRepository {
         return this.mongoTemplate.insert(errorTracking);
     }
 
-    public List<ErrorTrackingEntity> findErrorTrackingForProject(String projectId) {
-        CriteriaDefinition projectCriteria = Criteria.where("project").is(new ObjectId(projectId));
-        return this.mongoTemplate.find(new Query(projectCriteria), ErrorTrackingEntity.class);
+    public List<ErrorTrackingEntity> findErrorTrackingForJob(String jobId) {
+        CriteriaDefinition jobCriteria = Criteria.where("job").is(new ObjectId(jobId));
+        return this.mongoTemplate.find(new Query(jobCriteria), ErrorTrackingEntity.class);
     }
 }

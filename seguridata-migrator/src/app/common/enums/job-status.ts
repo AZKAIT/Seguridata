@@ -1,3 +1,3 @@
-export enum ProjectStatus {
+export enum JobStatus {
   CREATED, STARTING, RUNNING, STOPPING, STOPPED
 }

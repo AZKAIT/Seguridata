@@ -10,6 +10,7 @@ import { ProjectsModule } from './projects/projects.module';
 import { ColumnsModule } from './columns/columns.module';
 import { PlansModule } from './plans/plans.module';
 import { DefinitionsModule } from './definitions/definitions.module';
+import { JobsModule } from './jobs/jobs.module';
 import { GlobalHttpInterceptorService } from './common/interceptor/global-http-interceptor.service';
 import { WizardsModule } from './wizards/wizards.module';
 import { AppRoutingModule } from './app-routing.module';
@@ -39,6 +40,7 @@ import { TooltipModule } from 'primeng/tooltip';
     PlansModule,
     DefinitionsModule,
     WizardsModule,
+    JobsModule,
 
     ToastModule,
     ButtonModule,

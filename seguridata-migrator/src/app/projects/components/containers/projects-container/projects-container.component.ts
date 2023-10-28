@@ -1,7 +1,7 @@
 import { Component, OnDestroy, OnInit } from '@angular/core';
 import { MessageService } from 'primeng/api';
 import { Subscription } from 'rxjs';
-import { ProjectStatus } from 'src/app/common/enums/project-status';
+import { JobStatus } from 'src/app/common/enums/job-status';
 import { ConnectionModel } from 'src/app/common/models/connection-model';
 import { ProjectModel } from 'src/app/common/models/project-model';
 import { ConnectionService } from 'src/app/common/service/connection.service';
@@ -133,7 +133,7 @@ export class ProjectsContainerComponent implements OnInit, OnDestroy {
         .subscribe({
           next: response => {
             if (response) {
-              this.changeStatusForLocalProject(projectId, ProjectStatus.STARTING);
+              this.changeStatusForLocalProject(projectId, true);
               this._messageService.add({ severity: 'info', summary: 'Proyecto Agendado', detail: 'El Proyecto se agendó para Iniciar' });
             }
             this.schedulingLoading = false;
@@ -161,7 +161,7 @@ export class ProjectsContainerComponent implements OnInit, OnDestroy {
         .subscribe({
           next: response => {
             if (response) {
-              this.changeStatusForLocalProject(projectId, ProjectStatus.STOPPING);
+              this.changeStatusForLocalProject(projectId, false);
               this._messageService.add({ severity: 'info', summary: 'Proyecto Agendado', detail: 'El Proyecto se agendó para Finalizar' });
             }
             this.schedulingLoading = false;
@@ -205,10 +205,10 @@ export class ProjectsContainerComponent implements OnInit, OnDestroy {
       }));
   }
 
-  private changeStatusForLocalProject(projectId: string, status: ProjectStatus) {
+  private changeStatusForLocalProject(projectId: string, locked: boolean) {
     const foundProject = this.projectList.find(project => project.id === projectId);
     if (foundProject) {
-      foundProject.status = status;
+      foundProject.locked = locked;
     }
   }
 

@@ -1,5 +1,5 @@
 package com.seguridata.tools.dbmigrator.data.constant;
 
-public enum ProjectStatus {
+public enum JobStatus {
     CREATED, STARTING, RUNNING, STOPPING, STOPPED
 }

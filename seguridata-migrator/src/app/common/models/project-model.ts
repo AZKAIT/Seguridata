@@ -1,4 +1,4 @@
-import { ProjectStatus } from "../enums/project-status";
+import { JobStatus } from "../enums/job-status";
 import { ConnectionModel } from "./connection-model";
 
 export interface ProjectModel {
@@ -8,7 +8,7 @@ export interface ProjectModel {
   sourceConnection?: ConnectionModel;
   targetConnection?: ConnectionModel;
   createdAt?: Date;
-  status?: ProjectStatus;
-  lastStatusDate?: Date;
   autoPopulate?: boolean;
+  parallelThreads?: number;
+  locked?: boolean;
 }

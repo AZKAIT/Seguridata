@@ -33,6 +33,7 @@ public class DashboardFacade {
         DashboardDataModel model = new DashboardDataModel();
         model.setConnectionTotal(dashboardData.getConnectionTotal());
         model.setProjectTotal(dashboardData.getProjectTotal());
+        model.setJobCount(dashboardData.getJobCount());
 
         return model;
     }

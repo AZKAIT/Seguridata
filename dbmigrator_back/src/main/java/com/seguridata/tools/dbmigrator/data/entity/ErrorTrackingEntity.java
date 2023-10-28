@@ -8,7 +8,7 @@ import org.springframework.data.mongodb.core.mapping.DocumentReference;
 
 import java.util.Date;
 
-@Document(collection = "errorTracking")
+@Document(collection = "error_tracking")
 @Getter @Setter
 public class ErrorTrackingEntity {
     @Id
@@ -19,5 +19,5 @@ public class ErrorTrackingEntity {
     private String referenceType;
 
     @DocumentReference(lazy = true)
-    private ProjectEntity project;
+    private JobEntity job;
 }

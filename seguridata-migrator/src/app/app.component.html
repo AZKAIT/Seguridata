@@ -2,11 +2,11 @@
 
 
 <div class="grid">
-  <div class="col-2 bg-primary">
-    <div class="flex flex-column mt-5 xl:mt-4 justify-content-center w-full">
+  <div class="col-2 bg-primary static">
+    <div class="flex flex-column mt-5 xl:mt-4 justify-content-center w-full sticky">
 
       <div class="flex justify-content-center">
-        <p-image src="assets/logo-blanco.png" alt="SeguriData Logo" imageClass="flex w-11 lg:w-8"
+        <p-image src="assets/logo-blanco.png" alt="SeguriData Logo" [style]="{'display': 'none'}" imageClass="flex w-11 lg:w-8"
           styleClass="flex justify-content-center"></p-image>
       </div>
       <div class="flex justify-content-center xl:justify-content-start mt-6 lg:mt-5">
@@ -30,11 +30,18 @@
           <i class="pi pi-briefcase text-2xl md:text-lg"></i>
         </p-button>
       </div>
+      <div class="flex justify-content-center xl:justify-content-start mt-4 lg:mt-3">
+        <p-button pRipple [routerLink]="['/jobs']" label="Tareas" icon="pi pi-bolt"
+          styleClass="hidden xl:inline-flex xl:text-xl bg-primary" [text]="true"></p-button>
+        <p-button pRipple [routerLink]="['/jobs']" styleClass="inline-flex xl:hidden bg-primary" [text]="true">
+          <i class="pi pi-bolt text-2xl md:text-lg"></i>
+        </p-button>
+      </div>
 
     </div>
   </div>
 
-  <div class="col-10">
+  <div class="col-10" style="z-index: 1000;">
     <router-outlet></router-outlet>
   </div>
 </div>

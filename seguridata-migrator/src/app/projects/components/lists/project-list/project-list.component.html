@@ -27,8 +27,7 @@
           <th>Conex. Origen</th>
           <th>Conex. Destino</th>
           <th>Creado</th>
-          <th>Estatus</th>
-          <th>Ult. estatus</th>
+          <th>&nbsp;</th>
         </tr>
       </ng-template>
       <ng-template pTemplate="body" let-project>
@@ -41,8 +40,7 @@
           <td>{{ project.sourceConnection?.name }}</td>
           <td>{{ project.targetConnection?.name }}</td>
           <td>{{ project.createdAt | date }}</td>
-          <td>{{ parseStatus(project.status) }}</td>
-          <td>{{ project.lastStatusDate | date }}</td>
+          <td><i [class]="'pi' + ' ' + (project.locked ? 'pi-lock' : 'pi-lock-open')"></i></td>
         </tr>
       </ng-template>
     </p-table>

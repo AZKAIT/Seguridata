@@ -30,8 +30,8 @@ public class ProjectMapper {
         project.setName(projectModel.getName());
         project.setDescription(projectModel.getDescription());
         project.setCreatedAt(projectModel.getCreatedAt());
-        project.setStatus(projectModel.getStatus());
-        project.setLastStatusDate(projectModel.getLastStatusDate());
+        project.setParallelThreads(projectModel.getParallelThreads());
+        project.setLocked(projectModel.getLocked());
 
         project.setSourceConnection(this.connectionMapper.mapConnectionEntity(projectModel.getSourceConnection()));
         project.setTargetConnection(this.connectionMapper.mapConnectionEntity(projectModel.getTargetConnection()));
@@ -45,8 +45,8 @@ public class ProjectMapper {
         projectModel.setName(project.getName());
         projectModel.setDescription(project.getDescription());
         projectModel.setCreatedAt(project.getCreatedAt());
-        projectModel.setStatus(project.getStatus());
-        projectModel.setLastStatusDate(project.getLastStatusDate());
+        projectModel.setParallelThreads(project.getParallelThreads());
+        projectModel.setLocked(project.getLocked());
 
         projectModel.setSourceConnection(this.connectionMapper.mapConnectionModel(project.getSourceConnection()));
         projectModel.setTargetConnection(this.connectionMapper.mapConnectionModel(project.getTargetConnection()));

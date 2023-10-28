@@ -119,7 +119,7 @@ public class ProjectSyncUpFacade {
 
     private List<DefinitionEntity> createDefinitionsForPlans(PlanEntity plan) {
         List<ColumnEntity> sourceColumns = this.getTableColumn(plan.getSourceTable());
-        List<ColumnEntity> targetColumns = this.getTableColumn(plan.getSourceTable());
+        List<ColumnEntity> targetColumns = this.getTableColumn(plan.getTargetTable());
 
         List<DefinitionEntity> newDefinitions = sourceColumns.stream().map(sourceColumn ->
                 this.findColumnByName(sourceColumn, targetColumns)

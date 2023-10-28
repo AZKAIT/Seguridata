@@ -7,4 +7,5 @@ import lombok.Setter;
 public class DashboardDataDTO {
     private Long connectionTotal;
     private Long projectTotal;
+    private Long jobCount;
 }

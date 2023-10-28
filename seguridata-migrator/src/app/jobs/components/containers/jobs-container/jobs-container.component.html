@@ -1,0 +1,4 @@
+<app-job-list [jobList]="jobList" [(selectedJob)]="selectedJob" (listRefreshEvent)="onExecuteRefresh();"
+  [tableLoading]="tableLoading"></app-job-list>
+
+<app-errors-container [job]="selectedJob"></app-errors-container>
