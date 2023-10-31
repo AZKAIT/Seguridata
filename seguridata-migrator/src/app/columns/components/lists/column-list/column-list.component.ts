@@ -1,4 +1,4 @@
-import { Component, Input, Output, EventEmitter } from '@angular/core';
+import { Component, Input, Output, EventEmitter, OnChanges, SimpleChanges } from '@angular/core';
 import { TableRowSelectEvent, TableRowUnSelectEvent } from 'primeng/table';
 import { ColumnModel } from 'src/app/common/models/column-model';
 import { TableModel } from 'src/app/common/models/table-model';
@@ -8,7 +8,7 @@ import { TableModel } from 'src/app/common/models/table-model';
   templateUrl: './column-list.component.html',
   styleUrls: ['./column-list.component.css']
 })
-export class ColumnListComponent {
+export class ColumnListComponent implements OnChanges {
 
   @Input() table?: TableModel;
   @Input() columnList?: ColumnModel[];
@@ -22,6 +22,16 @@ export class ColumnListComponent {
 
   @Input() tableLoading?: boolean;
   @Input() deleteLoading?: boolean;
+
+  numTables = 0;
+
+  ngOnChanges(changes: SimpleChanges): void {
+    if (this.columnList) {
+      this.numTables = this.columnList.length;
+    } else {
+      this.numTables = 0;
+    }
+  }
 
 
   refreshList(): void {

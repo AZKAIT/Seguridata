@@ -1,5 +1,6 @@
 package com.seguridata.tools.dbmigrator.business.thread;
 
+import com.seguridata.tools.dbmigrator.business.task.ExecutionResult;
 import com.seguridata.tools.dbmigrator.business.task.PlanExecutionCallable;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -17,7 +18,7 @@ import java.util.concurrent.TimeUnit;
 public class MigrationThreadPoolExecutor extends ThreadPoolExecutor {
     private static final Logger LOGGER = LoggerFactory.getLogger(MigrationThreadPoolExecutor.class);
 
-    private final List<Future<String>> futureList;
+    private final List<Future<ExecutionResult>> futureList;
     private CountDownLatch latch;
 
     public MigrationThreadPoolExecutor(int corePoolSize, int maximumPoolSize, long keepAliveTime,
@@ -26,14 +27,12 @@ public class MigrationThreadPoolExecutor extends ThreadPoolExecutor {
         this.futureList = new ArrayList<>();
     }
 
-    public CountDownLatch invokePlanTasks(Collection<PlanExecutionCallable> planExecutionTasks) {
+    public void invokePlanTasks(Collection<PlanExecutionCallable> planExecutionTasks) {
         this.latch = new CountDownLatch(planExecutionTasks.size());
         planExecutionTasks.forEach(task -> {
-            task.initialize(latch);
+            task.initialize(getLatch());
             this.futureList.add(super.submit(task));
         });
-
-        return this.latch;
     }
 
     public void stopTasks() {
@@ -43,11 +42,15 @@ public class MigrationThreadPoolExecutor extends ThreadPoolExecutor {
                 .forEach(future -> {
                     if (!future.isDone() && !future.isCancelled()) {
                         future.cancel(true);
-                    } else {
-                        if (this.latch.getCount() > 0) {
-                            this.latch.countDown();
-                        }
                     }
                 });
+    }
+
+    public CountDownLatch getLatch() {
+        return latch;
+    }
+
+    public List<Future<ExecutionResult>> getFutureList() {
+        return futureList;
     }
 }

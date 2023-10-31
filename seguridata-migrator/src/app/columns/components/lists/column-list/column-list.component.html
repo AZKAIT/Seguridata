@@ -1,6 +1,6 @@
 <ng-container *ngIf="columnList">
   <p-card [header]="'Columnas de ' + (table? table.name: 'N/A')">
-    <p-table [value]="columnList" selectionMode="single" dataKey="id" [(selection)]="selectedColumn" (onRowSelect)="onRowSelect($event)" (onRowUnselect)="onRowUnselect($event)" [loading]="tableLoading"
+    <p-table [value]="columnList" [totalRecords]="numTables" selectionMode="single" dataKey="id" [(selection)]="selectedColumn" (onRowSelect)="onRowSelect($event)" (onRowUnselect)="onRowUnselect($event)" [loading]="tableLoading"
       [paginator]="true" [rows]="10" [tableStyle]="{ 'min-width': '50rem' }">
       <ng-template pTemplate="caption">
         <div class="flex align-items-center justify-content-between">

@@ -1,5 +1,5 @@
 import { Component, OnDestroy, Input } from '@angular/core';
-import { MessageService } from 'primeng/api';
+import { MessageService, ConfirmationService } from 'primeng/api';
 import { Subscription } from 'rxjs';
 import { ColumnModel } from 'src/app/common/models/column-model';
 
@@ -28,7 +28,7 @@ export class TablesContainerComponent implements OnDestroy {
   formLoading: boolean = false;
   deleteLoading: boolean = false;
 
-  constructor(private _connectionService: ConnectionService, private _tableService: TableService, private _messageService: MessageService) {
+  constructor(private _connectionService: ConnectionService, private _tableService: TableService, private _messageService: MessageService, private _confirmService: ConfirmationService) {
   }
 
   ngOnDestroy(): void {
@@ -58,24 +58,32 @@ export class TablesContainerComponent implements OnDestroy {
   }
 
   onDeleteTable() {
-    this.deleteLoading = true;
-    if (this.selectedTable?.id) {
-      this._subsList.push(this._tableService.deleteTable(this.selectedTable.id)
-        .subscribe({
-          next: delTable => {
-            if (this.selectedTable) {
-              this.tableList.splice(this.tableList.indexOf(this.selectedTable), 1);
-              this.selectedTable = undefined;
-              this.postSuccess('Eliminar Tabla', `Tabla ${delTable?.name} eliminada`);
-            }
-            this.deleteLoading = false;
-          },
-          error: err => {
-            this.deleteLoading = false;
-            this.postError('Error al eliminar Tabla', err?.messages?.join(','));
-          }
-        }));
-    }
+    this._confirmService.confirm({
+      message: `¿Desea eliminar la Tabla${this.selectedTable? ' ' + this.selectedTable.name : ''}?`,
+      header: 'Eliminar Tabla',
+      icon: 'pi pi-exclamation-triangle',
+      accept: () => {
+        this.deleteLoading = true;
+        if (this.selectedTable?.id) {
+          this._subsList.push(this._tableService.deleteTable(this.selectedTable.id)
+            .subscribe({
+              next: delTable => {
+                if (this.selectedTable) {
+                  this.tableList.splice(this.tableList.indexOf(this.selectedTable), 1);
+                  this.selectedTable = undefined;
+                  this.postSuccess('Eliminar Tabla', `Tabla ${delTable?.name} eliminada`);
+                }
+                this.deleteLoading = false;
+              },
+              error: err => {
+                this.deleteLoading = false;
+                this.postError('Error al eliminar Tabla', err?.messages?.join(','));
+              }
+            }));
+        }
+      }
+    });
+
   }
 
   onCreateTable() {
@@ -129,16 +137,16 @@ export class TablesContainerComponent implements OnDestroy {
   fetchTableColumns() {
     if (this.selectedTable?.id) {
       this._subsList.push(this._tableService.getColumnsForTable(this.selectedTable.id)
-      .subscribe({
-        next: colList => {
-          if (colList) {
-            this.columnList = colList;
+        .subscribe({
+          next: colList => {
+            if (colList) {
+              this.columnList = colList;
+            }
+          },
+          error: err => {
+            this.postError('Error al obtener las Columnas de la tabla', err?.messages?.join(','));
           }
-        },
-        error: err => {
-          this.postError('Error al obtener las Columnas de la tabla', err?.messages?.join(','));
-        }
-      }));
+        }));
     }
   }
 

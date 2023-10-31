@@ -89,10 +89,10 @@ public class ConnectionSyncUpFacade {
         ConnectionEntity entity = null;
         try {
             entity = this.connectionMapper.mapConnectionEntity(connectionModel);
-            this.stompMsgClient.sendConnSyncUpStatusChange(entity, "STARTED - Sincronización de Tablas");
+            this.stompMsgClient.sendConnSyncUpStatusChange(entity, "INICIADO - Sincronización de Tablas");
 
             this.syncUpConnectionTables(entity);
-            this.stompMsgClient.sendConnSyncUpStatusChange(entity, "FINISHED - Sincronización de Tablas");
+            this.stompMsgClient.sendConnSyncUpStatusChange(entity, "TERMINADO - Sincronización de Tablas");
         } catch (SQLException e) {
             LOGGER.error("SyncUp failed: {}", e.getMessage());
             this.stompMsgClient.sendConnSyncUpError(entity, String.format("ERROR - Sincronización de Tablas: %s", e.getMessage()));
@@ -129,7 +129,7 @@ public class ConnectionSyncUpFacade {
         ConnectionEntity entity = null;
         try {
             entity = this.connectionMapper.mapConnectionEntity(connectionModel);
-            this.stompMsgClient.sendConnSyncUpStatusChange(entity, "STARTED - Sincronización de Columnas");
+            this.stompMsgClient.sendConnSyncUpStatusChange(entity, "INICIADO - Sincronización de Columnas");
 
             List<TableEntity> table = this.tableMapper.mapTableEntityList(tableModels);
 
@@ -137,7 +137,7 @@ public class ConnectionSyncUpFacade {
             queryManager.initializeConnection(entity);
             this.syncUpTableColumns(entity, queryManager, table);
             queryManager.closeConnection();
-            this.stompMsgClient.sendConnSyncUpStatusChange(entity, "FINISHED - Sincronización de Columnas");
+            this.stompMsgClient.sendConnSyncUpStatusChange(entity, "TERMINADO - Sincronización de Columnas");
         } catch (SQLException e) {
             LOGGER.error("SyncUp failed: {}", e.getMessage());
             this.stompMsgClient.sendConnSyncUpError(entity, String.format("ERROR - Sincronización de Columnas: %s", e.getMessage()));

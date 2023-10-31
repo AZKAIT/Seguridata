@@ -1,5 +1,5 @@
 import { Component, Input, OnDestroy } from '@angular/core';
-import { MessageService } from 'primeng/api';
+import { MessageService, ConfirmationService } from 'primeng/api';
 import { Subscription } from 'rxjs';
 import { ColumnModel } from 'src/app/common/models/column-model';
 import { DefinitionModel } from 'src/app/common/models/definition-model';
@@ -35,7 +35,7 @@ export class DefinitionsContainerComponent implements OnDestroy {
 
 
   constructor(private _planService: PlanService, private _defService: DefinitionService,
-    private _tableService: TableService, private _messageService: MessageService) {
+    private _tableService: TableService, private _messageService: MessageService, private _confirmService: ConfirmationService) {
   }
 
   ngOnDestroy(): void {
@@ -66,24 +66,31 @@ export class DefinitionsContainerComponent implements OnDestroy {
   }
 
   onDeleteDef() {
-    this.deleteLoading = true;
-    if (this.selectedDef?.id) {
-      this._subsList.push(this._defService.deleteDefinition(this.selectedDef.id)
-        .subscribe({
-          next: delDef => {
-            if (this.selectedDef) {
-              this.defList.splice(this.defList.indexOf(this.selectedDef), 1);
-              this.selectedDef = undefined;
-              this.postSuccess('Eliminar Definición', 'Definición eliminada');
-            }
-            this.deleteLoading = false;
-          },
-          error: err => {
-            this.postError('Error al eliminar Definición', err?.messages?.join(','));
-            this.deleteLoading = false;
-          }
-        }));
-    }
+    this._confirmService.confirm({
+      message: `¿Desea eliminar la Definición?`,
+      header: 'Eliminar Definición',
+      icon: 'pi pi-exclamation-triangle',
+      accept: () => {
+        this.deleteLoading = true;
+        if (this.selectedDef?.id) {
+          this._subsList.push(this._defService.deleteDefinition(this.selectedDef.id)
+            .subscribe({
+              next: delDef => {
+                if (this.selectedDef) {
+                  this.defList.splice(this.defList.indexOf(this.selectedDef), 1);
+                  this.selectedDef = undefined;
+                  this.postSuccess('Eliminar Definición', 'Definición eliminada');
+                }
+                this.deleteLoading = false;
+              },
+              error: err => {
+                this.postError('Error al eliminar Definición', err?.messages?.join(','));
+                this.deleteLoading = false;
+              }
+            }));
+        }
+      }
+    });
   }
 
   onCreateDef() {
@@ -138,21 +145,21 @@ export class DefinitionsContainerComponent implements OnDestroy {
     this.formLoading = true;
     if (this._plan?.id) {
       this._subsList.push(this._planService.createDefinitionsBatchForPlan(this._plan.id, defs)
-      .subscribe({
-        next: newDefs => {
-          if (newDefs) {
-            this.defList.push(...newDefs);
-            this.selectedDef = undefined;
-            this.showCreateForm = false;
-            this.postSuccess('Crear Definiciones', 'Definiciones creadas');
-          }
-          this.formLoading = false;
-        },
+        .subscribe({
+          next: newDefs => {
+            if (newDefs) {
+              this.defList.push(...newDefs);
+              this.selectedDef = undefined;
+              this.showCreateForm = false;
+              this.postSuccess('Crear Definiciones', 'Definiciones creadas');
+            }
+            this.formLoading = false;
+          },
           error: err => {
             this.postError('Error al crear lista de Definiciones', err?.messages?.join(','));
             this.formLoading = false;
           }
-      }))
+        }))
     } else {
       this.postError('Error en el Plan', 'No hay un Plan definido');
       this.formLoading = false;

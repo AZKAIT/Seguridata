@@ -1,5 +1,5 @@
 import { Component, OnDestroy, OnInit } from '@angular/core';
-import { MessageService } from 'primeng/api';
+import { MessageService, ConfirmationService } from 'primeng/api';
 import { Subscription } from 'rxjs';
 import { ConnectionModel } from 'src/app/common/models/connection-model';
 import { ConnectionService } from 'src/app/common/service/connection.service';
@@ -24,7 +24,7 @@ export class ConnectionsContainerComponent implements OnInit, OnDestroy {
   syncLoading = false;
 
 
-  constructor(private _connectionService: ConnectionService, private _messageService: MessageService) {
+  constructor(private _connectionService: ConnectionService, private _messageService: MessageService, private _confirmService: ConfirmationService) {
   }
 
   ngOnInit(): void {
@@ -53,41 +53,48 @@ export class ConnectionsContainerComponent implements OnInit, OnDestroy {
     this.syncLoading = true;
     if (this.selectedConn?.id) {
       this._subsList.push(this._connectionService.syncUpTables(this.selectedConn.id)
-      .subscribe({
-        next: result => {
-          if (result) {
-            this.selectedConn = undefined;
-            this.postSuccess('Conexión Sincronizada', `La Conexión se ha sincronizado`);
+        .subscribe({
+          next: result => {
+            if (result) {
+              this.selectedConn = undefined;
+              this.postSuccess('Conexión Sincronizada', `La Conexión se ha sincronizado`);
+            }
+            this.syncLoading = false;
+          },
+          error: err => {
+            this.postError('Error al sincronizar Conexión', err?.messages?.join(','));
+            this.syncLoading = false;
           }
-          this.syncLoading = false;
-        },
-        error: err => {
-          this.postError('Error al sincronizar Conexión', err?.messages?.join(','));
-          this.syncLoading = false;
-        }
-      }));
+        }));
     }
   }
 
   onDeleteConnection() {
-    this.deleteLoading = true;
-    if (this.selectedConn?.id) {
-      this._subsList.push(this._connectionService.deleteConnection(this.selectedConn.id)
-        .subscribe({
-          next: delConn => {
-            if (this.selectedConn) {
-              this.connectionList.splice(this.connectionList.indexOf(this.selectedConn), 1);
-              this.selectedConn = undefined;
-              this.postSuccess('Eliminar Conexión', `Conexión ${delConn?.name} eliminada`);
-            }
-            this.deleteLoading = false;
-          },
-          error: err => {
-            this.postError('Error al eliminar Conexión', err?.messages?.join(','));
-            this.deleteLoading = false;
-          }
-        }));
-    }
+    this._confirmService.confirm({
+      message: `¿Desea eliminar la Conexión${this.selectedConn? ' ' + this.selectedConn.name : ''}?`,
+      header: 'Eliminar Conexión',
+      icon: 'pi pi-exclamation-triangle',
+      accept: () => {
+        this.deleteLoading = true;
+        if (this.selectedConn?.id) {
+          this._subsList.push(this._connectionService.deleteConnection(this.selectedConn.id)
+            .subscribe({
+              next: delConn => {
+                if (this.selectedConn) {
+                  this.connectionList.splice(this.connectionList.indexOf(this.selectedConn), 1);
+                  this.selectedConn = undefined;
+                  this.postSuccess('Eliminar Conexión', `Conexión ${delConn?.name} eliminada`);
+                }
+                this.deleteLoading = false;
+              },
+              error: err => {
+                this.postError('Error al eliminar Conexión', err?.messages?.join(','));
+                this.deleteLoading = false;
+              }
+            }));
+        }
+      }
+    });
   }
 
   onCreateConnection() {

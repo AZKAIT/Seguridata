@@ -1,4 +1,4 @@
-import { Component, EventEmitter, Input, Output } from '@angular/core';
+import { Component, EventEmitter, Input, Output, OnChanges, SimpleChanges } from '@angular/core';
 import { TableRowSelectEvent, TableRowUnSelectEvent } from 'primeng/table';
 import { ErrorTrackingModel } from 'src/app/common/models/error-tracking-model';
 import { JobModel } from 'src/app/common/models/job-model';
@@ -8,7 +8,7 @@ import { JobModel } from 'src/app/common/models/job-model';
   templateUrl: './error-list.component.html',
   styleUrls: ['./error-list.component.css']
 })
-export class ErrorListComponent {
+export class ErrorListComponent implements OnChanges {
 
   @Input() job?: JobModel;
   @Input() errorList?: ErrorTrackingModel[];
@@ -18,6 +18,16 @@ export class ErrorListComponent {
   @Output() selectedErrorChange = new EventEmitter<ErrorTrackingModel | undefined>();
 
   @Input() tableLoading?: boolean;
+
+  numTables = 0;
+
+  ngOnChanges(changes: SimpleChanges): void {
+    if (this.errorList) {
+      this.numTables = this.errorList.length;
+    } else {
+      this.numTables = 0;
+    }
+  }
 
 
   refreshList() {

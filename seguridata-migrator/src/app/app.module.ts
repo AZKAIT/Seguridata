@@ -16,12 +16,13 @@ import { WizardsModule } from './wizards/wizards.module';
 import { AppRoutingModule } from './app-routing.module';
 import { DashboardComponent } from './dashboard/dashboard.component';
 
-import { MessageService } from 'primeng/api';
+import { MessageService, ConfirmationService } from 'primeng/api';
 import { ToastModule } from 'primeng/toast';
 import { ButtonModule } from 'primeng/button';
 import { TabViewModule } from 'primeng/tabview';
 import { ImageModule } from 'primeng/image';
 import { TooltipModule } from 'primeng/tooltip';
+import { ConfirmDialogModule } from 'primeng/confirmdialog';
 
 @NgModule({
   declarations: [
@@ -46,7 +47,8 @@ import { TooltipModule } from 'primeng/tooltip';
     ButtonModule,
     TabViewModule,
     ImageModule,
-    TooltipModule
+    TooltipModule,
+    ConfirmDialogModule
   ],
   providers: [
     {
@@ -59,7 +61,8 @@ import { TooltipModule } from 'primeng/tooltip';
       useClass: GlobalHttpInterceptorService,
       multi: true
     },
-    MessageService
+    MessageService,
+    ConfirmationService
   ],
   bootstrap: [AppComponent]
 })

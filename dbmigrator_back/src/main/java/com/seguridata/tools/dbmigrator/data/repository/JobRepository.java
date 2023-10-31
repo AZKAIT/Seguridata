@@ -12,9 +12,13 @@ import org.springframework.data.mongodb.core.query.Query;
 import org.springframework.data.mongodb.core.query.Update;
 import org.springframework.stereotype.Repository;
 
+import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
 
+import static com.seguridata.tools.dbmigrator.data.constant.JobStatus.FINISHED_ERROR;
+import static com.seguridata.tools.dbmigrator.data.constant.JobStatus.FINISHED_SUCCESS;
+import static com.seguridata.tools.dbmigrator.data.constant.JobStatus.FINISHED_WARN;
 import static com.seguridata.tools.dbmigrator.data.constant.JobStatus.STARTING;
 import static com.seguridata.tools.dbmigrator.data.constant.JobStatus.STOPPED;
 
@@ -54,7 +58,7 @@ public class JobRepository {
             statusUpdate = statusUpdate.set("startedAt", new Date());
         }
 
-        if (STOPPED.equals(status)) {
+        if (Arrays.asList(STOPPED, FINISHED_SUCCESS, FINISHED_WARN, FINISHED_ERROR).contains(status)) {
             statusUpdate = statusUpdate.set("finishedAt", new Date());
         }
 

@@ -1,5 +1,6 @@
-import { Component, EventEmitter, Input, Output } from '@angular/core';
+import { Component, EventEmitter, Input, Output, OnChanges, SimpleChanges } from '@angular/core';
 import { TableRowSelectEvent, TableRowUnSelectEvent } from 'primeng/table';
+import { JobStatus } from 'src/app/common/enums/job-status';
 import { JobModel } from 'src/app/common/models/job-model';
 
 @Component({
@@ -7,7 +8,7 @@ import { JobModel } from 'src/app/common/models/job-model';
   templateUrl: './job-list.component.html',
   styleUrls: ['./job-list.component.css']
 })
-export class JobListComponent {
+export class JobListComponent implements OnChanges {
 
   @Input() jobList?: JobModel[];
   @Output() listRefreshEvent = new EventEmitter<void>();
@@ -16,6 +17,16 @@ export class JobListComponent {
   @Output() selectedJobChange = new EventEmitter<JobModel | undefined>();
 
   @Input() tableLoading?: boolean;
+
+  numTables = 0;
+
+  ngOnChanges(changes: SimpleChanges): void {
+    if (this.jobList) {
+      this.numTables = this.jobList.length;
+    } else {
+      this.numTables = 0;
+    }
+  }
 
 
   refreshList() {
@@ -28,5 +39,34 @@ export class JobListComponent {
 
   onRowUnselect(event : TableRowUnSelectEvent) {
     this.selectedJobChange.emit(this.selectedJob);
+  }
+
+  resolveIcon(jobStatus: JobStatus): string {
+    const status = this.parseStatus(jobStatus);
+
+    let icon = 'pi-thumbs-up';
+    if (status == JobStatus.STARTING || status == JobStatus.RUNNING || status == JobStatus.STOPPING) {
+      icon = 'pi-spin pi-sync';
+    } else if (status == JobStatus.FINISHED_SUCCESS) {
+      icon = 'pi-check-circle';
+    } else if (status == JobStatus.FINISHED_ERROR) {
+      icon = 'pi-times-circle';
+    } else if (status == JobStatus.FINISHED_WARN) {
+      icon = 'pi-exclamation-triangle';
+    } else if (status == JobStatus.STOPPED) {
+      icon = 'pi-minus-circle';
+    }
+
+    return icon;
+  }
+
+  private parseStatus(status: number | string): JobStatus | undefined {
+    let projStatus: JobStatus | undefined = undefined;
+    if (typeof status === 'string') {
+      projStatus = JobStatus[status as keyof typeof JobStatus];
+    } else if (typeof status === 'number') {
+      projStatus = JobStatus[JobStatus[status] as keyof typeof JobStatus];
+    }
+    return projStatus;
   }
 }

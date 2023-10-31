@@ -1,4 +1,3 @@
-import { JobStatus } from "../enums/job-status";
 import { ConnectionModel } from "./connection-model";
 
 export interface ProjectModel {

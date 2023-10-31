@@ -124,8 +124,14 @@ public class ProjectFacade {
 
             updatedProject = this.projectService.updateProject(existingProject, updatedProject);
 
+            ProjectModel updatedModel = this.projectMapper.mapProjectModel(updatedProject);
+            updatedModel.setAutoPopulate(projectModel.getAutoPopulate());
             projectResponse.setCode("00");
-            projectResponse.setData(this.projectMapper.mapProjectModel(updatedProject));
+            projectResponse.setData(updatedModel);
+
+            if (TRUE.equals(updatedModel.getAutoPopulate())) {
+                this.appEventPublisher.publishEvent(new ProjectCreatedEvent(this, updatedModel));
+            }
         } catch (BaseCodeException e) {
             projectResponse.setCode(e.getCode());
             projectResponse.setMessages(Arrays.asList(e.getMessages()));

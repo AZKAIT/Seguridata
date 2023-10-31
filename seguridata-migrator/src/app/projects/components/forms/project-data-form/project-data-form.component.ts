@@ -1,7 +1,6 @@
 import { Component, EventEmitter, Input, Output } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { DropdownChangeEvent } from 'primeng/dropdown';
-import { JobStatus } from 'src/app/common/enums/job-status';
 import { ConnectionModel } from 'src/app/common/models/connection-model';
 import { ProjectModel } from 'src/app/common/models/project-model';
 

@@ -7,6 +7,7 @@ import com.seguridata.tools.dbmigrator.business.service.ConnectionService;
 import com.seguridata.tools.dbmigrator.business.service.JobService;
 import com.seguridata.tools.dbmigrator.business.service.ProjectService;
 import com.seguridata.tools.dbmigrator.business.service.ErrorTrackingService;
+import com.seguridata.tools.dbmigrator.business.task.ExecutionResult;
 import com.seguridata.tools.dbmigrator.business.task.PlanExecutionCallable;
 import com.seguridata.tools.dbmigrator.business.thread.MigrationThreadPoolExecutor;
 import com.seguridata.tools.dbmigrator.data.constant.JobStatus;
@@ -26,6 +27,8 @@ import java.util.Comparator;
 import java.util.List;
 import java.util.Objects;
 import java.util.concurrent.CountDownLatch;
+import java.util.concurrent.ExecutionException;
+import java.util.concurrent.Future;
 import java.util.stream.Collectors;
 
 @Component
@@ -59,6 +62,8 @@ public class ExecutionFacade {
         LOGGER.info("Starting execution of Job: {}", job.getProjectExecutionNumber());
         ConnectionEntity srcConn = null;
         ConnectionEntity tgtConn = null;
+
+        JobStatus jobResult = JobStatus.FINISHED_WARN;
         try {
             this.jobService.updateProjectStatus(job, JobStatus.STARTING);
             srcConn = project.getSourceConnection();
@@ -71,16 +76,18 @@ public class ExecutionFacade {
             DatabaseQueryManager targetQueryManager = this.getQueryManager(job, tgtConn);
 
             List<PlanExecutionCallable> executionCallables = this.getTasksForProject(job, sourceQueryManager, targetQueryManager);
-            CountDownLatch latch = this.executeTasks(job, executionCallables);
+            MigrationThreadPoolExecutor executor = this.executeTasks(job, executionCallables);
             this.jobService.updateProjectStatus(job, JobStatus.RUNNING);
 
             LOGGER.info("Awaiting execution...");
-            latch.await();
+            executor.getLatch().await();
             LOGGER.info("Finished waiting");
 
 
             sourceQueryManager.closeConnection();
             targetQueryManager.closeConnection();
+
+            jobResult = this.resolveStatusByResult(executor.getFutureList());
             LOGGER.info("Execution finished");
         } catch (Exception e) {
             LOGGER.error("Exception on Job execution: Job({}) -> {}", job.getProjectExecutionNumber(), e.getMessage());
@@ -88,7 +95,7 @@ public class ExecutionFacade {
             this.connectionService.unlockConnections(srcConn, tgtConn);
             this.projectService.updateProjectLocked(project, false);
 
-            this.jobService.updateProjectStatus(job, JobStatus.STOPPED);
+            this.jobService.updateProjectStatus(job, jobResult);
             this.threadPoolExecutorFactory.removeExecutorForProject(project.getId());
             LOGGER.info("Execution of Project: {} is now unlocked", project.getId());
         }
@@ -147,7 +154,7 @@ public class ExecutionFacade {
             errorTracking.setMessage(e.getMessage());
             errorTracking.setJob(job);
             errorTracking.setReferenceType(ProjectEntity.class.getCanonicalName());
-            errorTracking.setReferenceId(job.getProject().getId()); // TODO: Revisar
+            errorTracking.setReferenceId(job.getProject().getId());
             this.errorTrackingService.createErrorTrackingForProject(job, errorTracking);
 
             throw new RuntimeException(e);
@@ -164,15 +171,15 @@ public class ExecutionFacade {
         }
     }
 
-    private CountDownLatch executeTasks(JobEntity job, List<PlanExecutionCallable> executionCallables) {
+    private MigrationThreadPoolExecutor executeTasks(JobEntity job, List<PlanExecutionCallable> executionCallables) {
         LOGGER.debug("Executing Tasks");
         try {
             MigrationThreadPoolExecutor executorService = this.threadPoolExecutorFactory
                     .initializeExecutorForJob(job);
-            CountDownLatch latch = executorService.invokePlanTasks(executionCallables);
+            executorService.invokePlanTasks(executionCallables);
 
             LOGGER.info("Tasks executed successfully");
-            return latch;
+            return executorService;
         } catch (Exception e) {
             LOGGER.error("Exception executing tasks: {}", e.getMessage());
             ErrorTrackingEntity errorTracking = new ErrorTrackingEntity();
@@ -183,5 +190,30 @@ public class ExecutionFacade {
 
             throw new RuntimeException(e);
         }
+    }
+
+    private JobStatus resolveStatusByResult(List<Future<ExecutionResult>> results) {
+        List<ExecutionResult> execResults = results.stream().map(future -> {
+            try {
+                return future.get();
+            } catch (Exception e) {
+                LOGGER.warn("Exception while retrieving results, marking as WARN result");
+                return ExecutionResult.EXCEPTION;
+            }
+        }).collect(Collectors.toList());
+
+        if (execResults.stream().anyMatch(ExecutionResult.INTERRUPTED::equals)) {
+            return JobStatus.STOPPED;
+        }
+
+        if (execResults.stream().allMatch(ExecutionResult.SUCCESS::equals)) {
+            return JobStatus.FINISHED_SUCCESS;
+        }
+
+        if (execResults.stream().allMatch(ExecutionResult.EXCEPTION::equals)) {
+            return JobStatus.FINISHED_ERROR;
+        }
+
+        return JobStatus.FINISHED_WARN;
     }
 }

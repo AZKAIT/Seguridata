@@ -1,6 +1,5 @@
-import { Component, EventEmitter, Input, Output } from '@angular/core';
+import { Component, EventEmitter, Input, Output, OnChanges, SimpleChanges } from '@angular/core';
 import { TableRowSelectEvent, TableRowUnSelectEvent } from 'primeng/table';
-import { JobStatus } from 'src/app/common/enums/job-status';
 import { ProjectModel } from 'src/app/common/models/project-model';
 
 @Component({
@@ -8,7 +7,7 @@ import { ProjectModel } from 'src/app/common/models/project-model';
   templateUrl: './project-list.component.html',
   styleUrls: ['./project-list.component.css']
 })
-export class ProjectListComponent {
+export class ProjectListComponent implements OnChanges {
 
   @Input() projectList?: ProjectModel[];
   @Output() listRefreshEvent = new EventEmitter<void>();
@@ -25,6 +24,16 @@ export class ProjectListComponent {
   @Input() tableLoading?: boolean;
   @Input() deleteLoading?: boolean;
   @Input() schedulingLoading?: boolean;
+
+  numTables = 0;
+
+  ngOnChanges(changes: SimpleChanges): void {
+    if (this.projectList) {
+      this.numTables = this.projectList.length;
+    } else {
+      this.numTables = 0;
+    }
+  }
 
   refreshList() {
     this.listRefreshEvent.emit();
@@ -64,15 +73,5 @@ export class ProjectListComponent {
     }
 
     return !project.locked;
-  }
-
-  parseStatus(status: any): JobStatus | string {
-    let projStatus = status;
-    if (typeof projStatus === 'string') {
-      projStatus = JobStatus[JobStatus[projStatus as keyof typeof JobStatus]];
-    } else if (typeof projStatus === 'number') {
-      projStatus = JobStatus[status]
-    }
-    return projStatus;
   }
 }

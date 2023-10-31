@@ -1,5 +1,5 @@
 import { Component, OnDestroy, Input } from '@angular/core';
-import { MessageService } from 'primeng/api';
+import { MessageService, ConfirmationService } from 'primeng/api';
 import { Subscription } from 'rxjs';
 import { ColumnModel } from 'src/app/common/models/column-model';
 import { TableModel } from 'src/app/common/models/table-model';
@@ -26,7 +26,7 @@ export class ColumnsContainerComponent implements OnDestroy {
   formLoading: boolean = false;
   deleteLoading: boolean = false;
 
-  constructor(private _tableService: TableService, private _columnService: ColumnService, private _messageService: MessageService) {
+  constructor(private _tableService: TableService, private _columnService: ColumnService, private _messageService: MessageService, private _confirmService: ConfirmationService) {
   }
 
   ngOnDestroy(): void {
@@ -55,24 +55,31 @@ export class ColumnsContainerComponent implements OnDestroy {
   }
 
   onDeleteColumn() {
-    this.deleteLoading = true;
-    if (this.selectedColumn?.id) {
-      this._subsList.push(this._columnService.deleteColumn(this.selectedColumn.id)
-        .subscribe({
-          next: delColumn => {
-            if (this.selectedColumn) {
-              this.columnList.splice(this.columnList.indexOf(this.selectedColumn), 1);
-              this.selectedColumn = undefined;
-              this.postSuccess('Eliminar Columna', `Columna ${delColumn?.name} eliminada`);
-            }
-            this.deleteLoading = false;
-          },
-          error: err => {
-            this.deleteLoading = false;
-            this.postError('Error eliminando Columna', err?.messages?.join(','));
-          }
-        }));
-    }
+    this._confirmService.confirm({
+      message: `¿Desea eliminar la Columna${this.selectedColumn? ' ' + this.selectedColumn.name : ''}?`,
+      header: 'Eliminar Columna',
+      icon: 'pi pi-exclamation-triangle',
+      accept: () => {
+        this.deleteLoading = true;
+        if (this.selectedColumn?.id) {
+          this._subsList.push(this._columnService.deleteColumn(this.selectedColumn.id)
+            .subscribe({
+              next: delColumn => {
+                if (this.selectedColumn) {
+                  this.columnList.splice(this.columnList.indexOf(this.selectedColumn), 1);
+                  this.selectedColumn = undefined;
+                  this.postSuccess('Eliminar Columna', `Columna ${delColumn?.name} eliminada`);
+                }
+                this.deleteLoading = false;
+              },
+              error: err => {
+                this.deleteLoading = false;
+                this.postError('Error eliminando Columna', err?.messages?.join(','));
+              }
+            }));
+        }
+      }
+    });
   }
 
   onCreateColumn() {

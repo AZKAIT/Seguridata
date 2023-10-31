@@ -1,7 +1,6 @@
 import { Component, OnDestroy, OnInit } from '@angular/core';
-import { MessageService } from 'primeng/api';
+import { MessageService, ConfirmationService } from 'primeng/api';
 import { Subscription } from 'rxjs';
-import { JobStatus } from 'src/app/common/enums/job-status';
 import { ConnectionModel } from 'src/app/common/models/connection-model';
 import { ProjectModel } from 'src/app/common/models/project-model';
 import { ConnectionService } from 'src/app/common/service/connection.service';
@@ -29,7 +28,7 @@ export class ProjectsContainerComponent implements OnInit, OnDestroy {
   schedulingLoading: boolean = false;
 
 
-  constructor(private _projectService: ProjectService, private _connService: ConnectionService, private _messageService: MessageService) { }
+  constructor(private _projectService: ProjectService, private _connService: ConnectionService, private _messageService: MessageService, private _confirmService: ConfirmationService) { }
 
   ngOnInit(): void {
     this.fetchProjects();
@@ -55,24 +54,31 @@ export class ProjectsContainerComponent implements OnInit, OnDestroy {
   }
 
   onDeleteProject() {
-    this.deleteLoading = true;
-    if (this.selectedProject?.id) {
-      this._subsList.push(this._projectService.deleteProject(this.selectedProject.id)
-        .subscribe({
-          next: delProj => {
-            if (this.selectedProject) {
-              this.projectList.splice(this.projectList.indexOf(this.selectedProject), 1);
-              this.selectedProject = undefined;
-              this.postSuccess('Eliminar Proyecto', `Proyecto ${delProj?.name} eliminado`);
-            }
-            this.deleteLoading = false;
-          },
-          error: err => {
-            this.postError('Error al eliminar Proyecto', err?.messages?.join(','));
-            this.deleteLoading = false;
-          }
-        }));
-    }
+    this._confirmService.confirm({
+      message: `¿Desea eliminar el Proyecto${this.selectedProject? ' ' + this.selectedProject.name : ''}?`,
+      header: 'Eliminar Proyecto',
+      icon: 'pi pi-exclamation-triangle',
+      accept: () => {
+        this.deleteLoading = true;
+        if (this.selectedProject?.id) {
+          this._subsList.push(this._projectService.deleteProject(this.selectedProject.id)
+            .subscribe({
+              next: delProj => {
+                if (this.selectedProject) {
+                  this.projectList.splice(this.projectList.indexOf(this.selectedProject), 1);
+                  this.selectedProject = undefined;
+                  this.postSuccess('Eliminar Proyecto', `Proyecto ${delProj?.name} eliminado`);
+                }
+                this.deleteLoading = false;
+              },
+              error: err => {
+                this.postError('Error al eliminar Proyecto', err?.messages?.join(','));
+                this.deleteLoading = false;
+              }
+            }));
+        }
+      }
+    });
   }
 
   onCreateProject() {

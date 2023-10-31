@@ -1,5 +1,5 @@
 import { Component, Input, OnDestroy } from '@angular/core';
-import { MessageService } from 'primeng/api';
+import { MessageService, ConfirmationService } from 'primeng/api';
 import { Subscription } from 'rxjs';
 import { PlanModel } from 'src/app/common/models/plan-model';
 
@@ -33,7 +33,7 @@ export class PlansContainerComponent implements OnDestroy {
   deleteLoading: boolean = false;
 
   constructor(private _projectService: ProjectService, private _planService: PlanService,
-    private _connService: ConnectionService, private _messageService: MessageService) {
+    private _connService: ConnectionService, private _messageService: MessageService, private _confirmService: ConfirmationService) {
   }
 
   ngOnDestroy(): void {
@@ -64,24 +64,31 @@ export class PlansContainerComponent implements OnDestroy {
   }
 
   onDeletePlan() {
-    this.deleteLoading = true;
-    if (this.selectedPlan?.id) {
-      this._subsList.push(this._planService.deletePlan(this.selectedPlan.id)
-        .subscribe({
-          next: delPlan => {
-            if (this.selectedPlan) {
-              this.planList.splice(this.planList.indexOf(this.selectedPlan), 1);
-              this.selectedPlan = undefined;
-              this.postSuccess('Eliminar Plan', 'Plan eliminado');
-            }
-            this.deleteLoading = false;
-          },
-          error: err => {
-            this.deleteLoading = false;
-            this.postError('Error al eliminar Plan', err?.messages?.join(','));
-          }
-        }));
-    }
+    this._confirmService.confirm({
+      message: `¿Desea eliminar el Plan?`,
+      header: 'Eliminar Plan',
+      icon: 'pi pi-exclamation-triangle',
+      accept: () => {
+        this.deleteLoading = true;
+        if (this.selectedPlan?.id) {
+          this._subsList.push(this._planService.deletePlan(this.selectedPlan.id)
+            .subscribe({
+              next: delPlan => {
+                if (this.selectedPlan) {
+                  this.planList.splice(this.planList.indexOf(this.selectedPlan), 1);
+                  this.selectedPlan = undefined;
+                  this.postSuccess('Eliminar Plan', 'Plan eliminado');
+                }
+                this.deleteLoading = false;
+              },
+              error: err => {
+                this.deleteLoading = false;
+                this.postError('Error al eliminar Plan', err?.messages?.join(','));
+              }
+            }));
+        }
+      }
+    });
   }
 
   onCreatePlan() {

@@ -27,7 +27,7 @@ import java.util.concurrent.Callable;
 import java.util.concurrent.CountDownLatch;
 import java.util.stream.Collectors;
 
-public class PlanExecutionCallable implements Callable<String> {
+public class PlanExecutionCallable implements Callable<ExecutionResult> {
     private static final Logger LOGGER = LoggerFactory.getLogger(PlanExecutionCallable.class);
 
     private final JobEntity job;
@@ -57,7 +57,7 @@ public class PlanExecutionCallable implements Callable<String> {
     }
 
     @Override
-    public String call() {
+    public ExecutionResult call() {
         TableEntity sourceTable = this.plan.getSourceTable();
         TableEntity targetTable = this.plan.getTargetTable();
         Thread.currentThread().setName(String.format("%s=>%s", sourceTable.getName(), targetTable.getName()));
@@ -68,9 +68,10 @@ public class PlanExecutionCallable implements Callable<String> {
             throw new IllegalStateException("La tarea se debe inicializar con un objeto Latch");
         }
 
+        ExecutionResult executionResult;
         try {
             if (StringUtils.isBlank(sourceTable.getOrderColumnName())) {
-                throw new MissingObjectException(String.format("Order column for Table %s is not configured", sourceTable.getName()));
+                throw new MissingObjectException(String.format("No se ha configurado ordenamiento para %s", sourceTable.getName()));
             }
 
             List<DefinitionEntity> dataProcessDefinitions = this.plan.getDefinitions();
@@ -120,9 +121,13 @@ public class PlanExecutionCallable implements Callable<String> {
                 LOGGER.info("Processed {} rows of ({} / {}) next skip is {} for {} => {}",
                         currentRows, totalRowsSource, maxRows, skip, sourceTable.getName(), targetTable.getName());
             }
+
+            executionResult = ExecutionResult.SUCCESS;
         } catch (InterruptedException e) {
             LOGGER.warn("Process was interrupted: {}", e.getMessage());
+            executionResult = ExecutionResult.INTERRUPTED;
         } catch (Exception e) {
+            executionResult = ExecutionResult.EXCEPTION;
             LOGGER.error("Exception occurred on Task: {}", getStackTrace(e));
             ErrorTrackingEntity errorTracking = new ErrorTrackingEntity();
             errorTracking.setMessage(e.getMessage());
@@ -130,10 +135,10 @@ public class PlanExecutionCallable implements Callable<String> {
             errorTracking.setReferenceId(this.plan.getId());
             this.errorTrackingService.createErrorTrackingForProject(this.job, errorTracking);
         } finally {
-            this.latch.countDown();
             LOGGER.info("Terminating Task: {}", Thread.currentThread().getName());
+            this.latch.countDown();
         }
-        return "YES";
+        return executionResult;
     }
 
     private String getStackTrace(Throwable t) {

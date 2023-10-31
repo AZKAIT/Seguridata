@@ -1,6 +1,6 @@
 <ng-container *ngIf="tableList">
   <p-card [header]="'Tablas de ' + (connection? connection.name: 'N/A')">
-    <p-table [value]="tableList" selectionMode="single" dataKey="id" [(selection)]="selectedTable"
+    <p-table [value]="tableList" [totalRecords]="numTables" selectionMode="single" dataKey="id" [(selection)]="selectedTable"
       (onRowSelect)="onRowSelect($event)" (onRowUnselect)="onRowUnselect($event)" [loading]="tableLoading"
       [paginator]="true" [rows]="10" [tableStyle]="{ 'min-width': '50rem' }">
       <ng-template pTemplate="caption">

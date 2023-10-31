@@ -59,7 +59,7 @@ public class ProjectSyncUpFacade {
         ProjectEntity project = null;
         try {
             project = this.projectMapper.mapProjectEntity(projectModel);
-            this.stompMsgClient.sendProjectSyncUpStatusChange(project, "STARTED - Creación de Planes y Definiciones");
+            this.stompMsgClient.sendProjectSyncUpStatusChange(project, "INICIADO - Creación de Planes y Definiciones");
 
             List<TableEntity> sourceTables = this.getConnectionTables(project.getSourceConnection());
             List<TableEntity> targetTables = this.getConnectionTables(project.getTargetConnection());
@@ -79,7 +79,7 @@ public class ProjectSyncUpFacade {
             if (CollectionUtils.isEmpty(newDefs)) {
                 throw new EmptyResultException("No se pudieron crear las Definiciones para los Planes");
             }
-            this.stompMsgClient.sendProjectSyncUpStatusChange(project, "FINISHED - Creación de Planes y Definiciones");
+            this.stompMsgClient.sendProjectSyncUpStatusChange(project, "TERMINADO - Creación de Planes y Definiciones");
         } catch (BaseCodeException e) {
             LOGGER.error("Error Syncing Up Plans / Definitions: {}", e.getMessage());
             this.stompMsgClient.sendProjectSyncUpError(project, String.format("ERROR - Creación de Planes y Definiciones: %s", String.join(", ", e.getMessages())));

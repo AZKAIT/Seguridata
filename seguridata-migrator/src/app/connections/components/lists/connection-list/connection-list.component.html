@@ -1,6 +1,6 @@
 <ng-container *ngIf="connectionList">
   <p-card header="Conexiones">
-    <p-table [value]="connectionList" selectionMode="single" dataKey="id" [(selection)]="selectedConn"
+    <p-table [value]="connectionList" [totalRecords]="numTables" selectionMode="single" dataKey="id" [(selection)]="selectedConn"
       (onRowSelect)="onRowSelect($event)" (onRowUnselect)="onRowUnselect($event)" [paginator]="true" [rows]="10" [loading]="tableLoading"
       [tableStyle]="{ 'min-width': '50rem' }">
       <ng-template pTemplate="caption">

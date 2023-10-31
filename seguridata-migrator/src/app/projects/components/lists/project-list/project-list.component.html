@@ -1,6 +1,6 @@
 <ng-container *ngIf="projectList">
   <p-card header="Proyectos">
-    <p-table [value]="projectList" selectionMode="single" dataKey="id" [(selection)]="selectedProject"
+    <p-table [value]="projectList" [totalRecords]="numTables" selectionMode="single" dataKey="id" [(selection)]="selectedProject"
       [loading]="tableLoading" (onRowSelect)="onRowSelect($event)" (onRowUnselect)="onRowUnselect($event)" [paginator]="true" [rows]="10"
       [tableStyle]="{ 'min-width': '50rem' }">
       <ng-template pTemplate="caption">
