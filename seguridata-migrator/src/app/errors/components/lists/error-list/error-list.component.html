@@ -23,7 +23,7 @@
           <td>
             <p-tableRadioButton [value]="error"></p-tableRadioButton>
           </td>
-          <td>{{ error.date | date }}</td>
+          <td>{{ error.date | date:'short' }}</td>
           <td>{{ error.message }}</td>
         </tr>
       </ng-template>

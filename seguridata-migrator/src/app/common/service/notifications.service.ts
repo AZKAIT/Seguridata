@@ -7,6 +7,7 @@ import { MessageService } from 'primeng/api';
 import { webSocket, WebSocketSubject } from 'rxjs/webSocket';
 import { Observable, of, filter, map, switchMap, retry, delay, Subject, takeUntil } from 'rxjs';
 import { NotificationModel } from '../models/notification-model';
+import { JobStatus, parseJobStatusFromValue } from 'src/app/common/enums/job-status';
 
 
 const RETRY_SECONDS = 10;
@@ -97,7 +98,7 @@ export class NotificationsService {
     this._messageService.add({
       severity: 'info',
       summary: `Tarea: ${statusChange.objectName}`,
-      detail: `Tarea cambió de estatus a ${statusChange.data}`
+      detail: `Tarea cambió de estatus a ${this.translateJobStatus(statusChange.data)}`
     });
   }
 
@@ -151,8 +152,27 @@ export class NotificationsService {
     });
   }
 
+  private translateJobStatus(js: string): string {
+    const status: JobStatus | undefined = parseJobStatusFromValue(js);
+    if (!status) {
+      return '';
+    }
+
+    switch(status) {
+      case JobStatus.STARTING: return 'INICIANDO';
+       case JobStatus.RUNNING: return 'EJECUTANDO';
+       case JobStatus.STOPPING: return 'DETENIENDO';
+       case JobStatus.STOPPED: return 'DETENIDO';
+       case JobStatus.FINISHED_SUCCESS: return 'TERMINADO_EXITOSAMENTE';
+       case JobStatus.FINISHED_WARN: return 'TERMINADO_ADVERTENCIA';
+       case JobStatus.FINISHED_ERROR: return 'TERMINADO_ERROR';
+    }
+  }
+
+
+
   /**
-   * @deprecated Kept only as a reference, this method should not me used
+   * @deprecated Kept only as a reference, this method should not be used
    * @returns Observable of WebSocker
    */
   private createConnection(): Observable<any> {

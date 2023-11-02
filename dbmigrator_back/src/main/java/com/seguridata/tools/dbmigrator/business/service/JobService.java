@@ -3,22 +3,28 @@ package com.seguridata.tools.dbmigrator.business.service;
 import com.seguridata.tools.dbmigrator.business.client.StompMessageClient;
 import com.seguridata.tools.dbmigrator.business.exception.InvalidUpdateException;
 import com.seguridata.tools.dbmigrator.business.exception.MissingObjectException;
+import com.seguridata.tools.dbmigrator.data.constant.ExecutionStatus;
 import com.seguridata.tools.dbmigrator.data.constant.JobStatus;
+import com.seguridata.tools.dbmigrator.data.entity.ExecutionStatisticsEntity;
 import com.seguridata.tools.dbmigrator.data.entity.JobEntity;
+import com.seguridata.tools.dbmigrator.data.entity.PlanEntity;
 import com.seguridata.tools.dbmigrator.data.entity.ProjectEntity;
 import com.seguridata.tools.dbmigrator.data.repository.JobRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.util.CollectionUtils;
 
+import java.util.AbstractMap;
+import java.util.Collections;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Objects;
+import java.util.stream.Collectors;
 
 import static com.seguridata.tools.dbmigrator.data.constant.JobStatus.CREATED;
-import static com.seguridata.tools.dbmigrator.data.constant.JobStatus.RUNNING;
 import static com.seguridata.tools.dbmigrator.data.constant.JobStatus.STARTING;
-import static com.seguridata.tools.dbmigrator.data.constant.JobStatus.STOPPED;
-import static com.seguridata.tools.dbmigrator.data.constant.JobStatus.STOPPING;
 
 @Service
 public class JobService {
@@ -42,6 +48,7 @@ public class JobService {
         newJob.setExecNumber(execNumber);
         newJob.setStatus(CREATED);
         newJob.setProjectName(project.getName());
+        newJob.setPlanStats(this.createStatisticsForJob(project));
 
         return this.jobRepo.createJob(newJob);
     }
@@ -78,19 +85,27 @@ public class JobService {
             throw new InvalidUpdateException("Proyectos en estatus CREATED solo pueden transicionar a estatus STARTING");
         }
 
-        if (STARTING.equals(currentStatus) && (!RUNNING.equals(newStatus) && !STOPPED.equals(newStatus))) {
-            throw new InvalidUpdateException("Proyectos en estatus STARTING solo pueden transicionar a estatus RUNNING o STOPPED");
-        }
-
-        if (STOPPING.equals(currentStatus) && !STOPPED.equals(newStatus)) {
-            throw new InvalidUpdateException("Proyectos en estatus STOPPING solo pueden transicionar a estatus STOPPED");
-        }
-
         job.setStatus(newStatus);
         boolean updated = this.jobRepo.updateJob(job.getId(), newStatus);
         if (updated) {
             this.stompMsgClient.sendJobStatusChange(job, newStatus);
         }
         return updated;
+    }
+
+    private Map<String, ExecutionStatisticsEntity> createStatisticsForJob(ProjectEntity project) {
+        List<PlanEntity> plans = project.getPlans();
+        if (CollectionUtils.isEmpty(plans)) {
+            return Collections.emptyMap();
+        }
+
+        return plans.stream().map(plan -> {
+            ExecutionStatisticsEntity stats = new ExecutionStatisticsEntity();
+            stats.setName(String.format("[%d] %s -> %s", plan.getOrderNum(), plan.getSourceTable().getName(), plan.getTargetTable().getName()));
+            stats.setProgress(0.0);
+            stats.setStatus(ExecutionStatus.CREATED);
+
+            return new AbstractMap.SimpleEntry<>(plan.getId(), stats);
+        }).collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue, (x, y) -> y, HashMap::new));
     }
 }

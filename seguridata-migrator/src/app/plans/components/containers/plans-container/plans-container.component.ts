@@ -65,7 +65,7 @@ export class PlansContainerComponent implements OnDestroy {
 
   onDeletePlan() {
     this._confirmService.confirm({
-      message: `¿Desea eliminar el Plan?`,
+      message: `¿Desea eliminar el Plan de migración de Tablas [${this.selectedPlan?.sourceTable?.name}] -> [${this.selectedPlan?.targetTable?.name}]?`,
       header: 'Eliminar Plan',
       icon: 'pi pi-exclamation-triangle',
       accept: () => {

@@ -6,6 +6,7 @@ import com.seguridata.tools.dbmigrator.business.exception.MissingObjectException
 import com.seguridata.tools.dbmigrator.business.manager.DatabaseQueryManager;
 import com.seguridata.tools.dbmigrator.business.service.ErrorTrackingService;
 import com.seguridata.tools.dbmigrator.data.constant.ConversionFunction;
+import com.seguridata.tools.dbmigrator.data.constant.ExecutionResult;
 import com.seguridata.tools.dbmigrator.data.entity.DefinitionEntity;
 import com.seguridata.tools.dbmigrator.data.entity.ErrorTrackingEntity;
 import com.seguridata.tools.dbmigrator.data.entity.JobEntity;

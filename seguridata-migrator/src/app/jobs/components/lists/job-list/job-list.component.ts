@@ -1,6 +1,6 @@
 import { Component, EventEmitter, Input, Output, OnChanges, SimpleChanges } from '@angular/core';
 import { TableRowSelectEvent, TableRowUnSelectEvent } from 'primeng/table';
-import { JobStatus } from 'src/app/common/enums/job-status';
+import { JobStatus, parseJobStatusFromValue } from 'src/app/common/enums/job-status';
 import { JobModel } from 'src/app/common/models/job-model';
 
 @Component({
@@ -42,7 +42,7 @@ export class JobListComponent implements OnChanges {
   }
 
   resolveIcon(jobStatus: JobStatus): string {
-    const status = this.parseStatus(jobStatus);
+    const status = parseJobStatusFromValue(jobStatus);
 
     let icon = 'pi-thumbs-up';
     if (status == JobStatus.STARTING || status == JobStatus.RUNNING || status == JobStatus.STOPPING) {
@@ -58,15 +58,5 @@ export class JobListComponent implements OnChanges {
     }
 
     return icon;
-  }
-
-  private parseStatus(status: number | string): JobStatus | undefined {
-    let projStatus: JobStatus | undefined = undefined;
-    if (typeof status === 'string') {
-      projStatus = JobStatus[status as keyof typeof JobStatus];
-    } else if (typeof status === 'number') {
-      projStatus = JobStatus[JobStatus[status] as keyof typeof JobStatus];
-    }
-    return projStatus;
   }
 }

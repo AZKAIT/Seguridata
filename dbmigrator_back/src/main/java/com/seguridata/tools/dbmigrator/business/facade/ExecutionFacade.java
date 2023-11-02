@@ -7,7 +7,7 @@ import com.seguridata.tools.dbmigrator.business.service.ConnectionService;
 import com.seguridata.tools.dbmigrator.business.service.JobService;
 import com.seguridata.tools.dbmigrator.business.service.ProjectService;
 import com.seguridata.tools.dbmigrator.business.service.ErrorTrackingService;
-import com.seguridata.tools.dbmigrator.business.task.ExecutionResult;
+import com.seguridata.tools.dbmigrator.data.constant.ExecutionResult;
 import com.seguridata.tools.dbmigrator.business.task.PlanExecutionCallable;
 import com.seguridata.tools.dbmigrator.business.thread.MigrationThreadPoolExecutor;
 import com.seguridata.tools.dbmigrator.data.constant.JobStatus;
@@ -26,8 +26,6 @@ import org.springframework.util.CollectionUtils;
 import java.util.Comparator;
 import java.util.List;
 import java.util.Objects;
-import java.util.concurrent.CountDownLatch;
-import java.util.concurrent.ExecutionException;
 import java.util.concurrent.Future;
 import java.util.stream.Collectors;
 
@@ -91,6 +89,7 @@ public class ExecutionFacade {
             LOGGER.info("Execution finished");
         } catch (Exception e) {
             LOGGER.error("Exception on Job execution: Job({}) -> {}", job.getProjectExecutionNumber(), e.getMessage());
+            jobResult = JobStatus.FINISHED_ERROR;
         } finally {
             this.connectionService.unlockConnections(srcConn, tgtConn);
             this.projectService.updateProjectLocked(project, false);

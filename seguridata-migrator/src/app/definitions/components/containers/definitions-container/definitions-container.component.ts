@@ -67,7 +67,7 @@ export class DefinitionsContainerComponent implements OnDestroy {
 
   onDeleteDef() {
     this._confirmService.confirm({
-      message: `¿Desea eliminar la Definición?`,
+      message: `¿Desea eliminar la Definición para las Columnas [${this.selectedDef?.sourceColumn?.name}] -> [${this.selectedDef?.targetColumn?.name}]?`,
       header: 'Eliminar Definición',
       icon: 'pi pi-exclamation-triangle',
       accept: () => {

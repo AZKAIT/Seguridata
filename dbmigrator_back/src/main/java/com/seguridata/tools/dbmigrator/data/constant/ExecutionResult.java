@@ -1,4 +1,4 @@
-package com.seguridata.tools.dbmigrator.business.task;
+package com.seguridata.tools.dbmigrator.data.constant;
 
 public enum ExecutionResult {
     SUCCESS, INTERRUPTED, EXCEPTION

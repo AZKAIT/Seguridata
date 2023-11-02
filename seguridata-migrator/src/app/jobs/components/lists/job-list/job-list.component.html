@@ -29,9 +29,9 @@
           </td>
           <td>{{ job.projectName }}</td>
           <td>#{{ job.execNumber }}</td>
-          <td>{{ job.createdAt | date }}</td>
-          <td>{{ job.startedAt | date }}</td>
-          <td>{{ job.finishedAt | date }}</td>
+          <td>{{ job.createdAt | date:'short' }}</td>
+          <td>{{ job.startedAt | date:'short' }}</td>
+          <td>{{ job.finishedAt | date:'short' }}</td>
           <td><i [class]="'pi ' + resolveIcon(job.status)"></i>
           </td>
         </tr>

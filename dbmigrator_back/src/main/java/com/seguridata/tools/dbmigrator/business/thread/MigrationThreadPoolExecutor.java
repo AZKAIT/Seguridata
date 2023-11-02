@@ -1,6 +1,6 @@
 package com.seguridata.tools.dbmigrator.business.thread;
 
-import com.seguridata.tools.dbmigrator.business.task.ExecutionResult;
+import com.seguridata.tools.dbmigrator.data.constant.ExecutionResult;
 import com.seguridata.tools.dbmigrator.business.task.PlanExecutionCallable;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
