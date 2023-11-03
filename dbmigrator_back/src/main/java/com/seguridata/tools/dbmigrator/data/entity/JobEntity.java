@@ -9,7 +9,7 @@ import org.springframework.data.mongodb.core.mapping.Document;
 import org.springframework.data.mongodb.core.mapping.DocumentReference;
 
 import java.util.Date;
-import java.util.Map;
+import java.util.List;
 
 @Document(collection = "jobs")
 @Getter @Setter
@@ -26,7 +26,7 @@ public class JobEntity {
 
     @DocumentReference(lazy = true)
     private ProjectEntity project;
-    private Map<String, ExecutionStatisticsEntity> planStats;
+    private List<ExecutionStatisticsEntity> planStats;
 
 
     @Transient

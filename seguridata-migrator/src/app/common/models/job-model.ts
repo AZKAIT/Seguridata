@@ -1,4 +1,5 @@
 import { JobStatus } from "../enums/job-status";
+import { ExecutionStatisticsModel } from "./execution-statistics-model";
 
 export interface JobModel {
   id: string;
@@ -9,4 +10,5 @@ export interface JobModel {
   finishedAt: Date;
   status: JobStatus;
   projectId: string;
+  planStats: ExecutionStatisticsModel[];
 }

@@ -7,7 +7,7 @@ import { HttpParams } from '@angular/common/http';
 @Injectable({
   providedIn: 'root'
 })
-export class JobService {
+export class JobClientService {
 
   constructor(private backend: BackendFacadeService) { }
 

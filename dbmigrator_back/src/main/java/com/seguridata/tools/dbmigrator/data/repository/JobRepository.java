@@ -1,6 +1,8 @@
 package com.seguridata.tools.dbmigrator.data.repository;
 
 import com.mongodb.client.result.UpdateResult;
+import com.seguridata.tools.dbmigrator.data.constant.ExecutionResult;
+import com.seguridata.tools.dbmigrator.data.constant.ExecutionStatus;
 import com.seguridata.tools.dbmigrator.data.constant.JobStatus;
 import com.seguridata.tools.dbmigrator.data.entity.JobEntity;
 import org.bson.types.ObjectId;
@@ -15,6 +17,7 @@ import org.springframework.stereotype.Repository;
 import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
+import java.util.Objects;
 
 import static com.seguridata.tools.dbmigrator.data.constant.JobStatus.FINISHED_ERROR;
 import static com.seguridata.tools.dbmigrator.data.constant.JobStatus.FINISHED_SUCCESS;
@@ -79,5 +82,29 @@ public class JobRepository {
 
     public Long countProjectExecutions(String projectId) {
         return this.mongoTemplate.count(Query.query(Criteria.where("project").is(new ObjectId(projectId))), JobEntity.class);
+    }
+
+    public boolean updateExecutionStats(String jobId, String planId, ExecutionStatus execStatus, Double progress, ExecutionResult execResult) {
+        Update update = new Update();
+
+        if (!Objects.isNull(execStatus)) {
+            update = update.set("planStats.$[stat].status", execStatus);
+        }
+
+        if (!Objects.isNull(progress)) {
+            update = update.set("planStats.$[stat].progress", progress);
+        }
+
+        if (!Objects.isNull(execResult)) {
+            update = update.set("planStats.$[stat].result", execResult);
+        }
+        update = update.filterArray("stat.planId", planId);
+
+        UpdateResult result = this.mongoTemplate.update(JobEntity.class)
+                .matching(Criteria.where("_id").is(new ObjectId(jobId)))
+                .apply(update)
+                .first();
+
+        return result.getMatchedCount() == 1 && result.getModifiedCount() == 1;
     }
 }

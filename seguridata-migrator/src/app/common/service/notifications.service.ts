@@ -8,6 +8,8 @@ import { webSocket, WebSocketSubject } from 'rxjs/webSocket';
 import { Observable, of, filter, map, switchMap, retry, delay, Subject, takeUntil } from 'rxjs';
 import { NotificationModel } from '../models/notification-model';
 import { JobStatus, parseJobStatusFromValue } from 'src/app/common/enums/job-status';
+import { JobService } from 'src/app/jobs/job.service';
+import { ExecutionStatisticsModel } from '../models/execution-statistics-model';
 
 
 const RETRY_SECONDS = 10;
@@ -26,7 +28,7 @@ export class NotificationsService {
   private _connection!: WebSocketSubject<any>;
 
 
-  constructor(@Inject(DOCUMENT) private document: any, private _messageService: MessageService) {
+  constructor(@Inject(DOCUMENT) private document: any, private _messageService: MessageService, private _jobService: JobService) {
     const loc: string = this.document.location.toString();
     const uiIndex = loc.indexOf("/ui");
 
@@ -86,6 +88,10 @@ export class NotificationsService {
     this._stompClient.watch('/topic/connection/syncup/error')
       .pipe(takeUntil(this._destroyed))
       .subscribe(this.postConnSyncUpErrorNotif.bind(this));
+
+    this._stompClient.watch('/topic/job/execution/stats')
+      .pipe(takeUntil(this._destroyed))
+      .subscribe(this.updateExecStats.bind(this));
   }
 
   closeConnection(): void {
@@ -158,22 +164,27 @@ export class NotificationsService {
       return '';
     }
 
-    switch(status) {
+    switch (status) {
       case JobStatus.STARTING: return 'INICIANDO';
-       case JobStatus.RUNNING: return 'EJECUTANDO';
-       case JobStatus.STOPPING: return 'DETENIENDO';
-       case JobStatus.STOPPED: return 'DETENIDO';
-       case JobStatus.FINISHED_SUCCESS: return 'TERMINADO_EXITOSAMENTE';
-       case JobStatus.FINISHED_WARN: return 'TERMINADO_ADVERTENCIA';
-       case JobStatus.FINISHED_ERROR: return 'TERMINADO_ERROR';
+      case JobStatus.RUNNING: return 'EJECUTANDO';
+      case JobStatus.STOPPING: return 'DETENIENDO';
+      case JobStatus.STOPPED: return 'DETENIDO';
+      case JobStatus.FINISHED_SUCCESS: return 'TERMINADO_EXITOSAMENTE';
+      case JobStatus.FINISHED_WARN: return 'TERMINADO_ADVERTENCIA';
+      case JobStatus.FINISHED_ERROR: return 'TERMINADO_ERROR';
     }
+  }
+
+  private updateExecStats(message: Message) {
+    const statsChange: NotificationModel = JSON.parse(message.body) as NotificationModel;
+    this._jobService.updateJobExecStat(statsChange.referenceId, (statsChange.data as ExecutionStatisticsModel));
   }
 
 
 
   /**
    * @deprecated Kept only as a reference, this method should not be used
-   * @returns Observable of WebSocker
+   * @returns Observable of WebSocket
    */
   private createConnection(): Observable<any> {
     const websocketUrl = this._url.replace(/^http/, 'ws') + '/notifications';

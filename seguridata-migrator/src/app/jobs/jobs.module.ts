@@ -9,6 +9,7 @@ import { ErrorsModule } from '../errors/errors.module';
 import { TableModule } from 'primeng/table';
 import { ButtonModule } from 'primeng/button';
 import { CardModule } from 'primeng/card';
+import { ProgressBarModule } from 'primeng/progressbar';
 
 
 
@@ -24,7 +25,8 @@ import { CardModule } from 'primeng/card';
 
     TableModule,
     ButtonModule,
-    CardModule
+    CardModule,
+    ProgressBarModule
   ]
 })
 export class JobsModule { }

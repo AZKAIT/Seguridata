@@ -3,6 +3,7 @@ package com.seguridata.tools.dbmigrator.business.service;
 import com.seguridata.tools.dbmigrator.business.client.StompMessageClient;
 import com.seguridata.tools.dbmigrator.business.exception.InvalidUpdateException;
 import com.seguridata.tools.dbmigrator.business.exception.MissingObjectException;
+import com.seguridata.tools.dbmigrator.data.constant.ExecutionResult;
 import com.seguridata.tools.dbmigrator.data.constant.ExecutionStatus;
 import com.seguridata.tools.dbmigrator.data.constant.JobStatus;
 import com.seguridata.tools.dbmigrator.data.entity.ExecutionStatisticsEntity;
@@ -14,12 +15,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.util.CollectionUtils;
 
-import java.util.AbstractMap;
 import java.util.Collections;
 import java.util.Date;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 import java.util.Objects;
 import java.util.stream.Collectors;
 
@@ -93,19 +91,42 @@ public class JobService {
         return updated;
     }
 
-    private Map<String, ExecutionStatisticsEntity> createStatisticsForJob(ProjectEntity project) {
+    public boolean updateExecutionStatus(String jobId, String planId, ExecutionStatus execStatus) {
+        boolean updated = this.jobRepo.updateExecutionStats(jobId, planId, execStatus, null, null);
+
+        this.stompMsgClient.sendExecutionStats(jobId, planId, execStatus, null, null);
+        return updated;
+    }
+
+    public boolean updateExecutionProgress(String jobId, String planId, long currentRows, long rowsForCompletion) {
+        Double progress = ((double) currentRows / (double) rowsForCompletion) * 100;
+        boolean updated = this.jobRepo.updateExecutionStats(jobId, planId, null, progress, null);
+
+        this.stompMsgClient.sendExecutionStats(jobId, planId, null, progress, null);
+        return updated;
+    }
+
+    public boolean updateExecutionResult(String jobId, String planId, ExecutionResult execResult) {
+        boolean updated = this.jobRepo.updateExecutionStats(jobId, planId, ExecutionStatus.FINISHED, null, execResult);
+
+        this.stompMsgClient.sendExecutionStats(jobId, planId, ExecutionStatus.FINISHED, null, execResult);
+        return updated;
+    }
+
+    private List<ExecutionStatisticsEntity> createStatisticsForJob(ProjectEntity project) {
         List<PlanEntity> plans = project.getPlans();
         if (CollectionUtils.isEmpty(plans)) {
-            return Collections.emptyMap();
+            return Collections.emptyList();
         }
 
         return plans.stream().map(plan -> {
             ExecutionStatisticsEntity stats = new ExecutionStatisticsEntity();
-            stats.setName(String.format("[%d] %s -> %s", plan.getOrderNum(), plan.getSourceTable().getName(), plan.getTargetTable().getName()));
+            stats.setPlanId(plan.getId());
+            stats.setPlanName(String.format("[%d] %s -> %s", plan.getOrderNum(), plan.getSourceTable().getName(), plan.getTargetTable().getName()));
             stats.setProgress(0.0);
             stats.setStatus(ExecutionStatus.CREATED);
 
-            return new AbstractMap.SimpleEntry<>(plan.getId(), stats);
-        }).collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue, (x, y) -> y, HashMap::new));
+            return stats;
+        }).collect(Collectors.toList());
     }
 }

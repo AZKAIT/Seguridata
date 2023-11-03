@@ -13,4 +13,5 @@ public class TopicConstants {
     public static final String PROJECT_SYNC_UP_ERROR_TOPIC = TOPICS_PREFIX + "/project/syncup/error";
     public static final String CONNECTION_SYNC_UP_STATUS_TOPIC = TOPICS_PREFIX + "/connection/syncup/status";
     public static final String CONNECTION_SYNC_UP_ERROR_TOPIC = TOPICS_PREFIX + "/connection/syncup/error";
+    public static final String JOB_EXECUTION_STATS_TOPIC = TOPICS_PREFIX + "/job/execution/stats";
 }

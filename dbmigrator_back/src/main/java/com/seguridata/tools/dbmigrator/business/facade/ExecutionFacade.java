@@ -144,7 +144,7 @@ public class ExecutionFacade {
             return job.getProject().getPlans().stream()
                     .sorted(Comparator.comparing(PlanEntity::getOrderNum))
                     .map(plan -> new PlanExecutionCallable(job, plan,
-                            sourceQueryManager, targetQueryManager, this.errorTrackingService))
+                            sourceQueryManager, targetQueryManager, this.jobService, this.errorTrackingService))
                     .collect(Collectors.toList());
         } catch (EmptyResultException e) {
             LOGGER.error("Exception on Plans: {}", e.getMessage());

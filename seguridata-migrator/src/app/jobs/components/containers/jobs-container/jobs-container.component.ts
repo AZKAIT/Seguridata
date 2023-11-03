@@ -1,8 +1,7 @@
 import { Component, OnDestroy, OnInit } from '@angular/core';
-import { MessageService } from 'primeng/api';
-import { Subscription } from 'rxjs';
+import { Subject, Subscription, takeUntil } from 'rxjs';
 import { JobModel } from 'src/app/common/models/job-model';
-import { JobService } from 'src/app/common/service/job.service';
+import { JobService } from 'src/app/jobs/job.service';
 
 @Component({
   selector: 'app-jobs-container',
@@ -10,56 +9,33 @@ import { JobService } from 'src/app/common/service/job.service';
   styleUrls: ['./jobs-container.component.css']
 })
 export class JobsContainerComponent implements OnInit, OnDestroy {
-  private _subsList: Subscription[] = [];
+  private destroyed$ = new Subject<void>();
 
   jobList: JobModel[] = [];
+  tableLoading = false;
 
   selectedJob: JobModel | undefined;
 
-  tableLoading = false;
-
-  constructor(private _jobService: JobService, private _messageService: MessageService) {
+  constructor(private _jobService: JobService) {
   }
 
   ngOnInit(): void {
-    this.fetchJobs();
+    this._jobService.fetchJobs();
+
+    this._jobService.jobListObs()
+      .pipe(takeUntil(this.destroyed$))
+      .subscribe(jobList => this.jobList = jobList);
+
+    this._jobService.jobsLoadingObs()
+    .pipe(takeUntil(this.destroyed$))
+    .subscribe(jobsLoading => this.tableLoading = jobsLoading);
   }
 
   ngOnDestroy(): void {
-    let subs: Subscription | undefined;
-    while (this._subsList.length) {
-      subs = this._subsList.pop();
-      if (subs) {
-        subs.unsubscribe();
-      }
-    }
+    this.destroyed$.next();
   }
-
-
 
   onExecuteRefresh() {
-    this.fetchJobs();
-  }
-
-
-  private fetchJobs() {
-    this.tableLoading = true;
-    this._subsList.push(this._jobService.getAllJobs()
-      .subscribe({
-        next: jobList => {
-          if (jobList) {
-            this.jobList = jobList ?? [];
-          }
-          this.tableLoading = false;
-        },
-        error: err => {
-          this.postError('Error al cargar Tareas', err?.messages?.join(','));
-          this.tableLoading = false;
-        }
-      }));
-  }
-
-  private postError(title: string, message: string) {
-    this._messageService.add({ severity: 'error', summary: title, detail: message });
+    this._jobService.fetchJobs();
   }
 }

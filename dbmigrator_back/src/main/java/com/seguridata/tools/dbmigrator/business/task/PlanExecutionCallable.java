@@ -5,8 +5,10 @@ import com.seguridata.tools.dbmigrator.business.exception.EmptyResultException;
 import com.seguridata.tools.dbmigrator.business.exception.MissingObjectException;
 import com.seguridata.tools.dbmigrator.business.manager.DatabaseQueryManager;
 import com.seguridata.tools.dbmigrator.business.service.ErrorTrackingService;
+import com.seguridata.tools.dbmigrator.business.service.JobService;
 import com.seguridata.tools.dbmigrator.data.constant.ConversionFunction;
 import com.seguridata.tools.dbmigrator.data.constant.ExecutionResult;
+import com.seguridata.tools.dbmigrator.data.constant.ExecutionStatus;
 import com.seguridata.tools.dbmigrator.data.entity.DefinitionEntity;
 import com.seguridata.tools.dbmigrator.data.entity.ErrorTrackingEntity;
 import com.seguridata.tools.dbmigrator.data.entity.JobEntity;
@@ -35,6 +37,7 @@ public class PlanExecutionCallable implements Callable<ExecutionResult> {
     private final PlanEntity plan;
     private final DatabaseQueryManager sourceQueryManager;
     private final DatabaseQueryManager targetQueryManager;
+    private final JobService jobService;
     private final ErrorTrackingService errorTrackingService;
 
     private CountDownLatch latch;
@@ -43,11 +46,13 @@ public class PlanExecutionCallable implements Callable<ExecutionResult> {
                                  PlanEntity plan,
                                  DatabaseQueryManager sourceQueryManager,
                                  DatabaseQueryManager targetQueryManager,
+                                 JobService jobService,
                                  ErrorTrackingService errorTrackingService) {
         this.job = job;
         this.plan = plan;
         this.sourceQueryManager = sourceQueryManager;
         this.targetQueryManager = targetQueryManager;
+        this.jobService = jobService;
         this.errorTrackingService = errorTrackingService;
 
         this.latch = null;
@@ -62,6 +67,7 @@ public class PlanExecutionCallable implements Callable<ExecutionResult> {
         TableEntity sourceTable = this.plan.getSourceTable();
         TableEntity targetTable = this.plan.getTargetTable();
         Thread.currentThread().setName(String.format("%s=>%s", sourceTable.getName(), targetTable.getName()));
+        this.jobService.updateExecutionStatus(this.job.getId(), this.plan.getId(), ExecutionStatus.RUNNING);
 
         LOGGER.info("Executing Task: {}", Thread.currentThread().getName());
         if (Objects.isNull(this.latch)) {
@@ -69,7 +75,7 @@ public class PlanExecutionCallable implements Callable<ExecutionResult> {
             throw new IllegalStateException("La tarea se debe inicializar con un objeto Latch");
         }
 
-        ExecutionResult executionResult;
+        ExecutionResult executionResult = null;
         try {
             if (StringUtils.isBlank(sourceTable.getOrderColumnName())) {
                 throw new MissingObjectException(String.format("No se ha configurado ordenamiento para %s", sourceTable.getName()));
@@ -94,8 +100,13 @@ public class PlanExecutionCallable implements Callable<ExecutionResult> {
                 throw new IllegalStateException("El número de filas omitidas es mayor al número total de registros");
             }
 
+            if (maxRows != -1 && rowLimit > maxRows) {
+                throw new IllegalStateException("El tamaño de bloque es mayor a la cantidad máxima de registros a procesar");
+            }
+
             long currentRows = 0;
             long skip = initialSkip;
+            long rowsForCompletion = maxRows > 0 ? maxRows : totalRowsSource;
             LOGGER.info("Initiating process for {} rows in batches of {} starting from row {}, on a total of {} rows", maxRows, rowLimit, initialSkip, totalRowsSource);
             while (this.validateRowNum(currentRows, maxRows) && ((initialSkip + currentRows) < totalRowsSource) && !Thread.interrupted()) {
                 // Retrieve Data from SourceTable
@@ -121,6 +132,7 @@ public class PlanExecutionCallable implements Callable<ExecutionResult> {
 
                 LOGGER.info("Processed {} rows of ({} / {}) next skip is {} for {} => {}",
                         currentRows, totalRowsSource, maxRows, skip, sourceTable.getName(), targetTable.getName());
+                this.jobService.updateExecutionProgress(this.job.getId(), this.plan.getId(), currentRows, rowsForCompletion);
             }
 
             executionResult = ExecutionResult.SUCCESS;
@@ -138,6 +150,7 @@ public class PlanExecutionCallable implements Callable<ExecutionResult> {
         } finally {
             LOGGER.info("Terminating Task: {}", Thread.currentThread().getName());
             this.latch.countDown();
+            this.jobService.updateExecutionResult(this.job.getId(), this.plan.getId(), executionResult);
         }
         return executionResult;
     }

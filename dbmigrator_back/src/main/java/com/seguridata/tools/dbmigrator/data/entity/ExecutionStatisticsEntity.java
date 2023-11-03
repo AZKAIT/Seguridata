@@ -7,7 +7,8 @@ import lombok.Setter;
 
 @Getter @Setter
 public class ExecutionStatisticsEntity {
-    private String name;
+    private String planId;
+    private String planName;
     private ExecutionResult result;
     private ExecutionStatus status;
     private Double progress;

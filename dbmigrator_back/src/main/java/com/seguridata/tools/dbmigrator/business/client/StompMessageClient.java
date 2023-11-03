@@ -1,10 +1,13 @@
 package com.seguridata.tools.dbmigrator.business.client;
 
+import com.seguridata.tools.dbmigrator.data.constant.ExecutionResult;
+import com.seguridata.tools.dbmigrator.data.constant.ExecutionStatus;
 import com.seguridata.tools.dbmigrator.data.constant.NotificationType;
 import com.seguridata.tools.dbmigrator.data.constant.JobStatus;
 import com.seguridata.tools.dbmigrator.data.dto.NotificationDTO;
 import com.seguridata.tools.dbmigrator.data.entity.ConnectionEntity;
 import com.seguridata.tools.dbmigrator.data.entity.ErrorTrackingEntity;
+import com.seguridata.tools.dbmigrator.data.entity.ExecutionStatisticsEntity;
 import com.seguridata.tools.dbmigrator.data.entity.JobEntity;
 import com.seguridata.tools.dbmigrator.data.entity.ProjectEntity;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -16,12 +19,14 @@ import java.util.Map;
 import java.util.Objects;
 
 import static com.seguridata.tools.dbmigrator.business.constant.TopicConstants.JOB_EXECUTION_ERROR_TOPIC;
+import static com.seguridata.tools.dbmigrator.business.constant.TopicConstants.JOB_EXECUTION_STATS_TOPIC;
 import static com.seguridata.tools.dbmigrator.business.constant.TopicConstants.JOB_EXECUTION_STATUS_TOPIC;
 import static com.seguridata.tools.dbmigrator.business.constant.TopicConstants.CONNECTION_SYNC_UP_ERROR_TOPIC;
 import static com.seguridata.tools.dbmigrator.business.constant.TopicConstants.CONNECTION_SYNC_UP_STATUS_TOPIC;
 import static com.seguridata.tools.dbmigrator.business.constant.TopicConstants.PROJECT_SYNC_UP_ERROR_TOPIC;
 import static com.seguridata.tools.dbmigrator.business.constant.TopicConstants.PROJECT_SYNC_UP_STATUS_TOPIC;
 import static com.seguridata.tools.dbmigrator.data.constant.NotificationType.JOB_EXECUTION_ERROR;
+import static com.seguridata.tools.dbmigrator.data.constant.NotificationType.JOB_EXECUTION_STATS;
 import static com.seguridata.tools.dbmigrator.data.constant.NotificationType.JOB_EXECUTION_STATUS;
 import static com.seguridata.tools.dbmigrator.data.constant.NotificationType.CONNECTION_SYNC_UP_ERROR;
 import static com.seguridata.tools.dbmigrator.data.constant.NotificationType.CONNECTION_SYNC_UP_STATUS;
@@ -46,6 +51,7 @@ public class StompMessageClient {
         this.notificationTypeTopics.put(CONNECTION_SYNC_UP_ERROR, CONNECTION_SYNC_UP_ERROR_TOPIC);
         this.notificationTypeTopics.put(PROJECT_SYNC_UP_STATUS, PROJECT_SYNC_UP_STATUS_TOPIC);
         this.notificationTypeTopics.put(PROJECT_SYNC_UP_ERROR, PROJECT_SYNC_UP_ERROR_TOPIC);
+        this.notificationTypeTopics.put(JOB_EXECUTION_STATS, JOB_EXECUTION_STATS_TOPIC);
     }
 
     public void sendJobStatusChange(JobEntity job, JobStatus newStatus) {
@@ -100,6 +106,18 @@ public class StompMessageClient {
                 projName, message);
 
         this.sendNotification(PROJECT_SYNC_UP_ERROR, notification);
+    }
+
+    public void sendExecutionStats(String jobId, String planId, ExecutionStatus execStatus, Double progress, ExecutionResult execResult) {
+        ExecutionStatisticsEntity execStats = new ExecutionStatisticsEntity();
+        execStats.setPlanId(planId);
+        execStats.setStatus(execStatus);
+        execStats.setProgress(progress);
+        execStats.setResult(execResult);
+
+        NotificationDTO notification = new NotificationDTO(jobId, JobEntity.class.getCanonicalName(), "", execStats);
+
+        this.sendNotification(JOB_EXECUTION_STATS, notification);
     }
 
 
