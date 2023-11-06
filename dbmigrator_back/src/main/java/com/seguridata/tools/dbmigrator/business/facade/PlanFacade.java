@@ -6,8 +6,10 @@ import com.seguridata.tools.dbmigrator.business.service.DefinitionService;
 import com.seguridata.tools.dbmigrator.business.service.PlanService;
 import com.seguridata.tools.dbmigrator.business.service.ProjectService;
 import com.seguridata.tools.dbmigrator.business.service.TableService;
+import com.seguridata.tools.dbmigrator.data.entity.ConnectionEntity;
 import com.seguridata.tools.dbmigrator.data.entity.PlanEntity;
 import com.seguridata.tools.dbmigrator.data.entity.ProjectEntity;
+import com.seguridata.tools.dbmigrator.data.entity.TableEntity;
 import com.seguridata.tools.dbmigrator.data.model.PlanModel;
 import com.seguridata.tools.dbmigrator.data.wrapper.ResponseWrapper;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -46,7 +48,7 @@ public class PlanFacade {
             this.projectService.validateProjectStatus(project);
 
             PlanEntity plan = this.planMapper.mapPlanEntity(planModel);
-            this.validateTables(plan);
+            this.validateTables(plan, project);
             plan = this.planService.createPlanForProject(project, plan);
 
             planResponse.setCode("00");
@@ -90,10 +92,12 @@ public class PlanFacade {
         ResponseWrapper<PlanModel> planResponse = new ResponseWrapper<>();
         try {
             PlanEntity existingPlan = this.planService.getPlan(planId);
-            this.projectService.validateProjectStatus(existingPlan.getProject());
+
+            ProjectEntity project = existingPlan.getProject();
+            this.projectService.validateProjectStatus(project);
 
             PlanEntity updatedPlan = this.planMapper.mapPlanEntity(planModel);
-            this.validateTables(updatedPlan);
+            this.validateTables(updatedPlan, project);
 
             if (!Objects.equals(existingPlan.getSourceTable().getId(), updatedPlan.getSourceTable().getId())
                     || !Objects.equals(existingPlan.getTargetTable().getId(), updatedPlan.getTargetTable().getId())) {
@@ -129,8 +133,14 @@ public class PlanFacade {
         return planResponse;
     }
 
-    private void validateTables(PlanEntity plan) {
-        this.tableService.getTable(plan.getSourceTable().getId());
-        this.tableService.getTable(plan.getTargetTable().getId());
+    private void validateTables(PlanEntity plan, ProjectEntity project) {
+        ConnectionEntity sourceConn = project.getSourceConnection();
+        TableEntity sourceTable = plan.getSourceTable();
+        this.tableService.validateTableOwner(sourceConn, sourceTable);
+
+
+        ConnectionEntity targetConn = project.getTargetConnection();
+        TableEntity targetTable = plan.getTargetTable();
+        this.tableService.validateTableOwner(targetConn, targetTable);
     }
 }

@@ -8,8 +8,10 @@ import com.seguridata.tools.dbmigrator.business.service.ColumnService;
 import com.seguridata.tools.dbmigrator.business.service.DefinitionService;
 import com.seguridata.tools.dbmigrator.business.service.PlanService;
 import com.seguridata.tools.dbmigrator.business.service.ProjectService;
+import com.seguridata.tools.dbmigrator.data.entity.ColumnEntity;
 import com.seguridata.tools.dbmigrator.data.entity.DefinitionEntity;
 import com.seguridata.tools.dbmigrator.data.entity.PlanEntity;
+import com.seguridata.tools.dbmigrator.data.entity.TableEntity;
 import com.seguridata.tools.dbmigrator.data.model.DefinitionModel;
 import com.seguridata.tools.dbmigrator.data.wrapper.ResponseWrapper;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -66,7 +68,7 @@ public class DefinitionFacade {
             this.projectService.validateProjectStatus(plan.getProject());
 
             DefinitionEntity definition = this.definitionMapper.mapDefinitionEntity(definitionModel);
-            this.validateColumns(definition);
+            this.validateColumns(definition, plan);
             definition = this.definitionService.createDefinition(plan, definition);
 
             response.setCode("00");
@@ -89,7 +91,7 @@ public class DefinitionFacade {
             if (CollectionUtils.isEmpty(definitionList)) {
                 throw new EmptyResultException("La lista de Columnas de entrada está vacía");
             }
-            definitionList.forEach(this::validateColumns);
+            definitionList.forEach(def -> this.validateColumns(def, plan));
 
             definitionList = this.definitionService.createDefinitionList(plan, definitionList);
 
@@ -129,7 +131,7 @@ public class DefinitionFacade {
             this.projectService.validateProjectStatus(plan.getProject());
 
             DefinitionEntity updatedDefinition = this.definitionMapper.mapDefinitionEntity(definitionModel);
-            this.validateColumns(updatedDefinition);
+            this.validateColumns(updatedDefinition, plan);
             updatedDefinition = this.definitionService.updateDefinition(existingDefinition, updatedDefinition);
 
             response.setCode("00");
@@ -158,8 +160,13 @@ public class DefinitionFacade {
         return response;
     }
 
-    private void validateColumns(DefinitionEntity definition) {
-        this.columnService.getColumn(definition.getSourceColumn().getId());
-        this.columnService.getColumn(definition.getTargetColumn().getId());
+    private void validateColumns(DefinitionEntity definition, PlanEntity plan) {
+        TableEntity sourceTable = plan.getSourceTable();
+        ColumnEntity sourceColumn = definition.getSourceColumn();
+        this.columnService.validateColumnOwner(sourceTable, sourceColumn);
+
+        TableEntity targetTable = plan.getTargetTable();
+        ColumnEntity targetColumn = definition.getTargetColumn();
+        this.columnService.validateColumnOwner(targetTable, targetColumn);
     }
 }

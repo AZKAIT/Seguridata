@@ -62,9 +62,9 @@ public class TableService {
         return this.tableRepo.updateTable(updatedTable);
     }
 
-    public void validateTableOwner(String connectionId, String tableId) {
-        if (!this.tableRepo.validateTableConnection(connectionId, tableId)) {
-            throw new RuntimeException("Table doesn't belong to Connection");
+    public void validateTableOwner(ConnectionEntity connection, TableEntity table) {
+        if (!this.tableRepo.validateTableConnection(connection.getId(), table.getId())) {
+            throw new InvalidUpdateException("La Tabla no pertenece a la Conexión");
         }
     }
 

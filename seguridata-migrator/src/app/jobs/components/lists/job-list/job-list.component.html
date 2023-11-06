@@ -36,9 +36,9 @@
           </td>
           <td>{{ job.projectName }}</td>
           <td>#{{ job.execNumber }}</td>
-          <td>{{ job.createdAt | date:'short' }}</td>
-          <td>{{ job.startedAt | date:'short' }}</td>
-          <td>{{ job.finishedAt | date:'short' }}</td>
+          <td>{{ job.createdAt | date:'d/M/yy h:mm:ss a' }}</td>
+          <td>{{ job.startedAt | date:'d/M/yy h:mm:ss a' }}</td>
+          <td>{{ job.finishedAt | date:'d/M/yy h:mm:ss a' }}</td>
           <td><i [class]="'pi ' + resolveIcon(job.status)"></i>
           </td>
         </tr>
@@ -59,9 +59,9 @@
                   <ng-template pTemplate="body" let-stat>
                       <tr>
                           <td>{{ stat.planName }}</td>
-                          <td>{{ stat.status }}</td>
-                          <td><p-progressBar [value]="stat.progress"></p-progressBar></td>
-                          <td>{{ stat.result }}</td>
+                          <td>{{ translateStatus(stat.status) }}</td>
+                          <td><p-progressBar [value]="stat.progress" [showValue]="true"></p-progressBar> {{stat.progress}}%</td>
+                          <td>{{ translateResult(stat.result) }}</td>
                       </tr>
                   </ng-template>
                   <ng-template pTemplate="emptymessage">

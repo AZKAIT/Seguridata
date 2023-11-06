@@ -1,5 +1,7 @@
 import { Component, EventEmitter, Input, Output, OnChanges, SimpleChanges } from '@angular/core';
 import { TableRowSelectEvent, TableRowUnSelectEvent } from 'primeng/table';
+import { ExecutionResult, parseExecutionResultFromValue } from 'src/app/common/enums/execution-result';
+import { ExecutionStatus, parseExecutionStatusFromValue } from 'src/app/common/enums/execution-status';
 import { JobStatus, parseJobStatusFromValue } from 'src/app/common/enums/job-status';
 import { JobModel } from 'src/app/common/models/job-model';
 
@@ -58,5 +60,33 @@ export class JobListComponent implements OnChanges {
     }
 
     return icon;
+  }
+
+  translateStatus(st: any): string {
+    const status: ExecutionStatus | undefined = parseExecutionStatusFromValue(st);
+
+    if (status === ExecutionStatus.CREATED) {
+      return 'Creado';
+    } else if (status === ExecutionStatus.RUNNING) {
+      return 'Corriendo';
+    } else if (status === ExecutionStatus.FINISHED) {
+      return 'Terminado';
+    } else {
+      return '';
+    }
+  }
+
+  translateResult(res: any): string {
+    const result: ExecutionResult | undefined = parseExecutionResultFromValue(res);
+
+    if (result === ExecutionResult.SUCCESS) {
+      return 'Exitoso';
+    } else if (result === ExecutionResult.INTERRUPTED) {
+      return 'Interrumpido';
+    } else if (result === ExecutionResult.EXCEPTION) {
+      return 'Excepción';
+    } else {
+      return '';
+    }
   }
 }

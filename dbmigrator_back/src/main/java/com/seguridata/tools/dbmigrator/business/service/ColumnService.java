@@ -117,4 +117,10 @@ public class ColumnService {
                 .collect(Collectors.toList());
         return this.columnRepo.deleteColumnsByTableIds(tableIds);
     }
+
+    public void validateColumnOwner(TableEntity table, ColumnEntity column) {
+        if (!this.columnRepo.validateColumnTable(table.getId(), column.getId())) {
+            throw new InvalidUpdateException("La Columna no pertenece a la Tabla");
+        }
+    }
 }
