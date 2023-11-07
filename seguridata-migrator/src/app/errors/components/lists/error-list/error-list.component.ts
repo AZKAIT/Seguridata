@@ -19,6 +19,7 @@ export class ErrorListComponent implements OnChanges {
 
   @Input() tableLoading?: boolean;
 
+  firstIndex = 0;
   numTables = 0;
 
   ngOnChanges(changes: SimpleChanges): void {
@@ -27,6 +28,7 @@ export class ErrorListComponent implements OnChanges {
     } else {
       this.numTables = 0;
     }
+    this.firstIndex = 0;
   }
 
 

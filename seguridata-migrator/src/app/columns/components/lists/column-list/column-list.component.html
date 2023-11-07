@@ -1,15 +1,21 @@
 <ng-container *ngIf="columnList">
   <p-card [header]="'Columnas de ' + (table? table.name: 'N/A')">
-    <p-table [value]="columnList" [totalRecords]="numTables" selectionMode="single" dataKey="id" [(selection)]="selectedColumn" (onRowSelect)="onRowSelect($event)" (onRowUnselect)="onRowUnselect($event)" [loading]="tableLoading"
-      [paginator]="true" [rows]="10" [tableStyle]="{ 'min-width': '50rem' }">
+    <p-table [value]="columnList" [totalRecords]="numTables" selectionMode="single" dataKey="id"
+      [(selection)]="selectedColumn" (onRowSelect)="onRowSelect($event)" (onRowUnselect)="onRowUnselect($event)" [(first)]="firstIndex"
+      [loading]="tableLoading" [paginator]="true" [rows]="10" [tableStyle]="{ 'min-width': '50rem' }">
       <ng-template pTemplate="caption">
         <div class="flex align-items-center justify-content-between">
           Columnas
           <div class="flex">
-            <p-button class="h-full" icon="pi pi-refresh" [text]="true" (onClick)="refreshList();" pTooltip="Refrescar lista" tooltipPosition="top"></p-button>
-            <p-button class="h-full" icon="pi pi-pencil" [text]="true" (onClick)="editColumn()" [disabled]="!selectedColumn" pTooltip="Editar Columna" tooltipPosition="top"></p-button>
-            <p-button class="h-full" icon="pi pi-trash" [text]="true" (onClick)="deleteColumn()" [disabled]="!selectedColumn" [loading]="deleteLoading || false" pTooltip="Eliminar Columna" tooltipPosition="top"></p-button>
-            <p-button class="h-full" icon="pi pi-plus" [text]="true" (onClick)="createColumn()" pTooltip="Crear nueva Columna" tooltipPosition="top"></p-button>
+            <p-button class="h-full" icon="pi pi-refresh" [text]="true" (onClick)="refreshList();"
+              pTooltip="Refrescar lista" tooltipPosition="top"></p-button>
+            <p-button class="h-full" icon="pi pi-pencil" [text]="true" (onClick)="editColumn()"
+              [disabled]="!selectedColumn" pTooltip="Editar Columna" tooltipPosition="top"></p-button>
+            <p-button class="h-full" icon="pi pi-trash" [text]="true" (onClick)="deleteColumn()"
+              [disabled]="!selectedColumn" [loading]="deleteLoading || false" pTooltip="Eliminar Columna"
+              tooltipPosition="top"></p-button>
+            <p-button class="h-full" icon="pi pi-plus" [text]="true" (onClick)="createColumn()"
+              pTooltip="Crear nueva Columna" tooltipPosition="top"></p-button>
           </div>
         </div>
       </ng-template>

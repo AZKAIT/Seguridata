@@ -1,6 +1,6 @@
 <ng-container *ngIf="errorList">
   <p-card [header]="'Errores de ' + (job? job.projectName + ' #' + job.execNumber: 'N/A')">
-    <p-table [value]="errorList" [totalRecords]="numTables" selectionMode="single" dataKey="id" [(selection)]="selectedError"
+    <p-table [value]="errorList" [totalRecords]="numTables" selectionMode="single" dataKey="id" [(selection)]="selectedError" [(first)]="firstIndex"
       [loading]="tableLoading" (onRowSelect)="onRowSelect($event)" (onRowUnselect)="onRowUnselect($event)" [paginator]="true" [rows]="10"
       [tableStyle]="{ 'min-width': '50rem' }">
       <ng-template pTemplate="caption">
@@ -23,7 +23,7 @@
           <td>
             <p-tableRadioButton [value]="error"></p-tableRadioButton>
           </td>
-          <td>{{ error.date | date:'short' }}</td>
+          <td>{{ error.date | date:'d/M/yy h:mm:ss a' }}</td>
           <td>{{ error.message }}</td>
         </tr>
       </ng-template>

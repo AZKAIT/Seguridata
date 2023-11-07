@@ -1,7 +1,7 @@
 <ng-container *ngIf="jobList">
   <p-card header="Tareas">
     <p-table [value]="jobList" [totalRecords]="numTables" selectionMode="single" dataKey="id"
-      [(selection)]="selectedJob" [loading]="tableLoading" (onRowSelect)="onRowSelect($event)"
+      [(selection)]="selectedJob" [loading]="tableLoading" (onRowSelect)="onRowSelect($event)" [(first)]="firstIndex"
       (onRowUnselect)="onRowUnselect($event)" [paginator]="true" [rows]="10" [tableStyle]="{ 'min-width': '50rem' }">
       <ng-template pTemplate="caption">
         <div class="flex align-items-center justify-content-between">
@@ -60,7 +60,7 @@
                       <tr>
                           <td>{{ stat.planName }}</td>
                           <td>{{ translateStatus(stat.status) }}</td>
-                          <td><p-progressBar [value]="stat.progress" [showValue]="true"></p-progressBar> {{stat.progress}}%</td>
+                          <td><p-progressBar [value]="stat.progress" [showValue]="true"></p-progressBar> {{stat.progress | number:'1.2-2'}}%</td>
                           <td>{{ translateResult(stat.result) }}</td>
                       </tr>
                   </ng-template>

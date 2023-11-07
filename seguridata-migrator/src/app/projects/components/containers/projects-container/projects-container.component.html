@@ -1,9 +1,12 @@
-<app-project-list [projectList]="projectList" [(selectedProject)]="selectedProject" (listRefreshEvent)="onExecuteRefresh();" [tableLoading]="tableLoading" [deleteLoading]="deleteLoading" [schedulingLoading]="schedulingLoading"
-(editProjectEvent)="onEditProject()" (deleteProjectEvent)="onDeleteProject()" (createProjectEvent)="onCreateProject()"
-(executeProjectEvent)="onExecuteProjectEvent()" (stopProjectEvent)="onStopProjectEvent()"></app-project-list>
+<app-project-list [projectList]="projectList" [(selectedProject)]="selectedProject"
+  (listRefreshEvent)="onExecuteRefresh();" [tableLoading]="tableLoading" [deleteLoading]="deleteLoading"
+  [schedulingLoading]="schedulingLoading" (editProjectEvent)="onEditProject()" (deleteProjectEvent)="onDeleteProject()"
+  (createProjectEvent)="onCreateProject()" (executeProjectEvent)="onExecuteProjectEvent()"
+  (stopProjectEvent)="onStopProjectEvent()"></app-project-list>
 
 <app-plans-container [project]="selectedProject"></app-plans-container>
 
 <p-dialog header="Información del Proyecto" [(visible)]="showForm" [modal]="true" [style]="{width: '50vw'}">
-<app-project-data-form *ngIf="showForm" [project]="selectedProject" [connectionList]="connList" (saveProject)="saveProjectData($event)" [formLoading]="formLoading"></app-project-data-form>
+  <app-project-data-form *ngIf="showForm" [project]="selectedProject" [connectionList]="connList"
+    (saveProject)="saveProjectData($event)" [formLoading]="formLoading"></app-project-data-form>
 </p-dialog>

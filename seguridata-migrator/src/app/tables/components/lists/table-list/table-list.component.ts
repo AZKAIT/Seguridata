@@ -17,6 +17,7 @@ export class TableListComponent implements OnChanges {
   @Output() deleteTableEvent = new EventEmitter<void>();
   @Output() createTableEvent = new EventEmitter<void>();
 
+  firstIndex = 0;
   numTables = 0;
 
   @Input() selectedTable?: TableModel;
@@ -31,6 +32,8 @@ export class TableListComponent implements OnChanges {
     } else {
       this.numTables = 0;
     }
+
+    this.firstIndex = 0;
   }
 
 

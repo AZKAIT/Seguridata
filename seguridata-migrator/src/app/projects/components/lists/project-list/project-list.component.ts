@@ -25,6 +25,7 @@ export class ProjectListComponent implements OnChanges {
   @Input() deleteLoading?: boolean;
   @Input() schedulingLoading?: boolean;
 
+  firstIndex = 0;
   numTables = 0;
 
   ngOnChanges(changes: SimpleChanges): void {
@@ -33,6 +34,7 @@ export class ProjectListComponent implements OnChanges {
     } else {
       this.numTables = 0;
     }
+    this.firstIndex = 0;
   }
 
   refreshList() {

@@ -1,7 +1,7 @@
 <ng-container *ngIf="tableList">
   <p-card [header]="'Tablas de ' + (connection? connection.name: 'N/A')">
     <p-table [value]="tableList" [totalRecords]="numTables" selectionMode="single" dataKey="id" [(selection)]="selectedTable"
-      (onRowSelect)="onRowSelect($event)" (onRowUnselect)="onRowUnselect($event)" [loading]="tableLoading"
+      (onRowSelect)="onRowSelect($event)" (onRowUnselect)="onRowUnselect($event)" [loading]="tableLoading" [(first)]="firstIndex"
       [paginator]="true" [rows]="10" [tableStyle]="{ 'min-width': '50rem' }">
       <ng-template pTemplate="caption">
         <div class="flex align-items-center justify-content-between">

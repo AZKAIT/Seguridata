@@ -1,15 +1,21 @@
 <ng-container *ngIf="planList">
   <p-card [header]="'Planes de ' + (project? project.name: 'N/A')">
-    <p-table [value]="planList" [totalRecords]="numTables" selectionMode="single" dataKey="id" [(selection)]="selectedPlan" (onRowSelect)="onRowSelect($event)" (onRowUnselect)="onRowUnselect($event)" [loading]="tableLoading"
-      [paginator]="true" [rows]="10" [tableStyle]="{ 'min-width': '50rem' }">
+    <p-table [value]="planList" [totalRecords]="numTables" selectionMode="single" dataKey="id" [(first)]="firstIndex"
+      [(selection)]="selectedPlan" (onRowSelect)="onRowSelect($event)" (onRowUnselect)="onRowUnselect($event)"
+      [loading]="tableLoading" [paginator]="true" [rows]="10" [tableStyle]="{ 'min-width': '50rem' }">
       <ng-template pTemplate="caption">
         <div class="flex align-items-center justify-content-between">
           Planes
           <div class="flex">
-            <p-button class="h-full" icon="pi pi-refresh" [text]="true" (onClick)="refreshList();" pTooltip="Refrescar lista" tooltipPosition="top"></p-button>
-            <p-button class="h-full" icon="pi pi-pencil" [text]="true" (onClick)="editPlan()" [disabled]="!selectedPlan" pTooltip="Editar Plan" tooltipPosition="top"></p-button>
-            <p-button class="h-full" icon="pi pi-trash" [text]="true" (onClick)="deletePlan()" [disabled]="!selectedPlan" [loading]="deleteLoading || false" pTooltip="Eliminar Plan" tooltipPosition="top"></p-button>
-            <p-button class="h-full" icon="pi pi-plus" [text]="true" (onClick)="createPlan()" pTooltip="Crear nuevo Plan" tooltipPosition="top"></p-button>
+            <p-button class="h-full" icon="pi pi-refresh" [text]="true" (onClick)="refreshList();"
+              pTooltip="Refrescar lista" tooltipPosition="top"></p-button>
+            <p-button class="h-full" icon="pi pi-pencil" [text]="true" (onClick)="editPlan()" [disabled]="!selectedPlan"
+              pTooltip="Editar Plan" tooltipPosition="top"></p-button>
+            <p-button class="h-full" icon="pi pi-trash" [text]="true" (onClick)="deletePlan()"
+              [disabled]="!selectedPlan" [loading]="deleteLoading || false" pTooltip="Eliminar Plan"
+              tooltipPosition="top"></p-button>
+            <p-button class="h-full" icon="pi pi-plus" [text]="true" (onClick)="createPlan()"
+              pTooltip="Crear nuevo Plan" tooltipPosition="top"></p-button>
           </div>
         </div>
       </ng-template>

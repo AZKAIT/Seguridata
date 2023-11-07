@@ -23,6 +23,7 @@ export class PlanListComponent implements OnChanges {
   @Input() tableLoading?: boolean;
   @Input() deleteLoading?: boolean;
 
+  firstIndex = 0;
   numTables = 0;
 
   ngOnChanges(changes: SimpleChanges): void {
@@ -31,6 +32,7 @@ export class PlanListComponent implements OnChanges {
     } else {
       this.numTables = 0;
     }
+    this.firstIndex = 0;
   }
 
 

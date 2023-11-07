@@ -1,6 +1,6 @@
 <ng-container *ngIf="projectList">
   <p-card header="Proyectos">
-    <p-table [value]="projectList" [totalRecords]="numTables" selectionMode="single" dataKey="id" [(selection)]="selectedProject"
+    <p-table [value]="projectList" [totalRecords]="numTables" selectionMode="single" dataKey="id" [(selection)]="selectedProject" [(first)]="firstIndex"
       [loading]="tableLoading" (onRowSelect)="onRowSelect($event)" (onRowUnselect)="onRowUnselect($event)" [paginator]="true" [rows]="10"
       [tableStyle]="{ 'min-width': '50rem' }">
       <ng-template pTemplate="caption">
@@ -39,7 +39,7 @@
           <td>{{ project.description }}</td>
           <td>{{ project.sourceConnection?.name }}</td>
           <td>{{ project.targetConnection?.name }}</td>
-          <td>{{ project.createdAt | date }}</td>
+          <td>{{ project.createdAt | date:'d/M/yy h:mm:ss a' }}</td>
           <td><i [class]="'pi' + ' ' + (project.locked ? 'pi-lock' : 'pi-lock-open')"></i></td>
         </tr>
       </ng-template>
