@@ -1,4 +1,4 @@
-import { Component, Input, Output, EventEmitter, OnChanges, SimpleChanges } from '@angular/core';
+import { Component, Input, Output, EventEmitter } from '@angular/core';
 import { TableRowSelectEvent, TableRowUnSelectEvent } from 'primeng/table';
 import { ColumnModel } from 'src/app/common/models/column-model';
 import { TableModel } from 'src/app/common/models/table-model';
@@ -8,10 +8,10 @@ import { TableModel } from 'src/app/common/models/table-model';
   templateUrl: './column-list.component.html',
   styleUrls: ['./column-list.component.css']
 })
-export class ColumnListComponent implements OnChanges {
+export class ColumnListComponent {
 
   @Input() table?: TableModel;
-  @Input() columnList?: ColumnModel[];
+  private _columnList?: ColumnModel[];
   @Output() listRefreshEvent = new EventEmitter<void>();
   @Output() editColumnEvent = new EventEmitter<void>();
   @Output() deleteColumnEvent = new EventEmitter<void>();
@@ -26,9 +26,15 @@ export class ColumnListComponent implements OnChanges {
   firstIndex = 0;
   numTables = 0;
 
-  ngOnChanges(changes: SimpleChanges): void {
-    if (this.columnList) {
-      this.numTables = this.columnList.length;
+  @Input()
+  get columnList() {
+    return this._columnList;
+  }
+  set columnList(columnList: ColumnModel[] | undefined) {
+    this._columnList = columnList;
+
+    if (this._columnList) {
+      this.numTables = this._columnList.length;
     } else {
       this.numTables = 0;
     }

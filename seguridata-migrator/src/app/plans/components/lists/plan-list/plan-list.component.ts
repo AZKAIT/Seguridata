@@ -1,4 +1,4 @@
-import { Component, Input, Output, EventEmitter, OnChanges, SimpleChanges } from '@angular/core';
+import { Component, Input, Output, EventEmitter } from '@angular/core';
 import { TableRowSelectEvent, TableRowUnSelectEvent } from 'primeng/table';
 import { PlanModel } from 'src/app/common/models/plan-model';
 import { ProjectModel } from 'src/app/common/models/project-model';
@@ -8,10 +8,10 @@ import { ProjectModel } from 'src/app/common/models/project-model';
   templateUrl: './plan-list.component.html',
   styleUrls: ['./plan-list.component.css']
 })
-export class PlanListComponent implements OnChanges {
+export class PlanListComponent {
 
   @Input() project?: ProjectModel;
-  @Input() planList?: PlanModel[];
+  private _planList?: PlanModel[];
   @Output() listRefreshEvent = new EventEmitter<void>();
   @Output() editPlanEvent = new EventEmitter<void>();
   @Output() deletePlanEvent = new EventEmitter<void>();
@@ -26,9 +26,15 @@ export class PlanListComponent implements OnChanges {
   firstIndex = 0;
   numTables = 0;
 
-  ngOnChanges(changes: SimpleChanges): void {
-    if (this.planList) {
-      this.numTables = this.planList.length;
+  @Input()
+  get planList() {
+    return this._planList;
+  }
+  set planList(planList: PlanModel[] | undefined) {
+    this._planList = planList;
+
+    if (this._planList) {
+      this.numTables = this._planList.length;
     } else {
       this.numTables = 0;
     }

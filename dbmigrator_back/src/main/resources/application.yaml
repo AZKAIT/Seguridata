@@ -1,6 +1,19 @@
 server:
   servlet:
-    context-path: /migrator
+    context-path: /migration
+
+seguri-data:
+  configs:
+    links:
+
+      - name: Facebook
+        url: "https://facebook.com/SeguriDataMx/"
+      - name: LinkedIn
+        url: "https://linkedin.com/company/seguridata"
+      - name: YouTube
+        url: "https://youtube.com/channel/UCfvxNM-qv0j0rG1yldC67Yg"
+      - name: X
+        url: "https://x.com/seguridata"
 
 spring:
   data:

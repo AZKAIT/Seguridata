@@ -23,6 +23,7 @@ import { TabViewModule } from 'primeng/tabview';
 import { ImageModule } from 'primeng/image';
 import { TooltipModule } from 'primeng/tooltip';
 import { ConfirmDialogModule } from 'primeng/confirmdialog';
+import { DividerModule } from 'primeng/divider';
 
 @NgModule({
   declarations: [
@@ -48,7 +49,8 @@ import { ConfirmDialogModule } from 'primeng/confirmdialog';
     TabViewModule,
     ImageModule,
     TooltipModule,
-    ConfirmDialogModule
+    ConfirmDialogModule,
+    DividerModule
   ],
   providers: [
     {

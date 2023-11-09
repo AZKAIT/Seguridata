@@ -28,6 +28,7 @@ import java.util.Map;
 import java.util.Objects;
 import java.util.concurrent.Callable;
 import java.util.concurrent.CountDownLatch;
+import java.util.function.Function;
 import java.util.stream.Collectors;
 
 public class PlanExecutionCallable implements Callable<ExecutionResult> {
@@ -83,13 +84,13 @@ public class PlanExecutionCallable implements Callable<ExecutionResult> {
 
             List<DefinitionEntity> dataProcessDefinitions = this.plan.getDefinitions();
             if (CollectionUtils.isEmpty(dataProcessDefinitions)) {
-                throw new EmptyResultException("La lista de Definiciones está vacía");
+                throw new MissingObjectException("La lista de Definiciones está vacía");
             }
 
 
             long totalRowsSource = this.sourceQueryManager.getTotalRows(sourceTable);
             if (totalRowsSource == 0) {
-                throw new EmptyResultException("No Data for table " + sourceTable.getName());
+                throw new EmptyResultException("No hay datos para la tabla " + sourceTable.getName());
             }
 
             final long rowLimit = this.plan.getRowLimit();
@@ -139,6 +140,9 @@ public class PlanExecutionCallable implements Callable<ExecutionResult> {
         } catch (InterruptedException e) {
             LOGGER.warn("Process was interrupted: {}", e.getMessage());
             executionResult = ExecutionResult.INTERRUPTED;
+        } catch (EmptyResultException e) {
+            LOGGER.warn(e.getMessage());
+            executionResult = ExecutionResult.SUCCESS;
         } catch (Exception e) {
             executionResult = ExecutionResult.EXCEPTION;
             LOGGER.error("Exception occurred on Task: {}", getStackTrace(e));
@@ -168,7 +172,7 @@ public class PlanExecutionCallable implements Callable<ExecutionResult> {
                 .retrieveDataBlockFrom(table, this.plan.getDefinitions(), skip, limit);
 
         if (CollectionUtils.isEmpty(resultList)) {
-            throw new EmptyResultException("Source Data is Empty");
+            throw new EmptyResultException("No hay datos de Origen");
         }
 
         return resultList;

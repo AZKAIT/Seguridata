@@ -20,7 +20,7 @@ export class JobService {
   constructor(private _jobClientService: JobClientService, private _messageService: MessageService) { }
 
   fetchJobs() {
-    if (this.subs?.closed == false) {
+    if (this.subs && !this.subs.closed) {
       this.subs.unsubscribe();
     }
 

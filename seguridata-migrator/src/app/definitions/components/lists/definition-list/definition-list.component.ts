@@ -1,4 +1,4 @@
-import { Component, Input, Output, EventEmitter, OnChanges, SimpleChanges } from '@angular/core';
+import { Component, Input, Output, EventEmitter } from '@angular/core';
 import { TableRowSelectEvent, TableRowUnSelectEvent } from 'primeng/table';
 import { DefinitionModel } from 'src/app/common/models/definition-model';
 import { PlanModel } from 'src/app/common/models/plan-model';
@@ -8,10 +8,10 @@ import { PlanModel } from 'src/app/common/models/plan-model';
   templateUrl: './definition-list.component.html',
   styleUrls: ['./definition-list.component.css']
 })
-export class DefinitionListComponent implements OnChanges {
+export class DefinitionListComponent {
 
   @Input() plan?: PlanModel;
-  @Input() defList?: DefinitionModel[];
+  private _defList?: DefinitionModel[];
   @Output() listRefreshEvent = new EventEmitter<void>();
   @Output() editDefEvent = new EventEmitter<void>();
   @Output() deleteDefEvent = new EventEmitter<void>();
@@ -26,9 +26,15 @@ export class DefinitionListComponent implements OnChanges {
   firstIndex = 0;
   numTables = 0;
 
-  ngOnChanges(changes: SimpleChanges): void {
-    if (this.defList) {
-      this.numTables = this.defList.length;
+  @Input()
+  get defList() {
+    return this._defList;
+  }
+  set defList(defList: DefinitionModel[] | undefined) {
+    this._defList = defList;
+
+    if (this._defList) {
+      this.numTables = this._defList.length;
     } else {
       this.numTables = 0;
     }
