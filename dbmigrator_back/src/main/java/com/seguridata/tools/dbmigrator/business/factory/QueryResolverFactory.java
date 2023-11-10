@@ -41,7 +41,7 @@ public class QueryResolverFactory {
 
     public DBQueryResolver getDBQueryResolver(DatabaseType databaseType) {
         if (!this.dbQueryResolvers.containsKey(databaseType)) {
-            throw new RuntimeException("No implementation for DB: " + databaseType.name());
+            throw new IllegalArgumentException("No implementation for DB: " + databaseType.name());
         }
 
         return this.dbQueryResolvers.get(databaseType);

@@ -76,8 +76,7 @@ public class DatabaseConnectionFactory {
         ds.setDatabaseName(connection.getDatabase());
         ds.setInstanceName(connection.getObjectService());
 
-        // TODO: validate if it is okay to disable SSL
-        ds.setEncrypt(false);
+        ds.setEncrypt(Boolean.toString(false));
 
         return ds;
     }

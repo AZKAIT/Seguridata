@@ -7,4 +7,6 @@ export interface ExecutionStatisticsModel {
   result: ExecutionResult;
   status: ExecutionStatus;
   progress: number;
+  rowsProcessed: number;
+  rowsForCompletion: number;
 }

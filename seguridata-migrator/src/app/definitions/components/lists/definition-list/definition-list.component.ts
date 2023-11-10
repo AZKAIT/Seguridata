@@ -1,5 +1,6 @@
-import { Component, Input, Output, EventEmitter } from '@angular/core';
+import { Component, Input, Output, EventEmitter, OnChanges, SimpleChanges } from '@angular/core';
 import { TableRowSelectEvent, TableRowUnSelectEvent } from 'primeng/table';
+import { ConversionFunction, parseConversionFunctionFromValue } from 'src/app/common/enums/conversion-function';
 import { DefinitionModel } from 'src/app/common/models/definition-model';
 import { PlanModel } from 'src/app/common/models/plan-model';
 
@@ -8,7 +9,7 @@ import { PlanModel } from 'src/app/common/models/plan-model';
   templateUrl: './definition-list.component.html',
   styleUrls: ['./definition-list.component.css']
 })
-export class DefinitionListComponent {
+export class DefinitionListComponent implements OnChanges {
 
   @Input() plan?: PlanModel;
   private _defList?: DefinitionModel[];
@@ -32,13 +33,15 @@ export class DefinitionListComponent {
   }
   set defList(defList: DefinitionModel[] | undefined) {
     this._defList = defList;
+    this.firstIndex = 0;
+  }
 
+  ngOnChanges(changes: SimpleChanges): void {
     if (this._defList) {
       this.numTables = this._defList.length;
     } else {
       this.numTables = 0;
     }
-    this.firstIndex = 0;
   }
 
 
@@ -56,6 +59,12 @@ export class DefinitionListComponent {
 
   createDef(): void {
     this.createDefEvent.next();
+  }
+
+  resolveFunctionName(func: ConversionFunction): string {
+    const convFunc: ConversionFunction | undefined = parseConversionFunctionFromValue(func);
+
+    return convFunc?.valueOf() || '';
   }
 
 

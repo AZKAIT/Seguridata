@@ -1,4 +1,4 @@
-import { Component, EventEmitter, Input, Output } from '@angular/core';
+import { Component, EventEmitter, Input, OnChanges, Output, SimpleChanges } from '@angular/core';
 import { TableRowSelectEvent, TableRowUnSelectEvent } from 'primeng/table';
 import { ConnectionModel } from 'src/app/common/models/connection-model';
 
@@ -7,7 +7,7 @@ import { ConnectionModel } from 'src/app/common/models/connection-model';
   templateUrl: './connection-list.component.html',
   styleUrls: ['./connection-list.component.css']
 })
-export class ConnectionListComponent {
+export class ConnectionListComponent implements OnChanges {
 
   private _connectionList?: ConnectionModel[];
   @Output() listRefreshEvent = new EventEmitter<void>();
@@ -32,13 +32,15 @@ export class ConnectionListComponent {
   }
   set connectionList(connectionList: ConnectionModel[] | undefined) {
     this._connectionList = connectionList;
+    this.firstIndex = 0;
+  }
 
+  ngOnChanges(changes: SimpleChanges): void {
     if (this._connectionList) {
       this.numTables = this._connectionList.length;
     } else {
       this.numTables = 0;
     }
-    this.firstIndex = 0;
   }
 
   refreshList(): void {

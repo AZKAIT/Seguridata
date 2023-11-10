@@ -9,12 +9,15 @@ import org.springframework.data.annotation.ReadOnlyProperty;
 import org.springframework.data.mongodb.core.mapping.Document;
 import org.springframework.data.mongodb.core.mapping.DocumentReference;
 
+import java.io.Serializable;
 import java.util.List;
 
 @Document(collection = "connections")
 @Getter @Setter
-public class ConnectionEntity {
-    @Id
+public class ConnectionEntity implements Serializable {
+	private static final long serialVersionUID = 7867256518876301190L;
+
+	@Id
     private String id;
     private String name;
     private String description;

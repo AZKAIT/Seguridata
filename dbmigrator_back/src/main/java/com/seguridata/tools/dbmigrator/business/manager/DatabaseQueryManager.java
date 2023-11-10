@@ -43,14 +43,12 @@ public class DatabaseQueryManager {
     private DBQueryResolver queryResolver;
     private ConnectionEntity connection;
     private DataSource dataSource;
-    private boolean initialized;
 
     private final ApplicationContext appContext;
 
     public DatabaseQueryManager(ApplicationContext appContext) {
         LOGGER.info("Creating DatabaseQueryManager with: ");
         this.appContext = appContext;
-        this.initialized = false;
 
         this.connectionService = this.appContext.getBean(ConnectionService.class);
     }
@@ -70,8 +68,6 @@ public class DatabaseQueryManager {
 
         this.namedParamJdbcTemplate = new NamedParameterJdbcTemplate(this.dataSource);
         this.namedParamJdbcTemplate.getJdbcTemplate().execute(this.queryResolver.verificationQuery());
-
-        this.initialized = true;
     }
 
     public void closeConnection() {

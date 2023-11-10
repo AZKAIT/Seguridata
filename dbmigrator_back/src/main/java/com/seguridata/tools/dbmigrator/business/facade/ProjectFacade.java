@@ -11,7 +11,6 @@ import com.seguridata.tools.dbmigrator.business.service.DefinitionService;
 import com.seguridata.tools.dbmigrator.business.service.JobService;
 import com.seguridata.tools.dbmigrator.business.service.PlanService;
 import com.seguridata.tools.dbmigrator.business.service.ProjectService;
-import com.seguridata.tools.dbmigrator.data.constant.JobStatus;
 import com.seguridata.tools.dbmigrator.data.entity.JobEntity;
 import com.seguridata.tools.dbmigrator.data.entity.PlanEntity;
 import com.seguridata.tools.dbmigrator.data.entity.ProjectEntity;

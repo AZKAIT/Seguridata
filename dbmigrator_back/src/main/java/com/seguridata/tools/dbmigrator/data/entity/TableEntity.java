@@ -8,13 +8,16 @@ import org.springframework.data.mongodb.core.index.CompoundIndex;
 import org.springframework.data.mongodb.core.mapping.Document;
 import org.springframework.data.mongodb.core.mapping.DocumentReference;
 
+import java.io.Serializable;
 import java.util.List;
 
 @Document(collection = "tables")
 @CompoundIndex(name = "connection_schema_name", def = "{'connection': 1, 'schema': 1, 'name': 1}", unique = true)
 @Getter @Setter
-public class TableEntity {
-    @Id
+public class TableEntity implements Serializable {
+	private static final long serialVersionUID = 2362172965198529706L;
+
+	@Id
     private String id;
     private String schema;
     private String name;

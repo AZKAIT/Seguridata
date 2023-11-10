@@ -1,6 +1,5 @@
 package com.seguridata.tools.dbmigrator.business.query.impl;
 
-import com.seguridata.tools.dbmigrator.business.exception.InvalidUpdateException;
 import com.seguridata.tools.dbmigrator.business.query.DBQueryResolver;
 import com.seguridata.tools.dbmigrator.business.query.annotation.DatabaseTypeBean;
 import com.seguridata.tools.dbmigrator.data.constant.DatabaseType;

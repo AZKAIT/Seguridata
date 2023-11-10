@@ -1,12 +1,9 @@
 package com.seguridata.tools.dbmigrator.business.mapper;
 
-import com.seguridata.tools.dbmigrator.data.entity.DefinitionEntity;
 import com.seguridata.tools.dbmigrator.data.entity.PlanEntity;
-import com.seguridata.tools.dbmigrator.data.model.DefinitionModel;
 import com.seguridata.tools.dbmigrator.data.model.PlanModel;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
-import org.springframework.util.CollectionUtils;
 
 import java.util.Collection;
 import java.util.List;

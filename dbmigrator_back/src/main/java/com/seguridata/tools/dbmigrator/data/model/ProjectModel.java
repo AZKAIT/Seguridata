@@ -9,12 +9,16 @@ import lombok.Getter;
 import lombok.Setter;
 
 import jakarta.validation.constraints.NotBlank;
+
+import java.io.Serializable;
 import java.util.Date;
 
 @JsonInclude(JsonInclude.Include.NON_NULL)
 @Getter @Setter
-public class ProjectModel {
-    private String id;
+public class ProjectModel implements Serializable {
+	private static final long serialVersionUID = -2818805334492004537L;
+
+	private String id;
     @NotBlank
     private String name;
     private String description;

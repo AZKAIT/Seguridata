@@ -8,13 +8,16 @@ import org.springframework.data.annotation.Transient;
 import org.springframework.data.mongodb.core.mapping.Document;
 import org.springframework.data.mongodb.core.mapping.DocumentReference;
 
+import java.io.Serializable;
 import java.util.Date;
 import java.util.List;
 
 @Document(collection = "jobs")
 @Getter @Setter
-public class JobEntity {
-    @Id
+public class JobEntity implements Serializable {
+	private static final long serialVersionUID = 8853766360509377235L;
+
+	@Id
     private String id;
     private Long execNumber;
     private String projectName;

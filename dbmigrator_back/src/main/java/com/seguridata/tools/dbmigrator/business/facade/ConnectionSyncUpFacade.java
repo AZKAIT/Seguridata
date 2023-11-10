@@ -34,6 +34,8 @@ import java.util.stream.Collectors;
 public class ConnectionSyncUpFacade {
     private static final Logger LOGGER = LoggerFactory.getLogger(ConnectionSyncUpFacade.class);
 
+    private static final String COLUMN_SYNC_ERROR = "ERROR - Sincronización de Columnas: %s";
+
     private final ApplicationContext appContext;
     private final ConnectionMapper connectionMapper;
     private final ConnectionService connectionService;
@@ -140,9 +142,9 @@ public class ConnectionSyncUpFacade {
             this.stompMsgClient.sendConnSyncUpStatusChange(entity, "TERMINADO - Sincronización de Columnas");
         } catch (SQLException e) {
             LOGGER.error("SyncUp failed: {}", e.getMessage());
-            this.stompMsgClient.sendConnSyncUpError(entity, String.format("ERROR - Sincronización de Columnas: %s", e.getMessage()));
+            this.stompMsgClient.sendConnSyncUpError(entity, String.format(COLUMN_SYNC_ERROR, e.getMessage()));
         } catch (BaseCodeException e) {
-            this.stompMsgClient.sendConnSyncUpError(entity, String.format("ERROR - Sincronización de Columnas: %s", String.join(", ", e.getMessages())));
+            this.stompMsgClient.sendConnSyncUpError(entity, String.format(COLUMN_SYNC_ERROR, String.join(", ", e.getMessages())));
         }
     }
 
@@ -168,7 +170,7 @@ public class ConnectionSyncUpFacade {
                         List<ColumnEntity> tableColumns = queryManager.findColumnForTable(table);
                         return this.columnService.saveBatch(table, tableColumns).stream();
                     } catch (BaseCodeException e) {
-                        this.stompMsgClient.sendConnSyncUpError(connection, String.format("ERROR - Sincronización de Columnas: %s", String.join(", ", e.getMessages())));
+                        this.stompMsgClient.sendConnSyncUpError(connection, String.format(COLUMN_SYNC_ERROR, String.join(", ", e.getMessages())));
                         return null;
                     }
                 })

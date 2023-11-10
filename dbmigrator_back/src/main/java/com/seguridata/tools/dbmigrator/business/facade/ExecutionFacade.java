@@ -1,6 +1,7 @@
 package com.seguridata.tools.dbmigrator.business.facade;
 
 import com.seguridata.tools.dbmigrator.business.exception.EmptyResultException;
+import com.seguridata.tools.dbmigrator.business.factory.ConversionFunctionFactory;
 import com.seguridata.tools.dbmigrator.business.factory.ThreadPoolExecutorFactory;
 import com.seguridata.tools.dbmigrator.business.manager.DatabaseQueryManager;
 import com.seguridata.tools.dbmigrator.business.service.ConnectionService;
@@ -39,6 +40,7 @@ public class ExecutionFacade {
     private final JobService jobService;
     private final ErrorTrackingService errorTrackingService;
     private final ThreadPoolExecutorFactory threadPoolExecutorFactory;
+    private final ConversionFunctionFactory conversionFunctionFactory;
 
     @Autowired
     public ExecutionFacade(ApplicationContext appContext,
@@ -46,13 +48,15 @@ public class ExecutionFacade {
                            ConnectionService connectionService,
                            JobService jobService,
                            ErrorTrackingService errorTrackingService,
-                           ThreadPoolExecutorFactory threadPoolExecutorFactory) {
+                           ThreadPoolExecutorFactory threadPoolExecutorFactory,
+                           ConversionFunctionFactory conversionFunctionFactory) {
         this.appContext = appContext;
         this.projectService = projectService;
         this.connectionService = connectionService;
         this.jobService = jobService;
         this.errorTrackingService = errorTrackingService;
         this.threadPoolExecutorFactory = threadPoolExecutorFactory;
+        this.conversionFunctionFactory = conversionFunctionFactory;
     }
 
     public void startExecution(JobEntity job) {
@@ -87,7 +91,7 @@ public class ExecutionFacade {
 
             jobResult = this.resolveStatusByResult(executor.getFutureList());
             LOGGER.info("Execution finished");
-        } catch (Exception e) {
+        } catch (Exception e) { // NOSONAR
             LOGGER.error("Exception on Job execution: Job({}) -> {}", job.getProjectExecutionNumber(), e.getMessage());
             jobResult = JobStatus.FINISHED_ERROR;
         } finally {
@@ -128,7 +132,7 @@ public class ExecutionFacade {
             errorTracking.setReferenceId(connection.getId());
             this.errorTrackingService.createErrorTrackingForProject(job, errorTracking);
 
-            throw new RuntimeException("Falló la inicialización del manejador de dato de Base Destino");
+            throw new IllegalStateException("Falló la inicialización del manejador de dato de Base Destino");
         }
     }
 
@@ -144,11 +148,9 @@ public class ExecutionFacade {
             return job.getProject().getPlans().stream()
                     .sorted(Comparator.comparing(PlanEntity::getOrderNum))
                     .map(plan -> new PlanExecutionCallable(job, plan,
-                            sourceQueryManager, targetQueryManager, this.jobService, this.errorTrackingService))
+                            sourceQueryManager, targetQueryManager, this.jobService, this.errorTrackingService, this.conversionFunctionFactory))
                     .collect(Collectors.toList());
         } catch (EmptyResultException e) {
-            LOGGER.error("Exception on Plans: {}", e.getMessage());
-
             ErrorTrackingEntity errorTracking = new ErrorTrackingEntity();
             errorTracking.setMessage(e.getMessage());
             errorTracking.setJob(job);
@@ -156,17 +158,15 @@ public class ExecutionFacade {
             errorTracking.setReferenceId(job.getProject().getId());
             this.errorTrackingService.createErrorTrackingForProject(job, errorTracking);
 
-            throw new RuntimeException(e);
+            throw new IllegalArgumentException(e);
         } catch (Exception e) {
-            LOGGER.error("Error creating tasks for Project: {}", e.getMessage());
-
             ErrorTrackingEntity errorTracking = new ErrorTrackingEntity();
             errorTracking.setMessage(e.getMessage());
             errorTracking.setJob(job);
             errorTracking.setReferenceType(e.getClass().getCanonicalName());
             this.errorTrackingService.createErrorTrackingForProject(job, errorTracking);
 
-            throw new RuntimeException(e);
+            throw new IllegalStateException(e);
         }
     }
 
@@ -180,14 +180,13 @@ public class ExecutionFacade {
             LOGGER.info("Tasks executed successfully");
             return executorService;
         } catch (Exception e) {
-            LOGGER.error("Exception executing tasks: {}", e.getMessage());
             ErrorTrackingEntity errorTracking = new ErrorTrackingEntity();
             errorTracking.setMessage(e.getMessage());
             errorTracking.setJob(job);
             errorTracking.setReferenceType(e.getClass().getCanonicalName());
             this.errorTrackingService.createErrorTrackingForProject(job, errorTracking);
 
-            throw new RuntimeException(e);
+            throw new IllegalStateException(e);
         }
     }
 
@@ -195,7 +194,7 @@ public class ExecutionFacade {
         List<ExecutionResult> execResults = results.stream().map(future -> {
             try {
                 return future.get();
-            } catch (Exception e) {
+            } catch (Exception e) { // NOSONAR
                 LOGGER.warn("Exception while retrieving results, marking as WARN result");
                 return ExecutionResult.EXCEPTION;
             }

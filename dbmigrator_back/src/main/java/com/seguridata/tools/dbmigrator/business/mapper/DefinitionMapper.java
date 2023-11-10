@@ -1,6 +1,6 @@
 package com.seguridata.tools.dbmigrator.business.mapper;
 
-import com.seguridata.tools.dbmigrator.data.constant.ConversionFunction;
+import com.seguridata.tools.dbmigrator.data.constant.ConversionFunctionType;
 import com.seguridata.tools.dbmigrator.data.entity.DefinitionEntity;
 import com.seguridata.tools.dbmigrator.data.model.DefinitionModel;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -40,7 +40,7 @@ public class DefinitionMapper {
         definition.setId(definitionModel.getId());
         definition.setSourceColumn(this.columnMapper.mapColumnEntity(definitionModel.getSourceColumn()));
         definition.setTargetColumn(this.columnMapper.mapColumnEntity(definitionModel.getTargetColumn()));
-        definition.setConversionFunction(Optional.ofNullable(definitionModel.getConversionFunction()).orElse(ConversionFunction.NONE));
+        definition.setConversionFunction(Optional.ofNullable(definitionModel.getConversionFunction()).orElse(ConversionFunctionType.NONE));
 
         return definition;
     }

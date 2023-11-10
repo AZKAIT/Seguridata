@@ -55,14 +55,14 @@ public class StompMessageClient {
     }
 
     public void sendJobStatusChange(JobEntity job, JobStatus newStatus) {
-        NotificationDTO notification = new NotificationDTO(job.getId(), JobEntity.class.getCanonicalName(),
+        NotificationDTO<JobStatus> notification = new NotificationDTO<>(job.getId(), JobEntity.class.getCanonicalName(),
                 job.getProjectExecutionNumber(), newStatus);
 
         this.sendNotification(JOB_EXECUTION_STATUS, notification);
     }
 
     public void sendJobExecutionError(JobEntity job, ErrorTrackingEntity errorTrack) {
-        NotificationDTO notification = new NotificationDTO(job.getId(), JobEntity.class.getCanonicalName(),
+        NotificationDTO<String> notification = new NotificationDTO<>(job.getId(), JobEntity.class.getCanonicalName(),
                 job.getProjectExecutionNumber(), errorTrack.getMessage());
 
         this.sendNotification(JOB_EXECUTION_ERROR, notification);
@@ -72,7 +72,7 @@ public class StompMessageClient {
         String connId = Objects.isNull(connection) ? "" : connection.getId();
         String connName = Objects.isNull(connection) ? "N/A" : connection.getName();
 
-        NotificationDTO notification = new NotificationDTO(connId, ConnectionEntity.class.getCanonicalName(),
+        NotificationDTO<String> notification = new NotificationDTO<>(connId, ConnectionEntity.class.getCanonicalName(),
                 connName, message);
 
         this.sendNotification(CONNECTION_SYNC_UP_STATUS, notification);
@@ -82,7 +82,7 @@ public class StompMessageClient {
         String connId = Objects.isNull(connection) ? "" : connection.getId();
         String connName = Objects.isNull(connection) ? "N/A" : connection.getName();
 
-        NotificationDTO notification = new NotificationDTO(connId, ConnectionEntity.class.getCanonicalName(),
+        NotificationDTO<String> notification = new NotificationDTO<>(connId, ConnectionEntity.class.getCanonicalName(),
                 connName, message);
 
         this.sendNotification(CONNECTION_SYNC_UP_ERROR, notification);
@@ -92,7 +92,7 @@ public class StompMessageClient {
         String projId = Objects.isNull(project) ? "" : project.getId();
         String projName = Objects.isNull(project) ? "N/A" : project.getName();
 
-        NotificationDTO notification = new NotificationDTO(projId, ProjectEntity.class.getCanonicalName(),
+        NotificationDTO<String> notification = new NotificationDTO<>(projId, ProjectEntity.class.getCanonicalName(),
                 projName, message);
 
         this.sendNotification(PROJECT_SYNC_UP_STATUS, notification);
@@ -102,27 +102,29 @@ public class StompMessageClient {
         String projId = Objects.isNull(project) ? "" : project.getId();
         String projName = Objects.isNull(project) ? "N/A" : project.getName();
 
-        NotificationDTO notification = new NotificationDTO(projId, ProjectEntity.class.getCanonicalName(),
+        NotificationDTO<String> notification = new NotificationDTO<>(projId, ProjectEntity.class.getCanonicalName(),
                 projName, message);
 
         this.sendNotification(PROJECT_SYNC_UP_ERROR, notification);
     }
 
-    public void sendExecutionStats(String jobId, String planId, ExecutionStatus execStatus, Double progress, ExecutionResult execResult) {
+    public void sendExecutionStats(String jobId, String planId, ExecutionStatus execStatus, Double progress, Long rowsProcessed,
+                                   Long rowsForCompletion, ExecutionResult execResult) {
         ExecutionStatisticsEntity execStats = new ExecutionStatisticsEntity();
         execStats.setPlanId(planId);
         execStats.setStatus(execStatus);
         execStats.setProgress(progress);
         execStats.setResult(execResult);
+        execStats.setRowsProcessed(rowsProcessed);
+        execStats.setRowsForCompletion(rowsForCompletion);
 
-        NotificationDTO notification = new NotificationDTO(jobId, JobEntity.class.getCanonicalName(), "", execStats);
+        NotificationDTO<ExecutionStatisticsEntity> notification = new NotificationDTO<>(jobId, JobEntity.class.getCanonicalName(), "", execStats);
 
         this.sendNotification(JOB_EXECUTION_STATS, notification);
     }
 
 
-    private void sendNotification(NotificationType type, NotificationDTO notification) {
-        String topic = this.notificationTypeTopics.get(type);
-        this.simpMessagingTemplate.convertAndSend(topic, notification);
+    private void sendNotification(NotificationType type, NotificationDTO<?> notification) {
+        this.simpMessagingTemplate.convertAndSend(this.notificationTypeTopics.get(type), notification);
     }
 }

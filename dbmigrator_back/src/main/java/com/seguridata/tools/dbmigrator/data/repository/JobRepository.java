@@ -28,6 +28,8 @@ import static com.seguridata.tools.dbmigrator.data.constant.JobStatus.STOPPED;
 @Repository
 public class JobRepository {
 
+    private static final String PROJECT = "project";
+
     private final MongoTemplate mongoTemplate;
 
     @Autowired
@@ -44,7 +46,7 @@ public class JobRepository {
     }
 
     public List<JobEntity> findJobsForProject(String projectId) {
-        return this.mongoTemplate.find(Query.query(Criteria.where("project").is(new ObjectId(projectId))), JobEntity.class);
+        return this.mongoTemplate.find(Query.query(Criteria.where(PROJECT).is(new ObjectId(projectId))), JobEntity.class);
     }
 
     public List<JobEntity> getAllJobs() {
@@ -73,7 +75,7 @@ public class JobRepository {
     }
 
     public JobEntity findLatestJobForProject(String projectId) {
-        Query query = new Query(Criteria.where("project").is(new ObjectId(projectId)))
+        Query query = new Query(Criteria.where(PROJECT).is(new ObjectId(projectId)))
                 .limit(1)
                 .with(Sort.by(Sort.Direction.DESC, "createdAt"));
 
@@ -81,10 +83,11 @@ public class JobRepository {
     }
 
     public Long countProjectExecutions(String projectId) {
-        return this.mongoTemplate.count(Query.query(Criteria.where("project").is(new ObjectId(projectId))), JobEntity.class);
+        return this.mongoTemplate.count(Query.query(Criteria.where(PROJECT).is(new ObjectId(projectId))), JobEntity.class);
     }
 
-    public boolean updateExecutionStats(String jobId, String planId, ExecutionStatus execStatus, Double progress, ExecutionResult execResult) {
+    public boolean updateExecutionStats(String jobId, String planId, ExecutionStatus execStatus,
+                                        Double progress, Long rowsProcessed, Long rowsForCompletion, ExecutionResult execResult) {
         Update update = new Update();
 
         if (!Objects.isNull(execStatus)) {
@@ -93,6 +96,14 @@ public class JobRepository {
 
         if (!Objects.isNull(progress)) {
             update = update.set("planStats.$[stat].progress", progress);
+        }
+
+        if (!Objects.isNull(rowsProcessed)) {
+            update = update.set("planStats.$[stat].rowsProcessed", rowsProcessed);
+        }
+
+        if (!Objects.isNull(rowsForCompletion)) {
+            update = update.set("planStats.$[stat].rowsForCompletion", rowsForCompletion);
         }
 
         if (!Objects.isNull(execResult)) {

@@ -12,7 +12,7 @@ import org.springframework.web.servlet.resource.ResourceResolverChain;
 
 import javax.servlet.http.HttpServletRequest;
 import java.util.List;
-import java.util.Objects;
+import java.util.Optional;
 
 @Configuration
 @EnableAsync
@@ -37,11 +37,11 @@ public class WebConfig implements WebMvcConfigurer {
         @Override
         protected Resource resolveResourceInternal(HttpServletRequest request, String requestPath,
                                                    List<? extends Resource> locations, ResourceResolverChain chain) {
-            Resource resource = super.resolveResourceInternal(request, requestPath, locations, chain);
-            if(Objects.isNull(resource) || !resource.exists()){
-                resource = super.resolveResourceInternal(request, "/index.html", locations, chain);
-            }
-            return resource;
+            Optional<Resource> resourceOptional = Optional.ofNullable(super.resolveResourceInternal(request, requestPath, locations, chain));
+
+            return resourceOptional
+                    .filter(Resource::exists)
+                    .orElseGet(() -> super.resolveResourceInternal(request, "/index.html", locations, chain));
         }
     }
 

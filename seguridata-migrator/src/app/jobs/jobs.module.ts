@@ -10,6 +10,7 @@ import { TableModule } from 'primeng/table';
 import { ButtonModule } from 'primeng/button';
 import { CardModule } from 'primeng/card';
 import { ProgressBarModule } from 'primeng/progressbar';
+import { TooltipModule } from 'primeng/tooltip';
 
 
 
@@ -26,7 +27,8 @@ import { ProgressBarModule } from 'primeng/progressbar';
     TableModule,
     ButtonModule,
     CardModule,
-    ProgressBarModule
+    ProgressBarModule,
+    TooltipModule
   ]
 })
 export class JobsModule { }

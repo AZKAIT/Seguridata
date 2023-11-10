@@ -1,4 +1,4 @@
-import { Component, EventEmitter, Input, Output } from '@angular/core';
+import { Component, EventEmitter, Input, OnChanges, Output, SimpleChanges } from '@angular/core';
 import { TableRowSelectEvent, TableRowUnSelectEvent } from 'primeng/table';
 import { ExecutionResult, parseExecutionResultFromValue } from 'src/app/common/enums/execution-result';
 import { ExecutionStatus, parseExecutionStatusFromValue } from 'src/app/common/enums/execution-status';
@@ -10,7 +10,7 @@ import { JobModel } from 'src/app/common/models/job-model';
   templateUrl: './job-list.component.html',
   styleUrls: ['./job-list.component.css']
 })
-export class JobListComponent {
+export class JobListComponent implements OnChanges {
 
   private _jobList?: JobModel[];
   @Output() listRefreshEvent = new EventEmitter<void>();
@@ -29,14 +29,15 @@ export class JobListComponent {
   }
   set jobList(jobList: JobModel[] | undefined) {
     this._jobList = jobList;
+    this.firstIndex = 0;
+  }
 
+  ngOnChanges(changes: SimpleChanges): void {
     if (this._jobList) {
       this.numTables = this._jobList.length;
     } else {
       this.numTables = 0;
     }
-
-    this.firstIndex = 0;
   }
 
 

@@ -1,6 +1,5 @@
 package com.seguridata.tools.dbmigrator.business.mapper;
 
-import com.seguridata.tools.dbmigrator.data.entity.ConnectionEntity;
 import com.seguridata.tools.dbmigrator.data.entity.TableEntity;
 import com.seguridata.tools.dbmigrator.data.model.TableModel;
 import org.springframework.stereotype.Component;

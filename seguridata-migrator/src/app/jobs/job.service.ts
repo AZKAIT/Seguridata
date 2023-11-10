@@ -60,6 +60,14 @@ export class JobService {
       job.planStats[planIndex].progress = stats.progress;
     }
 
+    if (stats?.rowsProcessed) {
+      job.planStats[planIndex].rowsProcessed = stats.rowsProcessed;
+    }
+
+    if (stats?.rowsForCompletion) {
+      job.planStats[planIndex].rowsForCompletion = stats.rowsForCompletion;
+    }
+
     if (stats?.result) {
       job.planStats[planIndex].result = stats.result;
     }
@@ -67,6 +75,7 @@ export class JobService {
     if (stats?.status) {
       job.planStats[planIndex].status = stats.status;
     }
+
 
     this._jobList[jobIndex] = job;
   }

@@ -7,11 +7,15 @@ import jakarta.validation.constraints.NotNull;
 import lombok.Getter;
 import lombok.Setter;
 
+import java.io.Serializable;
+
 
 @JsonInclude(JsonInclude.Include.NON_NULL)
 @Getter @Setter
-public class ColumnModel {
-    private String id;
+public class ColumnModel implements Serializable {
+	private static final long serialVersionUID = -662478351132514935L;
+
+	private String id;
     @NotBlank
     private String name;
     private String description;

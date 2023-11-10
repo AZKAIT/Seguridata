@@ -1,4 +1,4 @@
-import { Component, EventEmitter, Input, Output } from '@angular/core';
+import { Component, EventEmitter, Input, OnChanges, Output, SimpleChanges } from '@angular/core';
 import { TableRowSelectEvent, TableRowUnSelectEvent } from 'primeng/table';
 import { ProjectModel } from 'src/app/common/models/project-model';
 
@@ -7,7 +7,7 @@ import { ProjectModel } from 'src/app/common/models/project-model';
   templateUrl: './project-list.component.html',
   styleUrls: ['./project-list.component.css']
 })
-export class ProjectListComponent {
+export class ProjectListComponent implements OnChanges {
 
   private _projectList?: ProjectModel[];
   @Output() listRefreshEvent = new EventEmitter<void>();
@@ -34,13 +34,15 @@ export class ProjectListComponent {
   }
   set projectList(projectList: ProjectModel[] | undefined) {
     this._projectList = projectList;
+    this.firstIndex = 0;
+  }
 
+  ngOnChanges(changes: SimpleChanges): void {
     if (this._projectList) {
       this.numTables = this._projectList.length;
     } else {
       this.numTables = 0;
     }
-    this.firstIndex = 0;
   }
 
   refreshList() {

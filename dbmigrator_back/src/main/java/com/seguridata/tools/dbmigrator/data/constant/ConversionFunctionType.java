@@ -1,5 +1,5 @@
 package com.seguridata.tools.dbmigrator.data.constant;
 
-public enum ConversionFunction {
-    NONE
+public enum ConversionFunctionType {
+    NONE, ENCRYPT
 }

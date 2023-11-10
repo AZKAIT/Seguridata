@@ -39,6 +39,8 @@ public class JobMapper {
         model.setPlanName(stats.getPlanName());
         model.setStatus(stats.getStatus());
         model.setProgress(stats.getProgress());
+        model.setRowsProcessed(stats.getRowsProcessed());
+        model.setRowsForCompletion(stats.getRowsForCompletion());
         model.setResult(stats.getResult());
 
         return model;

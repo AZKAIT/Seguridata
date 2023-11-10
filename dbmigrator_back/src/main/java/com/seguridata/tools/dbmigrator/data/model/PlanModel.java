@@ -8,12 +8,16 @@ import lombok.Setter;
 import jakarta.validation.constraints.Max;
 import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.NotBlank;
+
+import java.io.Serializable;
 import java.util.Date;
 
 @JsonInclude(JsonInclude.Include.NON_NULL)
 @Getter @Setter
-public class PlanModel {
-    private String id;
+public class PlanModel implements Serializable {
+	private static final long serialVersionUID = 4492723680598809829L;
+
+	private String id;
     @Min(1)
     private Integer orderNum;
     @NotBlank

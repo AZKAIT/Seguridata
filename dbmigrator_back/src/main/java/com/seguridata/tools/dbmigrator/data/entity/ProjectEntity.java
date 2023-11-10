@@ -7,13 +7,16 @@ import org.springframework.data.annotation.ReadOnlyProperty;
 import org.springframework.data.mongodb.core.mapping.Document;
 import org.springframework.data.mongodb.core.mapping.DocumentReference;
 
+import java.io.Serializable;
 import java.util.Date;
 import java.util.List;
 
 @Document(collection = "projects")
 @Getter @Setter
-public class ProjectEntity {
-    @Id
+public class ProjectEntity implements Serializable {
+	private static final long serialVersionUID = -7471974195042863774L;
+
+	@Id
     private String id;
     private String name;
     private String description;

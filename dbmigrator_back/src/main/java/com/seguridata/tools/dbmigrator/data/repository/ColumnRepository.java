@@ -18,6 +18,8 @@ import static org.springframework.data.mongodb.core.query.Query.query;
 @Repository
 public class ColumnRepository {
 
+    private static final String TABLE = "table";
+
     private final MongoTemplate mongoTemplate;
 
     @Autowired
@@ -34,7 +36,7 @@ public class ColumnRepository {
     }
 
     public List<ColumnEntity> findColumnListByTable(String tableId) {
-        Criteria tableCriteria = Criteria.where("table").is(new ObjectId(tableId));
+        Criteria tableCriteria = Criteria.where(TABLE).is(new ObjectId(tableId));
         return this.mongoTemplate.find(query(tableCriteria), ColumnEntity.class);
     }
 
@@ -47,21 +49,21 @@ public class ColumnRepository {
     }
 
     public List<ColumnEntity> deleteColumnsByTableIds(Collection<String> tableIds) {
-        Criteria tableCriteria = Criteria.where("table")
+        Criteria tableCriteria = Criteria.where(TABLE)
                 .in(tableIds.stream().map(ObjectId::new).collect(Collectors.toList()));
         return this.mongoTemplate.findAllAndRemove(query(tableCriteria), ColumnEntity.class);
     }
 
 
     public boolean validateColumnData(String tableId, ColumnEntity column) {
-        Criteria existCriteria = Criteria.where("table").is(new ObjectId(tableId))
+        Criteria existCriteria = Criteria.where(TABLE).is(new ObjectId(tableId))
                 .and("name").is(column.getName());
 
         return this.mongoTemplate.exists(new Query(existCriteria), ColumnEntity.class);
     }
 
     public boolean validateColumnTable(String tableId, String columnId) {
-        Criteria existCriteria = Criteria.where("table").is(new ObjectId(tableId))
+        Criteria existCriteria = Criteria.where(TABLE).is(new ObjectId(tableId))
                 .and("_id").is(new ObjectId(columnId));
 
         return this.mongoTemplate.exists(query(existCriteria), ColumnEntity.class);
@@ -72,7 +74,7 @@ public class ColumnRepository {
     }
 
     public List<ColumnEntity> findSortingColumnForTable(String tableId) {
-        Criteria sortColCriteria = Criteria.where("table").is(new ObjectId(tableId))
+        Criteria sortColCriteria = Criteria.where(TABLE).is(new ObjectId(tableId))
                 .and("sorting").is(true);
         return this.mongoTemplate.find(query(sortColCriteria), ColumnEntity.class);
     }

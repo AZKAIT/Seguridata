@@ -92,24 +92,30 @@ public class JobService {
     }
 
     public boolean updateExecutionStatus(String jobId, String planId, ExecutionStatus execStatus) {
-        boolean updated = this.jobRepo.updateExecutionStats(jobId, planId, execStatus, null, null);
+        boolean updated = this.jobRepo.updateExecutionStats(jobId, planId, execStatus, null, null, null,  null);
 
-        this.stompMsgClient.sendExecutionStats(jobId, planId, execStatus, null, null);
+        this.stompMsgClient.sendExecutionStats(jobId, planId, execStatus, null, null, null, null);
         return updated;
     }
 
     public boolean updateExecutionProgress(String jobId, String planId, long currentRows, long rowsForCompletion) {
-        Double progress = ((double) currentRows / (double) rowsForCompletion) * 100;
-        boolean updated = this.jobRepo.updateExecutionStats(jobId, planId, null, progress, null);
+        double progress;
+        if (Objects.equals(0, rowsForCompletion)) {
+            progress = 100.0;
+        } else {
+            progress = ((double) currentRows / (double) rowsForCompletion) * 100;
+        }
 
-        this.stompMsgClient.sendExecutionStats(jobId, planId, null, progress, null);
+        boolean updated = this.jobRepo.updateExecutionStats(jobId, planId, null, progress, currentRows, rowsForCompletion, null);
+
+        this.stompMsgClient.sendExecutionStats(jobId, planId, null, progress, currentRows, rowsForCompletion, null);
         return updated;
     }
 
     public boolean updateExecutionResult(String jobId, String planId, ExecutionResult execResult) {
-        boolean updated = this.jobRepo.updateExecutionStats(jobId, planId, ExecutionStatus.FINISHED, null, execResult);
+        boolean updated = this.jobRepo.updateExecutionStats(jobId, planId, ExecutionStatus.FINISHED, null, null, null, execResult);
 
-        this.stompMsgClient.sendExecutionStats(jobId, planId, ExecutionStatus.FINISHED, null, execResult);
+        this.stompMsgClient.sendExecutionStats(jobId, planId, ExecutionStatus.FINISHED, null, null, null, execResult);
         return updated;
     }
 
