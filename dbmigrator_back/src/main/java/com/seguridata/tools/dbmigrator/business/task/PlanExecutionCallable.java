@@ -8,7 +8,6 @@ import com.seguridata.tools.dbmigrator.business.function.ConversionFunction;
 import com.seguridata.tools.dbmigrator.business.manager.DatabaseQueryManager;
 import com.seguridata.tools.dbmigrator.business.service.ErrorTrackingService;
 import com.seguridata.tools.dbmigrator.business.service.JobService;
-import com.seguridata.tools.dbmigrator.data.constant.ConversionFunctionType;
 import com.seguridata.tools.dbmigrator.data.constant.ExecutionResult;
 import com.seguridata.tools.dbmigrator.data.constant.ExecutionStatus;
 import com.seguridata.tools.dbmigrator.data.entity.DefinitionEntity;

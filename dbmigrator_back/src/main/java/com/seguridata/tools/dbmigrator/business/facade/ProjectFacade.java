@@ -212,7 +212,7 @@ public class ProjectFacade {
         return execResponse;
     }
 
-    private void validateConnections(ProjectEntity project) throws BaseCodeException {
+    private void validateConnections(ProjectEntity project) {
         this.connectionService.getConnection(project.getSourceConnection().getId());
         this.connectionService.getConnection(project.getTargetConnection().getId());
     }
