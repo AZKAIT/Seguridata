@@ -75,7 +75,7 @@ export class PlansContainerComponent implements OnDestroy {
             .subscribe({
               next: delPlan => {
                 if (this.selectedPlan) {
-                  this.planList.splice(this.planList.indexOf(this.selectedPlan), 1);
+                  this.planList.splice(this.planList.findIndex(plan => plan.id == this.selectedPlan?.id), 1);
                   this.selectedPlan = undefined;
                   this.postSuccess('Eliminar Plan', 'Plan eliminado');
                 }
@@ -103,7 +103,7 @@ export class PlansContainerComponent implements OnDestroy {
         .subscribe({
           next: updatedPlan => {
             if (this.selectedPlan && updatedPlan) {
-              const prevDataIndex = this.planList.indexOf(this.selectedPlan);
+              const prevDataIndex = this.planList.findIndex(plan => plan.id == this.selectedPlan?.id);
               this.planList[prevDataIndex] = updatedPlan;
               this.selectedPlan = undefined;
               this.showForm = false;

@@ -66,7 +66,7 @@ export class ColumnsContainerComponent implements OnDestroy {
             .subscribe({
               next: delColumn => {
                 if (this.selectedColumn) {
-                  this.columnList.splice(this.columnList.indexOf(this.selectedColumn), 1);
+                  this.columnList.splice(this.columnList.findIndex(col => col.id == this.selectedColumn?.id), 1);
                   this.selectedColumn = undefined;
                   this.postSuccess('Eliminar Columna', `Columna ${delColumn?.name} eliminada`);
                 }
@@ -94,7 +94,7 @@ export class ColumnsContainerComponent implements OnDestroy {
         .subscribe({
           next: updatedCol => {
             if (this.selectedColumn && updatedCol) {
-              const prevDataIndex = this.columnList.indexOf(this.selectedColumn);
+              const prevDataIndex = this.columnList.findIndex(col => col.id == this.selectedColumn?.id);
               this.columnList[prevDataIndex] = updatedCol;
               this.selectedColumn = undefined;
               this.showForm = false;

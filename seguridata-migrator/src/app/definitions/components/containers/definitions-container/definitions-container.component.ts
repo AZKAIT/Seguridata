@@ -77,7 +77,7 @@ export class DefinitionsContainerComponent implements OnDestroy {
             .subscribe({
               next: delDef => {
                 if (this.selectedDef) {
-                  this.defList.splice(this.defList.indexOf(this.selectedDef), 1);
+                  this.defList.splice(this.defList.findIndex(def => def.id == this.selectedDef?.id), 1);
                   this.selectedDef = undefined;
                   this.postSuccess('Eliminar Definición', 'Definición eliminada');
                 }
@@ -105,7 +105,7 @@ export class DefinitionsContainerComponent implements OnDestroy {
         .subscribe({
           next: updatedDef => {
             if (this.selectedDef && updatedDef) {
-              const prevDataIndex = this.defList.indexOf(this.selectedDef);
+              const prevDataIndex = this.defList.findIndex(def => def.id == this.selectedDef?.id);
               this.defList[prevDataIndex] = updatedDef;
               this.selectedDef = undefined;
               this.showUpdateForm = false;

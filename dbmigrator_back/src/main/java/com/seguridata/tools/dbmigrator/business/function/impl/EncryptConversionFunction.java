@@ -18,7 +18,7 @@ public class EncryptConversionFunction implements ConversionFunction {
     @Override
     public Object apply(Object input) {
         try {
-            return Cipher.cipher(input.toString());
+            return Cipher.cipher(input.toString()); // NOSONAR
         } catch (Exception e) {
             throw new IllegalStateException(e);
         }

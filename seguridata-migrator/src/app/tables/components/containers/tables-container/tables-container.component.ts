@@ -69,7 +69,7 @@ export class TablesContainerComponent implements OnDestroy {
             .subscribe({
               next: delTable => {
                 if (this.selectedTable) {
-                  this.tableList.splice(this.tableList.indexOf(this.selectedTable), 1);
+                  this.tableList.splice(this.tableList.findIndex(table => table.id == this.selectedTable?.id), 1);
                   this.selectedTable = undefined;
                   this.postSuccess('Eliminar Tabla', `Tabla ${delTable?.name} eliminada`);
                 }
@@ -99,7 +99,7 @@ export class TablesContainerComponent implements OnDestroy {
         .subscribe({
           next: updatedTable => {
             if (this.selectedTable && updatedTable) {
-              const prevDataIndex = this.tableList.indexOf(this.selectedTable);
+              const prevDataIndex = this.tableList.findIndex(table => table.id == this.selectedTable?.id);
               this.tableList[prevDataIndex] = updatedTable;
               this.selectedTable = undefined;
               this.showForm = false;

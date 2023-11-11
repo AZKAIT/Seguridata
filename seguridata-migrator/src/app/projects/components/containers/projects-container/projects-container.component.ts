@@ -65,7 +65,7 @@ export class ProjectsContainerComponent implements OnInit, OnDestroy {
             .subscribe({
               next: delProj => {
                 if (this.selectedProject) {
-                  this.projectList.splice(this.projectList.indexOf(this.selectedProject), 1);
+                  this.projectList.splice(this.projectList.findIndex(proj => proj.id == this.selectedProject?.id), 1);
                   this.selectedProject = undefined;
                   this.postSuccess('Eliminar Proyecto', `Proyecto ${delProj?.name} eliminado`);
                 }
@@ -93,7 +93,7 @@ export class ProjectsContainerComponent implements OnInit, OnDestroy {
         .subscribe({
           next: updatedProj => {
             if (this.selectedProject && updatedProj) {
-              const prevDataIndex = this.projectList.indexOf(this.selectedProject);
+              const prevDataIndex = this.projectList.findIndex(proj => proj.id == this.selectedProject?.id);
               this.projectList[prevDataIndex] = updatedProj;
               this.selectedProject = undefined;
               this.showForm = false;

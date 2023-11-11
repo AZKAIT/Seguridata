@@ -81,7 +81,7 @@ export class ConnectionsContainerComponent implements OnInit, OnDestroy {
             .subscribe({
               next: delConn => {
                 if (this.selectedConn) {
-                  this.connectionList.splice(this.connectionList.indexOf(this.selectedConn), 1);
+                  this.connectionList.splice(this.connectionList.findIndex(conn => conn.id == this.selectedConn?.id), 1);
                   this.selectedConn = undefined;
                   this.postSuccess('Eliminar Conexión', `Conexión ${delConn?.name} eliminada`);
                 }
@@ -109,7 +109,7 @@ export class ConnectionsContainerComponent implements OnInit, OnDestroy {
         .subscribe({
           next: updatedConn => {
             if (this.selectedConn && updatedConn) {
-              const prevDataIndex = this.connectionList.indexOf(this.selectedConn);
+              const prevDataIndex = this.connectionList.findIndex(conn => conn.id == this.selectedConn?.id);
               this.connectionList[prevDataIndex] = updatedConn;
               this.selectedConn = undefined;
               this.showForm = false;
