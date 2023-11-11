@@ -78,6 +78,8 @@ public class PlanExecutionCallable implements Callable<ExecutionResult> {
         this.validateLatch();
 
         ExecutionResult executionResult = null;
+        long currentRows = 0;
+        long rowsForCompletion = 0;
         try {
             final long totalRowsSource = this.validatePlanAndReturnTotalRows();
 
@@ -87,9 +89,8 @@ public class PlanExecutionCallable implements Callable<ExecutionResult> {
             final long maxRows = this.plan.getMaxRows();
             final long initialSkip = this.plan.getInitialSkip();
 
-            long currentRows = 0;
             long skip = initialSkip;
-            long rowsForCompletion = this.resolveRowsForCompletion(totalRowsSource);
+            rowsForCompletion = this.resolveRowsForCompletion(totalRowsSource);
             this.jobService.updateExecutionProgress(this.job.getId(), this.plan.getId(), currentRows, rowsForCompletion);
 
             LOGGER.info("Initiating process for {} rows in batches of {} starting from row {}, on a total of {} rows", maxRows, rowLimit, initialSkip, totalRowsSource);
@@ -124,7 +125,6 @@ public class PlanExecutionCallable implements Callable<ExecutionResult> {
         } catch (EmptyResultException e) {
             LOGGER.warn(e.getMessage());
             executionResult = ExecutionResult.SUCCESS;
-            this.jobService.updateExecutionProgress(this.job.getId(), this.plan.getId(), 0, 0);
         } catch (Exception e) {
             executionResult = ExecutionResult.EXCEPTION;
             LOGGER.error("Exception occurred on Task: {}", getStackTrace(e));
@@ -136,7 +136,7 @@ public class PlanExecutionCallable implements Callable<ExecutionResult> {
         } finally {
             LOGGER.info("Terminating Task: {}", Thread.currentThread().getName());
             this.latch.countDown();
-            this.jobService.updateExecutionResult(this.job.getId(), this.plan.getId(), executionResult);
+            this.jobService.updateExecutionResult(this.job.getId(), this.plan.getId(), executionResult, currentRows, rowsForCompletion);
         }
         return executionResult;
     }

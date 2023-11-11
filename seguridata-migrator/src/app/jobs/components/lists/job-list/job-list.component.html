@@ -63,8 +63,8 @@
                           <td>{{ translateStatus(stat.status) }}</td>
                           <td><p-progressBar [value]="stat.progress" [showValue]="true"></p-progressBar> {{stat.progress | number:'1.2-2'}}%</td>
                           <td>{{ stat.rowsProcessed? stat.rowsProcessed : 0 }} de
-                            <span *ngIf="stat.rowsForCompletion">{{ stat.rowsForCompletion }}</span>
-                            <i *ngIf="!stat.rowsForCompletion" class="pi pi-clock" style="font-size: 1rem" pTooltip="Esperando por la cantidad total" tooltipPosition="top"></i>
+                            <span *ngIf="stat.rowsForCompletion != null">{{ stat.rowsForCompletion }}</span>
+                            <i *ngIf="stat.rowsForCompletion == null" class="pi pi-clock" style="font-size: 1rem" pTooltip="Esperando por la cantidad total" tooltipPosition="top"></i>
                           </td>
                           <td>{{ translateResult(stat.result) }}</td>
                       </tr>

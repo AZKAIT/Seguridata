@@ -91,32 +91,34 @@ public class JobService {
         return updated;
     }
 
-    public boolean updateExecutionStatus(String jobId, String planId, ExecutionStatus execStatus) {
-        boolean updated = this.jobRepo.updateExecutionStats(jobId, planId, execStatus, null, null, null,  null);
-
+    public void updateExecutionStatus(String jobId, String planId, ExecutionStatus execStatus) {
+        this.jobRepo.updateExecutionStats(jobId, planId, execStatus, null, null, null,  null);
         this.stompMsgClient.sendExecutionStats(jobId, planId, execStatus, null, null, null, null);
-        return updated;
     }
 
-    public boolean updateExecutionProgress(String jobId, String planId, long currentRows, long rowsForCompletion) {
+    public void updateExecutionProgress(String jobId, String planId, long currentRows, long rowsForCompletion) {
+        double progress = this.calculateProgress(currentRows, rowsForCompletion);
+
+        this.jobRepo.updateExecutionStats(jobId, planId, null, progress, currentRows, rowsForCompletion, null);
+        this.stompMsgClient.sendExecutionStats(jobId, planId, null, progress, currentRows, rowsForCompletion, null);
+    }
+
+    public void updateExecutionResult(String jobId, String planId, ExecutionResult execResult, long currentRows, long rowsForCompletion) {
+        double progress = this.calculateProgress(currentRows, rowsForCompletion);
+
+        this.jobRepo.updateExecutionStats(jobId, planId, ExecutionStatus.FINISHED, progress,  currentRows, rowsForCompletion, execResult);
+        this.stompMsgClient.sendExecutionStats(jobId, planId, ExecutionStatus.FINISHED, progress, currentRows, rowsForCompletion, execResult);
+    }
+
+    private double calculateProgress(long currentRows, long rowsForCompletion) {
         double progress;
-        if (Objects.equals(0, rowsForCompletion)) {
+        if (Objects.equals(0L, rowsForCompletion)) {
             progress = 100.0;
         } else {
             progress = ((double) currentRows / (double) rowsForCompletion) * 100;
         }
 
-        boolean updated = this.jobRepo.updateExecutionStats(jobId, planId, null, progress, currentRows, rowsForCompletion, null);
-
-        this.stompMsgClient.sendExecutionStats(jobId, planId, null, progress, currentRows, rowsForCompletion, null);
-        return updated;
-    }
-
-    public boolean updateExecutionResult(String jobId, String planId, ExecutionResult execResult) {
-        boolean updated = this.jobRepo.updateExecutionStats(jobId, planId, ExecutionStatus.FINISHED, null, null, null, execResult);
-
-        this.stompMsgClient.sendExecutionStats(jobId, planId, ExecutionStatus.FINISHED, null, null, null, execResult);
-        return updated;
+        return progress;
     }
 
     private List<ExecutionStatisticsEntity> createStatisticsForJob(ProjectEntity project) {
