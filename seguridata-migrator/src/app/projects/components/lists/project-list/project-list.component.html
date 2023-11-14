@@ -22,11 +22,11 @@
       <ng-template pTemplate="header">
         <tr>
           <th>&nbsp;</th>
-          <th>Nombre</th>
+          <th pSortableColumn="name">Nombre <p-sortIcon field="name"></p-sortIcon></th>
           <th>Descripción</th>
           <th>Conex. Origen</th>
           <th>Conex. Destino</th>
-          <th>Creado</th>
+          <th pSortableColumn="createdAt">Creado <p-sortIcon field="createdAt"></p-sortIcon></th>
           <th>&nbsp;</th>
         </tr>
       </ng-template>
